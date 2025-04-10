@@ -1,0 +1,14 @@
+event_type,team1_id,team1_player1,team1_player2,team2_id,team2_player1,team2_player2,team1_score,team2_score,winner_team_id,winner_names,round
+singles,101,Alice,,102,Bob,,21-15 21-17,,101,Alice,Group A
+singles,103,Chris,,104,Diana,,21-10 19-21 21-18,,103,Chris,Group A
+singles,105,Ethan,,106,Fiona,,18-21 21-13 21-11,,106,Fiona,Group B
+
+men_doubles,201,Jack,Tom,202,Bob,Dan,21-18 18-21 21-17,,201,Jack/Tom,Group A
+men_doubles,203,Nathan,Oscar,204,Paul,Quinn,19-21 21-14 21-15,,203,Nathan/Oscar,Group B
+men_doubles,205,Ray,Sam,201,Jack,Tom,22-20 21-17,,205,Ray/Sam,Semi-final
+
+women_doubles,301,Lily,Amy,302,Mary,Eva,21-12 21-10,,301,Lily/Amy,Group A
+women_doubles,303,Sara,Tina,304,Nina,Olivia,21-15 21-17,,303,Sara/Tina,Group B
+
+mixed_doubles,401,Kevin,Ella,402,Sam,Joy,17-21 21-16 21-19,,401,Kevin/Ella,Group A
+mixed_doubles,403,Luke,Anna,401,Kevin,Ella,18-21 21-19 21-14,,403,Luke/Anna,Final

@@ -1,0 +1,229 @@
+<!--
+William Craig 
+
+Goals : 
+- Make a web page which can be used by our user to input results from a badminton tournament (which has already finished) 
+- The data can be packaged into a known format and sent to the backend 
+
+
+Step 1 :
+- Fixed form with 4 player name inputs, and 4 game inputs (player 1, player 2, round, result)
+
+Step 2 :
+- create a system which allows fo rthe form to be expanded dynamically
+
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badminton Tournament Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Your custom CSS file -->
+    <link href="styles.css" rel="stylesheet">
+
+    <style>
+        body {
+            padding-top: 100
+        px; /* Adds space at the top to prevent cutoff */
+            overflow-x: hidden; /* Prevents horizontal scrolling */
+        }
+        
+        .container {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+        
+        /* Fix for potential navbar overlaps */
+        .card {
+            margin-top: 20px;
+            overflow: visible;
+        }
+        
+        /* Force Bootstrap card header to display properly */
+        .card-header {
+            display: block !important;
+            padding: 0.75rem 1.25rem !important;
+        }
+        
+        /* Ensure full-width rendering */
+        .row {
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Badminton Tournament Results</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="badmintonForm">
+                            <!-- Tournament Details -->
+                            <div class="mb-4">
+                                <h4>Tournament Details</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tournamentName" class="form-label">Tournament Name</label>
+                                        <input type="text" class="form-control" id="tournamentName" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tournamentDate" class="form-label">Date</label>
+                                        <input type="date" class="form-control" id="tournamentDate" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tournamentLocation" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="tournamentLocation">
+                                </div>
+                            </div>
+
+                            <!-- Player Results Section -->
+                            <div class="mb-4">
+                                <h4>Match Results</h4>
+                                
+                                <!-- Match 1 -->
+                                <div class="match-container border p-3 mb-3 rounded">
+                                    <h5>Match 1</h5>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <label for="player1Match1" class="form-label">Player 1</label>
+                                            <input type="text" class="form-control" id="player1Match1" required>
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end justify-content-center mb-3">
+                                            <span class="fw-bold">VS</span>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="player2Match1" class="form-label">Player 2</label>
+                                            <input type="text" class="form-control" id="player2Match1" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-5">
+                                            <label for="scorePlayer1Match1" class="form-label">Score (Player 1)</label>
+                                            <input type="number" min="0" class="form-control" id="scorePlayer1Match1" required>
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end justify-content-center mb-3">
+                                            <span class="fw-bold">-</span>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="scorePlayer2Match1" class="form-label">Score (Player 2)</label>
+                                            <input type="number" min="0" class="form-control" id="scorePlayer2Match1" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Match 2 -->
+                                <div class="match-container border p-3 mb-3 rounded">
+                                    <h5>Match 2</h5>
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <label for="player1Match2" class="form-label">Player 1</label>
+                                            <input type="text" class="form-control" id="player1Match2" required>
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end justify-content-center mb-3">
+                                            <span class="fw-bold">VS</span>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="player2Match2" class="form-label">Player 2</label>
+                                            <input type="text" class="form-control" id="player2Match2" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-5">
+                                            <label for="scorePlayer1Match2" class="form-label">Score (Player 1)</label>
+                                            <input type="number" min="0" class="form-control" id="scorePlayer1Match2" required>
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end justify-content-center mb-3">
+                                            <span class="fw-bold">-</span>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="scorePlayer2Match2" class="form-label">Score (Player 2)</label>
+                                            <input type="number" min="0" class="form-control" id="scorePlayer2Match2" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit Results</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Form Submission Script -->
+    <script>
+        document.getElementById('badmintonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Collect form data
+            const formData = {
+                tournament: {
+                    name: document.getElementById('tournamentName').value,
+                    date: document.getElementById('tournamentDate').value,
+                    location: document.getElementById('tournamentLocation').value
+                },
+                matches: [
+                    {
+                        player1: document.getElementById('player1Match1').value,
+                        player2: document.getElementById('player2Match1').value,
+                        scorePlayer1: document.getElementById('scorePlayer1Match1').value,
+                        scorePlayer2: document.getElementById('scorePlayer2Match1').value
+                    },
+                    {
+                        player1: document.getElementById('player1Match2').value,
+                        player2: document.getElementById('player2Match2').value,
+                        scorePlayer1: document.getElementById('scorePlayer1Match2').value,
+                        scorePlayer2: document.getElementById('scorePlayer2Match2').value
+                    }
+                ]
+            };
+            
+            // Here you would send the data to your backend
+            console.log('Form data to be sent:', formData);
+            
+            // Example of sending data to a backend (uncomment and modify as needed)
+            /*
+            fetch('your-backend-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Tournament results submitted successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting tournament results. Please try again.');
+            });
+            */
+            
+            alert('Form submitted! Check console for data that would be sent to backend.');
+        });
+    </script>
+</body>
+</html>

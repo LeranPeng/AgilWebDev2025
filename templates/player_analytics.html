@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Player Analysis - Badminton Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navi Bar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">🏸 Player Analysis</h1>
+    <div>
+      <a href="/analytics" class="px-3 hover:underline">← Back</a>
+      <a href="/dashboard" class="px-3 hover:underline">Dashboard</a>
+      <a href="/upload" class="px-3 hover:underline">Upload</a>
+      <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
+    <div class="mb-6 flex justify-between items-center">
+      <div>
+        <h2 class="text-2xl font-semibold">🏆Analysis for {{ player.name | default('N/A') }}</h2>
+        <p class="text-gray-600 mt-1">View detailed player statistics and performance</p>
+      </div>
+      <div>
+        <select id="playerSwitch" class="p-2 border rounded cursor-pointer">
+          <option value="">Switch Player...</option>
+          {% for p in players %}
+            {% if p.id != player.id %}
+              <option value="{{ p.id }}">{{ p.name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- Basic stats data -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-5 rounded shadow text-center">
+        <p class="text-gray-500">Total sessions</p>
+        <p class="text-3xl font-bold text-blue-700 mt-2">{{ player.matches }}</p>
+      </div>
+      <div class="bg-white p-5 rounded shadow text-center">
+        <p class="text-gray-500">Wins</p>
+        <p class="text-3xl font-bold text-green-600 mt-2">{{ player.wins }}</p>
+      </div>
+      <div class="bg-white p-5 rounded shadow text-center">
+        <p class="text-gray-500">Losses</p>
+        <p class="text-3xl font-bold text-red-600 mt-2">{{ player.losses }}</p>
+      </div>
+      <div class="bg-white p-5 rounded shadow text-center">
+        <p class="text-gray-500">Win Rate</p>
+        <p class="text-3xl font-bold text-purple-600 mt-2">{{ player.win_rate }}%</p>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-lg font-semibold mb-4">⚔️ Performance in various games</h3>
+        <canvas id="matchTypeChart" class="h-64 w-full"></canvas>
+      </div>
+      <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-lg font-semibold mb-4">📈 Score Statistics</h3>
+        <canvas id="scoreChart" class="h-64 w-full"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Matches -->
+    <div class="bg-white rounded shadow p-6 mb-8">
+      <h3 class="text-xl font-bold mb-4">🕒Recent Matches</h3>
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-sm leading-normal">
+              <th class="py-3 px-4 text-left">Date</th>
+              <th class="py-3 px-4 text-left">Tournament</th>
+              <th class="py-3 px-4 text-left">Opponent</th>
+              <th class="py-3 px-4 text-left">Result</th>
+              <th class="py-3 px-4 text-left">Scores</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600">
+            {% for match in player.recent_matches %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-4">{{ match.date }}</td>
+                <td class="py-3 px-4">{{ match.tournament }}</td>
+                <td class="py-3 px-4">{{ match.opponent }}</td>
+                <td class="py-3 px-4">
+                  {% if match.result == 'Win' %}
+                    <span class="text-green-600 font-medium">胜</span>
+                  {% else %}
+                    <span class="text-red-600 font-medium">负</span>
+                  {% endif %}
+                </td>
+                <td class="py-3 px-4">{{ match.score }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Game Analysis -->
+    <div class="bg-white rounded shadow p-6 mb-10">
+      <h3 class="text-xl font-bold mb-4">🥊Game Analysis</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-500 mb-2">Select an opponent to view the duel history</label>
+          <select id="opponentSelect" class="w-full p-2 border rounded cursor-pointer">
+            <option value="">Choosing an opponent...</option>
+            {% for p in players %}
+              {% if p.id != player.id %}
+                <option value="{{ p.id }}">{{ p.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button id="compareBtn" class="bg-blue-600 text-white px-4 py-2 rounded disabled:bg-gray-400 cursor-pointer" disabled>
+            View duel records
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Foot -->
+  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
+    © 2025 Badminton Manager · Copyrights Reserved
+  </footer>
+
+  <script>
+    // Init Charts
+    document.addEventListener('DOMContentLoaded', function() {
+      // Processing match type data
+      const matchTypes = {{ player.match_types|tojson }};
+      const matchTypeLabels = [];
+      const matchTypeWins = [];
+      const matchTypeLosses = [];
+
+      for (const type in matchTypes) {
+        matchTypeLabels.push(type);
+        const wins = matchTypes[type].wins;
+        const total = matchTypes[type].matches;
+        matchTypeWins.push(wins);
+        matchTypeLosses.push(total - wins);
+      }
+
+      // Charting Match Type Performance
+      const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
+      const matchTypeChart = new Chart(matchTypeCtx, {
+        type: 'bar',
+        data: {
+          labels: matchTypeLabels,
+          datasets: [
+            {
+              label: 'Wins',
+              data: matchTypeWins,
+              backgroundColor: 'rgba(16, 185, 129, 0.7)',
+              borderWidth: 0
+            },
+            {
+              label: 'Losses',
+              data: matchTypeLosses,
+              backgroundColor: 'rgba(239, 68, 68, 0.7)',
+              borderWidth: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { stacked: true },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+
+      // Score chart
+      const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+      const scoreChart = new Chart(scoreCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Score', 'Lost points'],
+          datasets: [{
+            label: 'Total Score',
+            data: [{{ player.points_scored }}, {{ player.points_conceded }}],
+            backgroundColor: [
+              'rgba(79, 70, 229, 0.7)',
+              'rgba(245, 158, 11, 0.7)'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+
+      // Player switch event
+      document.getElementById('playerSwitch').addEventListener('change', function() {
+        const playerId = this.value;
+        if (playerId) {
+          window.location.href = `/analytics/player/${playerId}`;
+        }
+      });
+
+      // Duel comparison logic
+      const opponentSelect = document.getElementById('opponentSelect');
+      const compareBtn = document.getElementById('compareBtn');
+
+      opponentSelect.addEventListener('change', function() {
+        compareBtn.disabled = !this.value;
+      });
+
+      compareBtn.addEventListener('click', function() {
+        const opponentId = opponentSelect.value;
+        if (opponentId) {
+          window.location.href = `/analytics/head_to_head?player1={{ player.id }}&player2=${opponentId}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

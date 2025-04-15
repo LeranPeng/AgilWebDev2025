@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Analysis - Badminton Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navi bar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">🏸 Data analysis</h1>
+    <div>
+      <a href="/dashboard" class="px-3 hover:underline">Dashboard</a>
+      <a href="/upload" class="px-3 hover:underline">Upload</a>
+      <a href="/input_form" class="px-3 hover:underline">Game</a>
+      <a href="/settings" class="px-3 hover:underline">Settings</a>
+      <a href="/logout" class="px-3 hover:underline text-red-300">Log out</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold">📊 Data Analysis Dashboard</h2>
+      <p class="text-gray-600 mt-1">View your badminton game statistics and trends</p>
+    </div>
+
+    <!-- Analysis navigator -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <a href="/analytics" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
+        Overall analysis
+      </a>
+      <a href="/analytics/head_to_head" class="bg-green-600 text-white p-4 rounded-lg shadow hover:bg-green-700 transition text-center">
+        Matchup Analysis
+      </a>
+      <div class="relative">
+        <select id="playerSelect" class="appearance-none bg-yellow-500 text-white p-4 rounded-lg shadow hover:bg-yellow-600 transition text-center w-full cursor-pointer">
+          <option value="">Select Player to Analyze...</option>
+          {% for player in players %}
+            <option value="{{ player.id }}">{{ player.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-500">Game Type Distribution</p>
+        <canvas id="matchTypeChart" class="mt-4 h-48"></canvas>
+      </div>
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-500">Top Player Win Rate</p>
+        <canvas id="winRateChart" class="mt-4 h-48"></canvas>
+      </div>
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-500">Number of matches per month</p>
+        <canvas id="monthlyMatchChart" class="mt-4 h-48"></canvas>
+      </div>
+    </div>
+
+    <!-- Championship Analysis -->
+    <div class="bg-white rounded shadow p-6 mb-10">
+      <h3 class="text-xl font-bold mb-4">🏆Tournament Analysis</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <p class="text-gray-500 mb-2">Select a tournament to view detailed analysis</p>
+          <select id="tournamentSelect" class="w-full p-2 border rounded">
+            <option value="">Select tournament...</option>
+            {% for tournament in tournaments %}
+              <option value="{{ tournament.id }}">{{ tournament.name }} ({{ tournament.date }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <p class="text-gray-500 mb-2">Tournament statistics</p>
+          <ul class="space-y-1 text-gray-600">
+            <li>• Total Tournaments: <span class="font-medium">{{ tournaments|length }}</span></li>
+            <li>• Total number of matches: <span class="font-medium" id="totalMatches">Calculating...</span></li>
+            <li>• Average number of matches per tournament: <span class="font-medium" id="avgMatchesPerTournament">Calculating...</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Player Comparison -->
+    <div class="bg-white rounded shadow p-6 mb-10">
+      <h3 class="text-xl font-bold mb-4">🏅Player Comparison</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-500 mb-2">Player 1</label>
+          <select id="player1Select" class="w-full p-2 border rounded">
+            <option value="">Selecting Player...</option>
+            {% for player in players %}
+              <option value="{{ player.id }}">{{ player.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-500 mb-2">Player 2</label>
+          <select id="player2Select" class="w-full p-2 border rounded">
+            <option value="">Selecting Player...</option>
+            {% for player in players %}
+              <option value="{{ player.id }}">{{ player.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4">
+        <button id="compareBtn" class="bg-blue-600 text-white px-4 py-2 rounded disabled:bg-gray-400" disabled>
+          Compare players
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Foot -->
+  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
+    © 2025 Badminton manager · Copyright Reserved
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Game type distribution plots
+      const matchTypeData = JSON.parse('{{ match_distribution|safe }}');
+      const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
+      const matchTypeChart = new Chart(matchTypeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: matchTypeData.labels,
+          datasets: [{
+            data: matchTypeData.data,
+            backgroundColor: [
+              '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12
+              }
+            }
+          }
+        }
+      });
+
+      // Player Win Rate Chart
+      const winRateData = JSON.parse('{{ player_win_rates|safe }}');
+      const winRateCtx = document.getElementById('winRateChart').getContext('2d');
+      const winRateChart = new Chart(winRateCtx, {
+        type: 'bar',
+        data: {
+          labels: winRateData.labels,
+          datasets: [{
+            label: 'Win Rate (%)',
+            data: winRateData.data,
+            backgroundColor: '#3B82F6',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Monthly Match Count Chart
+      const monthlyData = JSON.parse('{{ monthly_matches|safe }}');
+      const monthlyCtx = document.getElementById('monthlyMatchChart').getContext('2d');
+      const monthlyChart = new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+          labels: monthlyData.labels,
+          datasets: [{
+            label: 'Number of matches',
+            data: monthlyData.data,
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+
+      // Calculate the total number of matches
+      let totalMatches = 0;
+      matchTypeData.data.forEach(count => {
+        totalMatches += count;
+      });
+      document.getElementById('totalMatches').textContent = totalMatches;
+
+      // Calculate the average number of matches per tournament
+      const tournamentCount = {{ tournaments|length }};
+      const avgMatches = tournamentCount > 0 ? (totalMatches / tournamentCount).toFixed(1) : '0';
+      document.getElementById('avgMatchesPerTournament').textContent = avgMatches;
+
+      // Player chooses to jump
+      document.getElementById('playerSelect').addEventListener('change', function() {
+        const playerId = this.value;
+        if (playerId) {
+          window.location.href = `/analytics/player/${playerId}`;
+        }
+      });
+
+      // Tournament Selection Jump
+      document.getElementById('tournamentSelect').addEventListener('change', function() {
+        const tournamentId = this.value;
+        if (tournamentId) {
+          window.location.href = `/analytics/tournament/${tournamentId}`;
+        }
+      });
+
+      // Players are more controlled
+      const player1Select = document.getElementById('player1Select');
+      const player2Select = document.getElementById('player2Select');
+      const compareBtn = document.getElementById('compareBtn');
+
+      function updateCompareButton() {
+        compareBtn.disabled = !(player1Select.value && player2Select.value && player1Select.value !== player2Select.value);
+      }
+
+      player1Select.addEventListener('change', updateCompareButton);
+      player2Select.addEventListener('change', updateCompareButton);
+
+      compareBtn.addEventListener('click', function() {
+        if (player1Select.value && player2Select.value) {
+          window.location.href = `/analytics/head_to_head?player1=${player1Select.value}&player2=${player2Select.value}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

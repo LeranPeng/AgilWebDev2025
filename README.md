@@ -1,4 +1,5 @@
 # 🏸 Badminton Tournament Manager
+Author: Leran Peng, Dennis Chuo, Andrew Mekhail, William Craig
 
 This is a full-stack web application designed to help organizers manage badminton tournaments with ease. The system allows users to:
 

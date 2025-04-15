@@ -6,14 +6,15 @@
   <title>Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col">
   <!-- Navbar -->
   <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
     <h1 class="text-xl font-bold">🏸 Badminton Dashboard</h1>
     <div>
-      <a href="/upload.html" class="px-3 hover:underline">Upload</a>
-      <a href="/history.html" class="px-3 hover:underline">My Matches</a>
-      <a href="/settings.html" class="px-3 hover:underline">Settings</a>
+      <a href="/upload" class="px-3 hover:underline">Upload</a>
+      <a href="/input_form" class="px-3 hover:underline">My Matches</a>
+      <a href="/settings" class="px-3 hover:underline">Settings</a>
       <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
     </div>
   </nav>
@@ -53,11 +54,11 @@
 
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-      <a href="/upload.html" class="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition">
+      <a href="/upload" class="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition">
         <h3 class="text-xl font-bold mb-2">📤 Upload Match Results</h3>
         <p>Submit results for completed games.</p>
       </a>
-      <a href="/grouping.html" class="bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 transition">
+      <a href="/input_form" class="bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 transition">
         <h3 class="text-xl font-bold mb-2">📅 Generate Grouping</h3>
         <p>Create fair and balanced match groups.</p>
       </a>

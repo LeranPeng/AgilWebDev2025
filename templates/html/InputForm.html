@@ -10,7 +10,7 @@
   <div class="max-w-5xl mx-auto px-6 py-10">
     <h1 class="text-3xl font-bold mb-6 text-blue-700">🏸 Upload Tournament Results</h1>
 
-    <form id="resultsForm" class="space-y-6">
+    <form id="resultsForm" action="/submit_results" method="post" class="space-y-6">
       <!-- Tournament Details -->
       <div class="bg-white shadow-md rounded-lg p-6">
         <h2 class="text-xl font-semibold mb-4">Tournament Info</h2>
@@ -91,7 +91,6 @@
     }
 
     document.getElementById('resultsForm').addEventListener('submit', function(e) {
-      e.preventDefault();
       // Serialize form for backend submission
       const formData = new FormData(e.target);
       const data = {};

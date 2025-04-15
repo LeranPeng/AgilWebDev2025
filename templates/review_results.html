@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review Tournament Results</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">🏸 Review Results</h1>
+    <a href="/dashboard" class="text-sm hover:underline">← Back to Dashboard</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl font-bold mb-6">📋 Review Uploaded Results</h2>
+    <p class="mb-6 text-gray-600">Please review the uploaded match data before confirming. This will create a new tournament with all matches shown below.</p>
+
+    <!-- Tournament Name Form -->
+    <form action="/confirm_results/{{ filename }}" method="POST" class="bg-white p-6 rounded-lg shadow-md mb-8">
+      <h3 class="text-lg font-semibold mb-4">Tournament Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label for="tournament_name" class="block text-gray-700 mb-1">Tournament Name</label>
+          <input type="text" id="tournament_name" name="tournament_name"
+                 value="Tournament from {{ filename }}"
+                 class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label for="location" class="block text-gray-700 mb-1">Location (Optional)</label>
+          <input type="text" id="location" name="location"
+                 class="w-full border rounded px-3 py-2">
+        </div>
+      </div>
+
+      <!-- Data Preview Table -->
+      <h3 class="text-lg font-semibold mb-4">Match Data Preview</h3>
+      <div class="overflow-x-auto bg-gray-50 rounded-lg border">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-100">
+            <tr>
+              {% for header in headers %}
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {{ header }}
+              </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for match in matches %}
+              <tr class="hover:bg-gray-50">
+                {% for cell in match %}
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ cell }}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CSV Format Instructions -->
+      <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <h4 class="font-medium text-blue-700 mb-2">CSV Format Information</h4>
+        <p class="text-sm text-gray-600">
+          The system expects the following columns in your CSV:
+        </p>
+        <ul class="text-sm text-gray-600 list-disc ml-5 mt-1">
+          <li>Team 1 (player names, comma-separated)</li>
+          <li>Team 2 (player names, comma-separated)</li>
+          <li>Score Team 1 (format: 21-19, 19-21, 21-18)</li>
+          <li>Score Team 2 (format: 19-21, 21-19, 18-21)</li>
+          <li>Round (e.g., "Quarterfinal")</li>
+          <li>Match Type (e.g., "Men's Singles")</li>
+        </ul>
+      </div>
+
+      <!-- Buttons -->
+      <div class="mt-6 flex justify-between">
+        <a href="/upload" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+          Cancel
+        </a>
+        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          Confirm and Import
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
+    © 2025 Badminton Manager · All Rights Reserved
+  </footer>
+
+</body>
+</html>

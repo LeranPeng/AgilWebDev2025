@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="dashboard html frontend upload">
-      <change afterPath="$PROJECT_DIR$/User_settings.html" afterDir="false" />
-    </list>
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="User settings html upload" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +23,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JavaScript Debug.User_settings.html.executor": "Run",
     "JavaScript Debug.dashboard.html.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
@@ -56,7 +55,7 @@
       <workItem from="1744699199504" duration="62000" />
       <workItem from="1744699357590" duration="765000" />
       <workItem from="1744701138605" duration="398000" />
-      <workItem from="1744701539444" duration="331000" />
+      <workItem from="1744701539444" duration="392000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -106,7 +105,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744701586737</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="User settings html upload">
+      <option name="closed" value="true" />
+      <created>1744701915566</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1744701915566</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -118,6 +125,7 @@
     <MESSAGE value="delete the old style.css" />
     <MESSAGE value="css libraries applied to all" />
     <MESSAGE value="dashboard html frontend upload" />
-    <option name="LAST_COMMIT_MESSAGE" value="dashboard html frontend upload" />
+    <MESSAGE value="User settings html upload" />
+    <option name="LAST_COMMIT_MESSAGE" value="User settings html upload" />
   </component>
 </project>

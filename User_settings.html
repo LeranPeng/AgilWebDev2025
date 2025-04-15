@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Settings</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">🏸 Settings</h1>
+    <a href="/dashboard.html" class="text-sm hover:underline">← Back to Dashboard</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-3xl mx-auto px-4 py-10">
+    <h2 class="text-2xl font-bold mb-6">👤 User Settings</h2>
+    <form id="settingsForm" class="space-y-6 bg-white p-6 rounded shadow">
+      <!-- Username -->
+      <div>
+        <label class="block font-medium mb-1">Username</label>
+        <input type="text" id="username" class="w-full border px-4 py-2 rounded" required />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block font-medium mb-1">Email</label>
+        <input type="email" id="email" class="w-full border px-4 py-2 rounded" required />
+      </div>
+
+      <!-- Password Change -->
+      <div class="border-t pt-6">
+        <h3 class="font-semibold mb-2">🔐 Change Password</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input type="password" id="currentPassword" placeholder="Current Password" class="border px-4 py-2 rounded" />
+          <input type="password" id="newPassword" placeholder="New Password" class="border px-4 py-2 rounded" />
+          <input type="password" id="confirmPassword" placeholder="Confirm New Password" class="border px-4 py-2 rounded" />
+        </div>
+      </div>
+
+      <!-- Profile Picture (optional) -->
+      <div class="border-t pt-6">
+        <h3 class="font-semibold mb-2">🖼 Profile Picture</h3>
+        <input type="file" id="avatar" class="block" accept="image/*" />
+        <p class="text-sm text-gray-500 mt-1">Optional. JPG/PNG up to 1MB.</p>
+      </div>
+
+      <!-- Submit -->
+      <div class="pt-4">
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+          Save Changes
+        </button>
+        <p id="message" class="mt-3 text-sm text-green-600 hidden">✅ Changes saved!</p>
+      </div>
+    </form>
+  </main>
+
+  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
+    © 2025 Badminton Manager · All Rights Reserved
+  </footer>
+
+  <!-- Script -->
+  <script>
+    // Load user info from localStorage (for demo)
+    const storedUsername = localStorage.getItem("username") || "Leran";
+    const storedEmail = localStorage.getItem("email") || "leran@example.com";
+    document.getElementById("username").value = storedUsername;
+    document.getElementById("email").value = storedEmail;
+
+    // Form submission
+    document.getElementById("settingsForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      // Demo validation
+      if (newPassword && newPassword !== confirmPassword) {
+        alert("New passwords do not match.");
+        return;
+      }
+
+      // Save to localStorage (you can replace this with real backend call)
+      localStorage.setItem("username", username);
+      localStorage.setItem("email", email);
+
+      // Reset password fields
+      document.getElementById("currentPassword").value = '';
+      document.getElementById("newPassword").value = '';
+      document.getElementById("confirmPassword").value = '';
+
+      // Feedback message
+      const msg = document.getElementById("message");
+      msg.classList.remove("hidden");
+      msg.textContent = "✅ Changes saved!";
+      setTimeout(() => msg.classList.add("hidden"), 3000);
+    });
+  </script>
+</body>
+</html>

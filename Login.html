@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="styles.css">
-  <meta charset="UTF-8">
-  <title>Login Page</title>
-  
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 </head>
-<body>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form action="/login" method="post">
-      <input type="text" name="username" placeholder="Username" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <div class="signup-link">
-        <p>Don't have an account? <a href="/Signup.html">Sign up</a></p>
-      </div>
-    </form>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold text-blue-600 mb-6 text-center">Welcome Back</h2>
+      <form action="/login" method="post" class="space-y-4">
+        <input type="text" name="username" placeholder="Username" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <input type="password" name="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Login</button>
+      </form>
+      <p class="text-sm text-center text-gray-600 mt-4">
+        Don't have an account?
+        <a href="/signup.html" class="text-blue-600 hover:underline">Sign up</a>
+      </p>
+    </div>
   </div>
+
 </body>
 </html>

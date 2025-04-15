@@ -5,12 +5,10 @@ Data Analysis Module - Provides data analysis functionality for the badminton to
 from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request
 from sqlalchemy import func, desc, and_
 from datetime import datetime, timedelta
-import pandas as pd
-import numpy as np
 import json
 
-# Import database models
-from app import db, Tournament, Match, Team, Player
+# Import database models from models.py
+from models import db, Tournament, Match, Team, Player
 
 # Create blueprint
 analytics = Blueprint('analytics', __name__)

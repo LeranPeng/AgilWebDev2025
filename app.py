@@ -8,6 +8,7 @@ import csv
 import io
 import json
 
+# Create the Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///badminton.db'
@@ -475,23 +476,52 @@ def upload_post_tournament():
 
     if file:
         try:
+            # Save the file temporarily
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+
             # Read the CSV data
-            stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
-            csv_data = list(csv.reader(stream))
+            with open(filepath, 'r') as f:
+                csv_reader = csv.reader(f)
+                headers = next(csv_reader)
+                matches = list(csv_reader)
 
-            # Create a tournament for this upload
-            tournament = Tournament(
-                name=f"Tournament from {file.filename}",
-                date=datetime.now().date(),
-                location="Uploaded via CSV",
-                user_id=session["user_id"]
-            )
-            db.session.add(tournament)
-            db.session.flush()
+            return render_template('review_results.html', headers=headers, matches=matches, filename=filename)
 
-            # Process matches
+        except Exception as e:
+            flash(f'Error processing file: {str(e)}')
+            return redirect(url_for('upload_page'))
+
+
+@app.route("/confirm_results/<filename>", methods=["POST"])
+def confirm_results(filename):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    try:
+        tournament_name = request.form.get("tournament_name", f"Tournament from {filename}")
+        tournament_date = datetime.now().date()
+
+        # Create tournament
+        tournament = Tournament(
+            name=tournament_name,
+            date=tournament_date,
+            location=request.form.get("location", ""),
+            user_id=session["user_id"]
+        )
+        db.session.add(tournament)
+        db.session.flush()
+
+        # Process the CSV file
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(filename))
+        with open(filepath, 'r') as f:
+            csv_reader = csv.reader(f)
+            headers = next(csv_reader)
+
+            # Process each row in the CSV
             match_count = 0
-            for row in csv_data[1:]:  # Skip header row
+            for row in csv_reader:
                 if len(row) >= 4:  # Ensure row has enough data
                     try:
                         team1 = process_team(row[0])
@@ -499,11 +529,11 @@ def upload_post_tournament():
 
                         match = Match(
                             tournament_id=tournament.id,
-                            round_name=row[2] if len(row) > 2 else "Unknown",
+                            round_name=row[4] if len(row) > 4 else "Unknown",
                             team1_id=team1.id,
                             team2_id=team2.id,
-                            score1=row[3] if len(row) > 3 else "0-0",
-                            score2=row[4] if len(row) > 4 else "0-0",
+                            score1=row[2] if len(row) > 2 else "0-0",
+                            score2=row[3] if len(row) > 3 else "0-0",
                             match_type=row[5] if len(row) > 5 else "Unknown"
                         )
                         db.session.add(match)
@@ -512,12 +542,14 @@ def upload_post_tournament():
                         app.logger.error(f"Error processing match row: {str(e)}")
                         continue
 
-            db.session.commit()
-            flash(f'Successfully imported {match_count} matches!')
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error processing file: {str(e)}')
+        db.session.commit()
+        os.remove(filepath)  # Clean up the temporary file
 
+        flash(f'Successfully imported tournament with {match_count} matches!')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error processing results: {str(e)}')
         return redirect(url_for('upload_page'))
 
 
@@ -567,6 +599,11 @@ def page_not_found(e):
 def server_error(e):
     return render_template('html/500.html'), 500
 
+
+# Import and register the analytics blueprint
+from analytics import analytics
+
+app.register_blueprint(analytics)
 
 if __name__ == "__main__":
     with app.app_context():

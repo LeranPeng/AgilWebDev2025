@@ -14,6 +14,7 @@
     <div>
       <a href="/upload" class="px-3 hover:underline">Upload</a>
       <a href="/input_form" class="px-3 hover:underline">My Matches</a>
+      <a href="/analytics" class="px-3 hover:underline">Analytics</a>
       <a href="/settings" class="px-3 hover:underline">Settings</a>
       <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
     </div>
@@ -24,15 +25,15 @@
     <!-- Welcome -->
     <div class="mb-6 flex justify-between items-center">
       <div>
-        <h2 class="text-3xl font-semibold">Welcome back, <span id="username">Leran</span> 👋</h2>
+        <h2 class="text-3xl font-semibold">Welcome back, <span id="username">{{ username }}</span> 👋</h2>
         <p class="text-gray-600 mt-1">Here's a quick overview of your activity:</p>
       </div>
       <!-- User Info Card -->
       <div class="bg-white p-4 rounded shadow w-64">
         <p class="text-sm text-gray-500">Logged in as</p>
-        <p class="font-semibold text-blue-700 text-lg" id="user-email">leran@example.com</p>
-        <p class="text-sm text-gray-500 mt-2">Last login: <span id="last-login">2025-04-14 18:00</span></p>
-        <a href="/settings.html" class="text-sm text-blue-600 mt-2 inline-block hover:underline">Edit Profile</a>
+        <p class="font-semibold text-blue-700 text-lg" id="user-email">{{ email }}</p>
+        <p class="text-sm text-gray-500 mt-2">Last login: <span id="last-login">{{ last_login }}</span></p>
+        <a href="/settings" class="text-sm text-blue-600 mt-2 inline-block hover:underline">Edit Profile</a>
       </div>
     </div>
 
@@ -40,55 +41,52 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
       <div class="bg-white p-6 rounded shadow text-center">
         <p class="text-gray-500">Total Matches Uploaded</p>
-        <p class="text-2xl font-bold text-blue-700">12</p>
+        <p class="text-2xl font-bold text-blue-700">{{ tournament_count }}</p>
       </div>
       <div class="bg-white p-6 rounded shadow text-center">
         <p class="text-gray-500">Latest Upload</p>
-        <p class="text-lg font-semibold text-green-600">Apr 10, 2025</p>
+        <p class="text-lg font-semibold text-green-600">{{ latest_upload }}</p>
       </div>
       <div class="bg-white p-6 rounded shadow text-center">
         <p class="text-gray-500">Upcoming Matches</p>
-        <p class="text-2xl font-bold text-yellow-600">3</p>
+        <p class="text-2xl font-bold text-yellow-600">{{ upcoming_matches }}</p>
       </div>
     </div>
 
     <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
       <a href="/upload" class="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition">
         <h3 class="text-xl font-bold mb-2">📤 Upload Match Results</h3>
         <p>Submit results for completed games.</p>
       </a>
       <a href="/input_form" class="bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 transition">
-        <h3 class="text-xl font-bold mb-2">📅 Generate Grouping</h3>
-        <p>Create fair and balanced match groups.</p>
+        <h3 class="text-xl font-bold mb-2">📅 Record Matches</h3>
+        <p>Enter match details directly.</p>
+      </a>
+      <a href="/analytics" class="bg-purple-600 text-white p-6 rounded-lg shadow hover:bg-purple-700 transition">
+        <h3 class="text-xl font-bold mb-2">📊 Data Analytics</h3>
+        <p>View statistics and player performance.</p>
       </a>
     </div>
 
     <!-- Recent History -->
     <div class="bg-white rounded shadow p-6 mb-10">
       <h3 class="text-xl font-bold mb-4">📈 Recent Matches</h3>
-      <ul class="space-y-3">
-        <li class="border-b pb-2 flex justify-between">
-          <span>🟢 Alice vs Bob</span>
-          <span>21-15, 21-17 · 2025-04-10</span>
-        </li>
-        <li class="border-b pb-2 flex justify-between">
-          <span>🔴 Chris vs David</span>
-          <span>19-21, 22-20, 18-21 · 2025-04-08</span>
-        </li>
-        <li class="border-b pb-2 flex justify-between">
-          <span>🟢 Alice vs Chris</span>
-          <span>21-10, 21-13 · 2025-04-04</span>
-        </li>
-        <li class="border-b pb-2 flex justify-between">
-          <span>🟢 Bob vs David</span>
-          <span>21-18, 21-19 · 2025-04-03</span>
-        </li>
-        <li class="flex justify-between">
-          <span>🔴 Alice vs David</span>
-          <span>18-21, 21-19, 16-21 · 2025-03-30</span>
-        </li>
-      </ul>
+      {% if recent_matches %}
+        <ul class="space-y-3">
+          {% for match in recent_matches %}
+            <li class="border-b pb-2 flex justify-between">
+              <span>
+                {% if match.is_winner %}🟢{% else %}🔴{% endif %}
+                {{ match.team1 }}
+              </span>
+              <span>{{ match.score }} · {{ match.match_date }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500 text-center py-4">No recent matches found. Start by uploading match results!</p>
+      {% endif %}
     </div>
 
     <!-- Upcoming Reminders -->
@@ -104,15 +102,7 @@
 
   <!-- Footer -->
   <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
-    © 2025 Badminton Manager by Millie Peng · All Rights Reserved
+    © 2025 Badminton Manager · All Rights Reserved
   </footer>
-
-  <script>
-    // Fill username dynamically
-    const username = localStorage.getItem("username") || "Player";
-    const email = localStorage.getItem("email") || "player@example.com";
-    document.getElementById("username").textContent = username;
-    document.getElementById("user-email").textContent = email;
-  </script>
 </body>
 </html>

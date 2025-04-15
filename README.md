@@ -1,15 +1,32 @@
-# AgileWebDev2025
+# 🏸 Badminton Tournament Manager
+Author: Leran Peng, Dennis Chuo, Andrew Mekhail, William Craig
 
-## Group Members 
-Lerang Peng
-Dennis Chuo
-Andrew Mekhail
-William Craig
+This is a full-stack web application designed to help organizers manage badminton tournaments with ease. The system allows users to:
 
-# What is our Project ?
-Our project is a tournament visualisation software for Badminton Games. Our software allows you to log-in to a user account, upload a tournament data file, and see a visualisation of the tournament bracket which can be shared with others. 
+- Sign up and log in securely
+- Upload match data for completed tournaments
+- Input pre-tournament data for scheduling and grouping
+- View a personalized dashboard with match history, account settings, and tournament summaries
 
-# What information is in the tournament data file?
+---
 
-A csv file which contains all the results for all games in your tournament
+## 🔧 Features
 
+- 📝 **Match Submission**: Upload post-tournament results via a dynamic form
+- 📊 **Pre-Tournament Planning**: Enter player names, generate match schedules (in development)
+- 🔐 **User Authentication**: Secure login and registration
+- 🧾 **Dashboard**: Personalized view of tournament stats, user profile, and match history
+- ⚙️ **User Settings**: Update profile details, reset password, and upload profile picture
+
+---
+
+## 🖥️ Tech Stack
+
+| Frontend | Backend | Tools |
+|----------|---------|-------|
+| HTML5, CSS3, JavaScript | Node.js / Express (planned) | TailwindCSS / Bootstrap |
+| Vanilla JS (no framework) | MongoDB or JSON file DB (planned) | Git, localStorage (for demo) |
+
+---
+
+## 🚀 Getting Started

@@ -1,0 +1,19 @@
+﻿event_type,player1_name,player1_gender,player1_organization,player1_contact,player2_name,player2_gender,player2_organization,player2_contact,,,,,
+women_singles,Alice,female,UWA,,,,,,,,,Column Name,Description
+men_singles,Bob,male,,,,,,,,,,event_type,"Type of event: singles, doubles, or mixed"
+mixed_doubles,Jack,male,,,Lily,female,,,,,,player1_name,Name of Player 1
+men_doubles,Jack,male,,,James,male,,,,,,player1_gender,"Gender of Player 1 (optional, e.g., 'male', 'female')"
+women_doubles,Elena,female,,,Amy,female,,,,,,player1_organization,Organization/club/school (optional)
+,,,,,,,,,,,,player1_contact,Contact information of Player 1 (optional)
+,,,,,,,,,,,,player2_name,Name of Player 2 (for doubles/mixed)
+,,,,,,,,,,,,player2_gender,Gender of Player 2 (optional)
+,,,,,,,,,,,,player2_organization,Organization/club/school of Player 2 (optional)
+,,,,,,,,,,,,player2_contact,Contact information of Player 2 (optional)
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,

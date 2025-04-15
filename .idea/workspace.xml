@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="data analytics part backend">
+      <change afterPath="$PROJECT_DIR$/templates/Tournament_analytics.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/head_to_head.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -124,6 +126,7 @@
       <workItem from="1744711725329" duration="3333000" />
       <workItem from="1744718452325" duration="4636000" />
       <workItem from="1744726240585" duration="653000" />
+      <workItem from="1744731895546" duration="616000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />

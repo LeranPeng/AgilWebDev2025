@@ -1,5 +1,5 @@
 """
-Data analysis module for badminton games
+Data Analysis Module - Provides data analysis functionality for the badminton tournament management system
 """
 
 from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request
@@ -8,50 +8,51 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import json
-#database import
+
+# Import database models
 from app import db, Tournament, Match, Team, Player
 
-
+# Create blueprint
 analytics = Blueprint('analytics', __name__)
 
-
 def get_player_stats(player_id=None, user_id=None):
-    """Get player stats from database"""
+    """Get player statistics"""
 
-    # Basic query
+    # Base query - all matches
     query = db.session.query(
         Match, Tournament
     ).join(
         Tournament, Match.tournament_id == Tournament.id
     )
 
-    # search users
+    # If user ID is specified, only query that user's matches
     if user_id:
         query = query.filter(Tournament.user_id == user_id)
 
-    # Get all relevant users
+    # Get all relevant matches
     matches = query.all()
 
+    # Player statistics
     player_stats = {}
 
     for match, tournament in matches:
-        # Team1
+        # Process team 1
         team1 = match.team1
         team1_players = [team1.player1]
         if team1.player2:
             team1_players.append(team1.player2)
 
-        # Team2
+        # Process team 2
         team2 = match.team2
         team2_players = [team2.player1]
         if team2.player2:
             team2_players.append(team2.player2)
 
-        # Determine the winner
+        # Determine match winner
         winner = match.get_winner()
         is_team1_winner = (winner.id == team1.id)
 
-        # Update stats for each player
+        # Update statistics for each player
         for player in team1_players:
             if player.id not in player_stats:
                 player_stats[player.id] = {
@@ -73,7 +74,7 @@ def get_player_stats(player_id=None, user_id=None):
             else:
                 player_stats[player.id]['losses'] += 1
 
-            # Updated match type statistics
+            # Update match type statistics
             match_type = match.match_type
             if match_type not in player_stats[player.id]['match_types']:
                 player_stats[player.id]['match_types'][match_type] = {'matches': 0, 'wins': 0}
@@ -82,7 +83,7 @@ def get_player_stats(player_id=None, user_id=None):
             if is_team1_winner:
                 player_stats[player.id]['match_types'][match_type]['wins'] += 1
 
-            # Calculating points scored and lost
+            # Calculate points scored and conceded
             score1_sets = match.score1.split(', ')
             score2_sets = match.score2.split(', ')
 
@@ -96,13 +97,13 @@ def get_player_stats(player_id=None, user_id=None):
                     points_scored += score1_points
                     points_conceded += score2_points
                 except (ValueError, IndexError):
-                    # Handling malformed fractions
+                    # Handle malformed scores
                     pass
 
             player_stats[player.id]['points_scored'] += points_scored
             player_stats[player.id]['points_conceded'] += points_conceded
 
-            # Add to Recent Matches
+            # Add to recent matches
             match_info = {
                 'id': match.id,
                 'tournament': tournament.name,
@@ -113,7 +114,7 @@ def get_player_stats(player_id=None, user_id=None):
             }
             player_stats[player.id]['recent_matches'].append(match_info)
 
-        # Do the same for the players on team 2
+        # Do the same for team 2 players
         for player in team2_players:
             if player.id not in player_stats:
                 player_stats[player.id] = {
@@ -135,7 +136,7 @@ def get_player_stats(player_id=None, user_id=None):
             else:
                 player_stats[player.id]['losses'] += 1
 
-            # Updated match type statistics
+            # Update match type statistics
             match_type = match.match_type
             if match_type not in player_stats[player.id]['match_types']:
                 player_stats[player.id]['match_types'][match_type] = {'matches': 0, 'wins': 0}
@@ -144,7 +145,7 @@ def get_player_stats(player_id=None, user_id=None):
             if not is_team1_winner:
                 player_stats[player.id]['match_types'][match_type]['wins'] += 1
 
-            # Calculating points scored and lost
+            # Calculate points scored and conceded
             score1_sets = match.score1.split(', ')
             score2_sets = match.score2.split(', ')
 
@@ -158,13 +159,13 @@ def get_player_stats(player_id=None, user_id=None):
                     points_scored += score2_points
                     points_conceded += score1_points
                 except (ValueError, IndexError):
-                    # Handling malformed fractions
+                    # Handle malformed scores
                     pass
 
             player_stats[player.id]['points_scored'] += points_scored
             player_stats[player.id]['points_conceded'] += points_conceded
 
-            # Add to the recent games
+            # Add to recent matches
             match_info = {
                 'id': match.id,
                 'tournament': tournament.name,
@@ -175,34 +176,35 @@ def get_player_stats(player_id=None, user_id=None):
             }
             player_stats[player.id]['recent_matches'].append(match_info)
 
-    # Calculate the winning rate, only keep the last 5 games
+    # Calculate win rates and keep only the most recent 5 matches
     for player_id, stats in player_stats.items():
         if stats['matches'] > 0:
             stats['win_rate'] = round((stats['wins'] / stats['matches']) * 100, 1)
             stats['recent_matches'] = sorted(stats['recent_matches'], key=lambda x: x['date'], reverse=True)[:5]
 
-            # Count probability for each game type
+            # Calculate win rate for each match type
             for match_type, type_stats in stats['match_types'].items():
                 if type_stats['matches'] > 0:
                     type_stats['win_rate'] = round((type_stats['wins'] / type_stats['matches']) * 100, 1)
 
-    # If a player ID is specified, only statistics for that player are returned
+    # If a player ID is specified, only return that player's stats
     if player_id and player_id in player_stats:
         return player_stats[player_id]
 
-    # Otherwise return statistics for all players, sorted by win rate
+    # Otherwise return all player stats, sorted by win rate
     return sorted(list(player_stats.values()), key=lambda x: x['win_rate'], reverse=True)
-
 
 def get_tournament_stats(tournament_id=None, user_id=None):
     """Get tournament statistics"""
 
-    # basic query
+    # Base query
     query = Tournament.query
 
+    # If user ID is specified
     if user_id:
         query = query.filter_by(user_id=user_id)
 
+    # If tournament ID is specified
     if tournament_id:
         query = query.filter_by(id=tournament_id)
 
@@ -212,7 +214,7 @@ def get_tournament_stats(tournament_id=None, user_id=None):
     for tournament in tournaments:
         matches = Match.query.filter_by(tournament_id=tournament.id).all()
 
-        # basic stats data
+        # Basic statistics
         stats = {
             'id': tournament.id,
             'name': tournament.name,
@@ -227,7 +229,7 @@ def get_tournament_stats(tournament_id=None, user_id=None):
             'highest_score': None
         }
 
-        # Collect all player and game type
+        # Collect all players and match types
         players = set()
         longest_sets = 0
         highest_points = 0
@@ -235,34 +237,34 @@ def get_tournament_stats(tournament_id=None, user_id=None):
         longest_match = None
 
         for match in matches:
-            # add member team1
+            # Add team 1 players
             players.add(match.team1.player1.id)
             if match.team1.player2:
                 players.add(match.team1.player2.id)
 
-            # add member team2
+            # Add team 2 players
             players.add(match.team2.player1.id)
             if match.team2.player2:
                 players.add(match.team2.player2.id)
 
-            # game type stats
+            # Match type statistics
             if match.match_type not in stats['match_types']:
                 stats['match_types'][match.match_type] = 0
             stats['match_types'][match.match_type] += 1
 
-            # round stats
+            # Round statistics
             if match.round_name not in stats['rounds']:
                 stats['rounds'][match.round_name] = 0
             stats['rounds'][match.round_name] += 1
 
-            # Check the longest match (by number of innings)
+            # Check for longest match (by number of sets)
             score1_sets = match.score1.split(', ')
             current_sets = len(score1_sets)
             if current_sets > longest_sets:
                 longest_sets = current_sets
                 longest_match = match
 
-            # Check the highest scoring matches
+            # Check for highest scoring match
             total_points = 0
             for i in range(len(score1_sets)):
                 try:
@@ -279,7 +281,7 @@ def get_tournament_stats(tournament_id=None, user_id=None):
         # Update player count
         stats['player_count'] = len(players)
 
-        # Added longest match information
+        # Add longest match info
         if longest_match:
             team1_names = [longest_match.team1.player1.name]
             if longest_match.team1.player2:
@@ -298,7 +300,7 @@ def get_tournament_stats(tournament_id=None, user_id=None):
                 'match_type': longest_match.match_type
             }
 
-        # Added high scoring match information
+        # Add highest score match info
         if highest_score_match:
             team1_names = [highest_score_match.team1.player1.name]
             if highest_score_match.team1.player2:
@@ -317,7 +319,7 @@ def get_tournament_stats(tournament_id=None, user_id=None):
                 'match_type': highest_score_match.match_type
             }
 
-        # Add all player info
+        # Add all players' basic info
         for player_id in players:
             player = Player.query.get(player_id)
             if player:
@@ -332,15 +334,14 @@ def get_tournament_stats(tournament_id=None, user_id=None):
     if tournament_id and tournament_stats:
         return tournament_stats[0]
 
-    # sort by date
+    # Sort by date
     return sorted(tournament_stats, key=lambda x: x['date'], reverse=True)
 
-
 def get_head_to_head(player1_id, player2_id):
-    """Get the head-to-head data between two players"""
+    """Get head-to-head data between two players"""
 
-    # Find matches that both players are involved in
-    # The query here is more complicated, and needs to take into account that players may be on different teams
+    # Find matches where both players participated
+    # This query is complex as players could be in different teams
     player1_team_ids = db.session.query(Team.id).filter(
         (Team.player1_id == player1_id) | (Team.player2_id == player1_id)
     ).all()
@@ -351,7 +352,7 @@ def get_head_to_head(player1_id, player2_id):
     ).all()
     player2_team_ids = [t[0] for t in player2_team_ids]
 
-    # Find the games they are playing against
+    # Find matches where they faced each other
     versus_matches = Match.query.filter(
         ((Match.team1_id.in_(player1_team_ids)) & (Match.team2_id.in_(player2_team_ids))) |
         ((Match.team1_id.in_(player2_team_ids)) & (Match.team2_id.in_(player1_team_ids)))
@@ -360,7 +361,7 @@ def get_head_to_head(player1_id, player2_id):
     player1 = Player.query.get(player1_id)
     player2 = Player.query.get(player2_id)
 
-    # game record
+    # Match records
     head_to_head = {
         'player1': {
             'id': player1.id,
@@ -378,16 +379,14 @@ def get_head_to_head(player1_id, player2_id):
 
     for match in versus_matches:
         # Determine which team each player is on
-        player1_in_team1 = match.team1.player1_id == player1.id or (
-                    match.team1.player2_id and match.team1.player2_id == player1.id)
-        player2_in_team1 = match.team1.player1_id == player2.id or (
-                    match.team1.player2_id and match.team1.player2_id == player2.id)
+        player1_in_team1 = match.team1.player1_id == player1.id or (match.team1.player2_id and match.team1.player2_id == player1.id)
+        player2_in_team1 = match.team1.player1_id == player2.id or (match.team1.player2_id and match.team1.player2_id == player2.id)
 
-        # Determine the winning team
+        # Determine winning team
         winner = match.get_winner()
         winner_is_team1 = winner.id == match.team1.id
 
-        # Record wins and losses
+        # Record win/loss
         if (player1_in_team1 and winner_is_team1) or (not player1_in_team1 and not winner_is_team1):
             head_to_head['player1']['wins'] += 1
             winner_id = player1.id
@@ -395,10 +394,10 @@ def get_head_to_head(player1_id, player2_id):
             head_to_head['player2']['wins'] += 1
             winner_id = player2.id
 
-        # add game details
+        # Add match details
         tournament = Tournament.query.get(match.tournament_id)
 
-        # Get name of team
+        # Get team names
         team1_players = [match.team1.player1.name]
         if match.team1.player2:
             team1_players.append(match.team1.player2.name)
@@ -420,21 +419,21 @@ def get_head_to_head(player1_id, player2_id):
         }
         head_to_head['matches'].append(match_info)
 
-    # sort by date
+    # Sort by date
     head_to_head['matches'] = sorted(head_to_head['matches'], key=lambda x: x['date'], reverse=True)
 
     return head_to_head
 
-
 def get_match_distribution_by_type(user_id=None):
-    """Get the distribution of matches by match type"""
+    """Get match distribution by type"""
 
+    # Base query
     query = db.session.query(
         Match.match_type,
         func.count(Match.id).label('count')
     )
 
-    # If a user ID is specified, only the games of that user will be queried.
+    # If user ID is specified, only query that user's matches
     if user_id:
         query = query.join(Tournament, Match.tournament_id == Tournament.id)
         query = query.filter(Tournament.user_id == user_id)
@@ -442,7 +441,7 @@ def get_match_distribution_by_type(user_id=None):
     # Group and get results
     distribution = query.group_by(Match.match_type).all()
 
-    # Format as a dictionary
+    # Format as dictionary
     result = {
         'labels': [],
         'data': []
@@ -454,17 +453,16 @@ def get_match_distribution_by_type(user_id=None):
 
     return result
 
-
 def get_win_rates_by_player(user_id=None, limit=10):
-    """Get win rate by player"""
+    """Get win rates by player"""
 
     # Get player statistics
     players = get_player_stats(user_id=user_id)
 
-    # Sort by win rate and limit the number
+    # Sort by win rate and limit count
     players = sorted(players, key=lambda x: x['win_rate'], reverse=True)[:limit]
 
-    # Formatting data for charts
+    # Format for chart data
     result = {
         'labels': [],
         'data': []
@@ -476,14 +474,13 @@ def get_win_rates_by_player(user_id=None, limit=10):
 
     return result
 
-
 def get_points_stats_by_player(user_id=None, limit=10):
-    """Get score statistics by player"""
+    """Get points statistics by player"""
 
     # Get player statistics
     players = get_player_stats(user_id=user_id)
 
-    # Sort by average points per game
+    # Sort by average points per match
     for player in players:
         if player['matches'] > 0:
             player['avg_points_per_match'] = round(player['points_scored'] / player['matches'], 1)
@@ -492,7 +489,7 @@ def get_points_stats_by_player(user_id=None, limit=10):
 
     players = sorted(players, key=lambda x: x['avg_points_per_match'], reverse=True)[:limit]
 
-    # Formatting data for charts
+    # Format for chart data
     result = {
         'labels': [],
         'scored': [],
@@ -508,37 +505,37 @@ def get_points_stats_by_player(user_id=None, limit=10):
 
     return result
 
-
 def get_monthly_match_counts(user_id=None, months=12):
-    """Get the number of monthly matches"""
+    """Get monthly match counts"""
 
-    # Determine the start date
+    # Determine start date
     end_date = datetime.now()
     start_date = end_date - timedelta(days=30 * months)
 
+    # Base query
     query = db.session.query(
         func.strftime('%Y-%m', Match.timestamp).label('month'),
         func.count(Match.id).label('count')
     )
 
-    # If a user ID is specified, only the games of that user will be queried.
+    # If user ID is specified, only query that user's matches
     if user_id:
         query = query.join(Tournament, Match.tournament_id == Tournament.id)
         query = query.filter(Tournament.user_id == user_id)
 
-    # Restrict date range
+    # Limit date range
     query = query.filter(Match.timestamp >= start_date)
 
     # Group and get results
     monthly_counts = query.group_by('month').all()
 
-    # Make sure there is data for all months
+    # Ensure all months have data
     result = {
         'labels': [],
         'data': []
     }
 
-    # Create a dictionary of all months
+    # Create dictionary for all months
     all_months = {}
     current = start_date
     while current <= end_date:
@@ -546,11 +543,11 @@ def get_monthly_match_counts(user_id=None, months=12):
         all_months[month_key] = 0
         current = (current.replace(day=1) + timedelta(days=32)).replace(day=1)
 
-    # Populate query results
+    # Fill in query results
     for month, count in monthly_counts:
         all_months[month] = count
 
-    # Convert to List
+    # Convert to lists
     for month, count in sorted(all_months.items()):
         year, month_num = month.split('-')
         month_name = datetime(int(year), int(month_num), 1).strftime('%b %Y')
@@ -559,10 +556,9 @@ def get_monthly_match_counts(user_id=None, months=12):
 
     return result
 
-
 @analytics.route('/analytics')
 def analytics_dashboard():
-    """Data analysis dashboard view"""
+    """Analytics dashboard view"""
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -573,10 +569,10 @@ def analytics_dashboard():
     player_win_rates = get_win_rates_by_player(user_id, limit=5)
     monthly_matches = get_monthly_match_counts(user_id, months=6)
 
-    # Get a list of all players (for selection)
+    # Get all players list (for selection)
     players = Player.query.all()
 
-    # Get a list of all tournaments (for selection)
+    # Get all tournaments list (for selection)
     tournaments = Tournament.query.filter_by(user_id=user_id).all()
 
     return render_template(
@@ -588,10 +584,9 @@ def analytics_dashboard():
         tournaments=tournaments
     )
 
-
 @analytics.route('/analytics/player/<int:player_id>')
 def player_analytics(player_id):
-    """Single player analysis view"""
+    """Individual player analysis view"""
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -609,10 +604,9 @@ def player_analytics(player_id):
         players=players
     )
 
-
 @analytics.route('/analytics/tournament/<int:tournament_id>')
 def tournament_analytics(tournament_id):
-    """Tournament Analysis View"""
+    """Tournament analysis view"""
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -621,7 +615,7 @@ def tournament_analytics(tournament_id):
     # Get tournament statistics
     tournament_stats = get_tournament_stats(tournament_id, user_id)
 
-    # If the tournament cannot be found or it does not belong to the current user
+    # If tournament not found or doesn't belong to current user
     if not tournament_stats:
         return redirect(url_for('analytics.analytics_dashboard'))
 
@@ -630,10 +624,9 @@ def tournament_analytics(tournament_id):
         tournament=tournament_stats
     )
 
-
 @analytics.route('/analytics/head_to_head')
 def head_to_head_view():
-    """Matchup Analysis View"""
+    """Head-to-head analysis view"""
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -656,10 +649,9 @@ def head_to_head_view():
         player2_id=player2_id
     )
 
-
 @analytics.route('/api/player/<int:player_id>/stats')
 def api_player_stats(player_id):
-    """player stats API"""
+    """Player statistics API"""
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
@@ -668,10 +660,9 @@ def api_player_stats(player_id):
 
     return jsonify(stats)
 
-
 @analytics.route('/api/tournament/<int:tournament_id>/stats')
 def api_tournament_stats(tournament_id):
-    """Tournament stats API"""
+    """Tournament statistics API"""
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
@@ -680,10 +671,9 @@ def api_tournament_stats(tournament_id):
 
     return jsonify(stats)
 
-
 @analytics.route('/api/head_to_head/<int:player1_id>/<int:player2_id>')
 def api_head_to_head(player1_id, player2_id):
-    """game stats API"""
+    """Head-to-head statistics API"""
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 

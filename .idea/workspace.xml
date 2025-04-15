@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="data analytics part backend">
-      <change afterPath="$PROJECT_DIR$/templates/analytics.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/player_analytics.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AgilWebDev2025.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AgilWebDev2025.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="data analytics part backend" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -48,6 +42,7 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "JavaScript Debug.User_settings.html.executor": "Run",
+    "JavaScript Debug.analytics.html.executor": "Run",
     "JavaScript Debug.dashboard.html.executor": "Run",
     "JavaScript Debug.upload.html.executor": "Run",
     "Python.Backend_Auth_Flask.executor": "Run",
@@ -125,7 +120,7 @@
       <workItem from="1744701963833" duration="1208000" />
       <workItem from="1744704746301" duration="3904000" />
       <workItem from="1744711725329" duration="3333000" />
-      <workItem from="1744718452325" duration="4321000" />
+      <workItem from="1744718452325" duration="4636000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />

@@ -413,12 +413,12 @@ def upload_post_tournament():
                 headers = next(csv_reader)
                 matches = list(csv_reader)
 
+            # Fixed template path - without the html/ prefix since it's in the templates/ directory
             return render_template('review_results.html', headers=headers, matches=matches, filename=filename)
 
         except Exception as e:
             flash(f'Error processing file: {str(e)}')
             return redirect(url_for('upload_page'))
-
 
 @app.route("/confirm_results/<filename>", methods=["POST"])
 def confirm_results(filename):

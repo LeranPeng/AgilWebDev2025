@@ -4,29 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="CORE UPDATE for analysis visualisation">
-      <change afterPath="$PROJECT_DIR$/html/404.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/500.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/InputForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/Login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/Signup.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/User_settings.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/dashboard.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/homepage.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/html/upload.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Upload_Template.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Database structure.xlsx" beforeDir="false" />
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="Main Adjustment of the data analysis">
+      <change beforePath="$PROJECT_DIR$/analytics.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/500.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/500.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/InputForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/InputForm.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/Login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/Signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/Signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/User_settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/User_settings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/homepage.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/homepage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/upload.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/upload.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/instance/badminton.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/badminton.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/InputForm.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/Login.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/Signup.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/User_settings.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/dashboard.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/homepage.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/html/upload.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload_game_template.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,32 +51,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "JavaScript Debug.User_settings.html.executor": "Run",
-    "JavaScript Debug.analytics.html.executor": "Run",
-    "JavaScript Debug.dashboard.html.executor": "Run",
-    "JavaScript Debug.upload.html.executor": "Run",
-    "Python.Backend_Auth_Flask.executor": "Run",
-    "Python.analytics.executor": "Run",
-    "Python.app.executor": "Run",
-    "Python.seeddatabase.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;JavaScript Debug.User_settings.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.analytics.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.dashboard.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.upload.html.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Backend_Auth_Flask.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analytics.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.seeddatabase.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/templates" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager">
@@ -146,6 +137,7 @@
       <workItem from="1744718452325" duration="4636000" />
       <workItem from="1744726240585" duration="653000" />
       <workItem from="1744731895546" duration="1513000" />
+      <workItem from="1744733415293" duration="2844000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -251,7 +243,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744732779559</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Main Adjustment of the structure">
+      <option name="closed" value="true" />
+      <created>1744733443030</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1744733443030</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Main Adjustment of the data analysis">
+      <option name="closed" value="true" />
+      <created>1744734591762</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1744734591762</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,12 +279,14 @@
     <MESSAGE value="FULL app backend" />
     <MESSAGE value="data analytics part backend" />
     <MESSAGE value="CORE UPDATE for analysis visualisation" />
-    <option name="LAST_COMMIT_MESSAGE" value="CORE UPDATE for analysis visualisation" />
+    <MESSAGE value="Main Adjustment of the structure" />
+    <MESSAGE value="Main Adjustment of the data analysis" />
+    <option name="LAST_COMMIT_MESSAGE" value="Main Adjustment of the data analysis" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1744714769706" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1744732787838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1744733753922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1744735593263" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$Backend_Auth_Flask.coverage" NAME="app Coverage Results" MODIFIED="1744715012097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$analytics.coverage" NAME="analytics Coverage Results" MODIFIED="1744721393424" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$analytics.coverage" NAME="analytics Coverage Results" MODIFIED="1744733762439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -574,7 +574,7 @@ def analytics_dashboard():
     tournaments = Tournament.query.filter_by(user_id=user_id).all()
 
     return render_template(
-        "html/analytics.html",
+        "analytics.html",  # Changed from "html/analytics.html"
         match_distribution=json.dumps(match_distribution),
         player_win_rates=json.dumps(player_win_rates),
         monthly_matches=json.dumps(monthly_matches),
@@ -597,7 +597,7 @@ def player_analytics(player_id):
     players = Player.query.all()
 
     return render_template(
-        "html/player_analytics.html",
+        "player_analytics.html",  # Changed from "html/player_analytics.html"
         player=player_stats,
         players=players
     )
@@ -618,7 +618,7 @@ def tournament_analytics(tournament_id):
         return redirect(url_for('analytics.analytics_dashboard'))
 
     return render_template(
-        "html/tournament_analytics.html",
+        "tournament_analytics.html",  # Changed from "html/tournament_analytics.html"
         tournament=tournament_stats
     )
 
@@ -640,7 +640,7 @@ def head_to_head_view():
         head_to_head = get_head_to_head(player1_id, player2_id)
 
     return render_template(
-        "html/head_to_head.html",
+        "head_to_head.html",  # Changed from "html/head_to_head.html"
         players=players,
         head_to_head=head_to_head,
         player1_id=player1_id,

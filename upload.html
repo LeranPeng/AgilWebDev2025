@@ -1,33 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Upload Page</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+</head>
 
 <body class="bg-gray-50 text-gray-800 font-sans">
-</body>
-    <header class="bg-white shadow-md">
+
+  <!-- Header -->
+  <header class="bg-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-blue-600">🏸 Badminton Manager</h1>
       <nav class="space-x-4">
         <a href="#" class="text-gray-700 hover:text-blue-500">Home</a>
-        <a href="#" class="text-gray-700 hover:text-blue-500">Upload</a>
+        <a href="#" class="text-gray-700 hover:text-blue-500 font-semibold">Upload</a>
         <a href="#" class="text-gray-700 hover:text-blue-500">Groups</a>
         <a href="#" class="text-gray-700 hover:text-blue-500">Matches</a>
       </nav>
     </div>
   </header>
-<body>
 
-  <div class="upload-container">
-    <h2>Upload Your File</h2>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" required>
-      <button type="submit">Upload</button>
-    </form>
-  </div>
+  <!-- Upload Section -->
+  <main class="max-w-3xl mx-auto px-4 py-10">
+    <h2 class="text-2xl font-semibold mb-6">📤 Upload Tournament Data</h2>
+
+    <!-- Pre-tournament Upload -->
+    <section class="bg-white rounded-xl shadow p-6 mb-8">
+      <h3 class="text-lg font-semibold mb-2">🏁 Pre-Tournament Setup</h3>
+      <p class="text-sm text-gray-600 mb-4">Upload players, teams, or event setup data. This will be used for grouping, scheduling, and seeding.</p>
+
+      <form action="/upload/pre" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <input type="file" name="pre_file" accept=".csv" required class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upload Pre-Tournament Data</button>
+      </form>
+    </section>
+
+    <!-- Post-tournament Upload -->
+    <section class="bg-white rounded-xl shadow p-6">
+      <h3 class="text-lg font-semibold mb-2">🎯 Post-Tournament Results</h3>
+      <p class="text-sm text-gray-600 mb-4">Upload match results for analysis, ranking, or bracket generation. Include scores and winner info.</p>
+
+      <form action="/upload/post" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <input type="file" name="post_file" accept=".csv" required class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-600 hover:file:bg-green-100">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Upload Match Results</button>
+      </form>
+    </section>
+  </main>
 
 </body>
 </html>

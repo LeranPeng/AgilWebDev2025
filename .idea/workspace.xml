@@ -4,29 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="AJAX backend">
-      <change afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/seeddatabase.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/InputForm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/Login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/Signup.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/User_settings.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/dashboard.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/homepage.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/html/upload.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/review_results.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend_Auth_Flask.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/InputForm.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/Login.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/Signup.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/User_settings.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/dashboard.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/homepage.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/upload.html" beforeDir="false" />
-    </list>
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="FULL app backend" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -131,7 +109,7 @@
       <workItem from="1744701539444" duration="392000" />
       <workItem from="1744701963833" duration="1208000" />
       <workItem from="1744704746301" duration="3904000" />
-      <workItem from="1744711725329" duration="3110000" />
+      <workItem from="1744711725329" duration="3333000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -213,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744705505607</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="FULL app backend">
+      <option name="closed" value="true" />
+      <created>1744715061286</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715061286</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,10 +216,11 @@
     <MESSAGE value="Merge to a folder" />
     <MESSAGE value="before_game_data_template update" />
     <MESSAGE value="AJAX backend" />
-    <option name="LAST_COMMIT_MESSAGE" value="AJAX backend" />
+    <MESSAGE value="FULL app backend" />
+    <option name="LAST_COMMIT_MESSAGE" value="FULL app backend" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1744714769706" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$Backend_Auth_Flask.coverage" NAME="app Coverage Results" MODIFIED="1744714839471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$Backend_Auth_Flask.coverage" NAME="app Coverage Results" MODIFIED="1744715012097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

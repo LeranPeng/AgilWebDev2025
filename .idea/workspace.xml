@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="FULL app backend" />
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="FULL app backend">
+      <change afterPath="$PROJECT_DIR$/analytics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,27 +38,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "JavaScript Debug.User_settings.html.executor": "Run",
-    "JavaScript Debug.dashboard.html.executor": "Run",
-    "JavaScript Debug.upload.html.executor": "Run",
-    "Python.Backend_Auth_Flask.executor": "Run",
-    "Python.app.executor": "Run",
-    "Python.seeddatabase.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;JavaScript Debug.User_settings.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.dashboard.html.executor&quot;: &quot;Run&quot;,
+    &quot;JavaScript Debug.upload.html.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Backend_Auth_Flask.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.seeddatabase.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AgilWebDev2025" />
@@ -110,6 +113,7 @@
       <workItem from="1744701963833" duration="1208000" />
       <workItem from="1744704746301" duration="3904000" />
       <workItem from="1744711725329" duration="3333000" />
+      <workItem from="1744718452325" duration="902000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">🏸 Badminton Dashboard</h1>
+    <div>
+      <a href="/upload.html" class="px-3 hover:underline">Upload</a>
+      <a href="/history.html" class="px-3 hover:underline">My Matches</a>
+      <a href="/settings.html" class="px-3 hover:underline">Settings</a>
+      <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <!-- Welcome -->
+    <div class="mb-6">
+      <h2 class="text-3xl font-semibold">Welcome back, <span id="username">Leran</span> 👋</h2>
+      <p class="text-gray-600 mt-1">Here's what's going on today:</p>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-500">Total Matches Uploaded</p>
+        <p class="text-2xl font-bold text-blue-700">12</p>
+      </div>
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-500">Latest Upload</p>
+        <p class="text-lg font-semibold text-green-600">April 10, 2025</p>
+      </div>
+      <div class="bg-white p-6 rounded shadow text-center">
+        <p class="text-gray-500">This Month</p>
+        <p class="text-2xl font-bold text-purple-600">4</p>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <a href="/upload.html" class="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition">
+        <h3 class="text-xl font-bold mb-2">📤 Upload Match Results</h3>
+        <p>Submit results for completed games.</p>
+      </a>
+
+      <a href="/grouping.html" class="bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 transition">
+        <h3 class="text-xl font-bold mb-2">📅 Generate Grouping</h3>
+        <p>Create fair and balanced match groups.</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Example: fill in dynamic username from session/localStorage
+    const username = localStorage.getItem("username") || "Player";
+    document.getElementById("username").textContent = username;
+  </script>
+</body>
+</html>

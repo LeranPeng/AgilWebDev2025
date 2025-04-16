@@ -6,9 +6,9 @@ import os
 import csv
 import io
 import json
-
-# Import models first
 from models import db, User, Tournament, Player, Team, Match
+from functools import wraps
+
 
 # Create the Flask app
 app = Flask(__name__)
@@ -29,6 +29,15 @@ from analytics import analytics
 
 # Register the analytics blueprint
 app.register_blueprint(analytics)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please log in to access this page')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Helper function to find or create a player
 def get_or_create_player(name):
@@ -145,6 +154,10 @@ def login():
 
 @app.route("/dashboard")
 def dashboard():
+    user_id = session.get("user_id")
+    user = User.query.get(user_id)
+    tournament_count = Tournament.query.filter_by(user_id=user.id).count()
+
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -211,6 +224,7 @@ def logout():
 
 
 @app.route("/settings", methods=["GET", "POST"])
+@login_required
 def settings():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -264,6 +278,7 @@ def settings():
 
 
 @app.route("/upload")
+@login_required
 def upload_page():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -271,6 +286,7 @@ def upload_page():
 
 
 @app.route("/input_form")
+@login_required
 def input_form():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -278,6 +294,7 @@ def input_form():
 
 
 @app.route("/submit_results", methods=["POST"])
+@login_required
 def submit_results():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -348,6 +365,7 @@ def submit_results():
 
 
 @app.route("/upload/pre", methods=["POST"])
+@login_required
 def upload_pre_tournament():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -386,6 +404,7 @@ def upload_pre_tournament():
 
 
 @app.route("/upload/post", methods=["POST"])
+@login_required
 def upload_post_tournament():
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -421,6 +440,7 @@ def upload_post_tournament():
             return redirect(url_for('upload_page'))
 
 @app.route("/confirm_results/<filename>", methods=["POST"])
+@login_required
 def confirm_results(filename):
     if "user_id" not in session:
         return redirect(url_for("login"))
@@ -481,6 +501,7 @@ def confirm_results(filename):
 
 # Helper routes for AJAX
 @app.route("/api/matches/<int:tournament_id>")
+@login_required
 def get_matches(tournament_id):
     if "user_id" not in session:
         return jsonify({"error": "Not authorized"}), 401
@@ -524,6 +545,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template('html/500.html'), 500
+
 
 
 if __name__ == "__main__":

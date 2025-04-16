@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Badminton Tournament Manager{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">🏸 {% block page_title %}Badminton Manager{% endblock %}</h1>
+    <div>
+      {% if session.get('user_id') %}
+        <a href="/dashboard" class="px-3 hover:underline">Dashboard</a>
+        <a href="/upload" class="px-3 hover:underline">Upload</a>
+        <a href="/input_form" class="px-3 hover:underline">Add Match</a>
+        <a href="/analytics" class="px-3 hover:underline">Analytics</a>
+        <a href="/settings" class="px-3 hover:underline">Settings</a>
+        <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
+      {% else %}
+        <a href="/" class="px-3 hover:underline">Home</a>
+        <a href="/login" class="px-3 hover:underline">Login</a>
+        <a href="/signup" class="px-3 hover:underline">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for message in messages %}
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-2">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
+    © 2025 Badminton Manager · All Rights Reserved
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

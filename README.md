@@ -1,150 +1,109 @@
-# Badminton Tournament Management System
+# Badminton Tournament Manager
 
-A Flask-based web application for managing badminton tournaments, tracking player statistics, and analyzing match data.
+A web application for organizing and managing badminton tournaments, tracking player statistics, and analyzing game results.
 
 ## Features
 
-- User accounts and authentication
-- Tournament creation and management
-- Match recording and scoring
-- Player statistics and analytics
-- Head-to-head comparisons
-- CSV data import/export
+- **Player Management**: Register and manage players
+- **Tournament Organization**: Create tournaments and organize matches
+- **Match Recording**: Record match results and scores
+- **Statistics & Analytics**: View detailed player and tournament statistics
+- **Data Import/Export**: Upload and download tournament data via CSV
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/LeranPeng/AgilWebDev2025.git
+cd AgilWebDev2025
+```
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Initialize the database:
+```bash
+python seeddatabase.py
+```
+
+5. Run the application:
+```bash
+python app.py
+```
+
+6. Access the application in your browser at `http://localhost:5000`
 
 ## Project Structure
 
 ```
-badminton-manager/
-├── app.py                  # Main application file
-├── analytics.py            # Analytics module
-├── models.py               # Database models
-├── seeddatabase.py         # Script to populate sample data
-├── uploads/                # Directory for uploaded CSV files
-├── static/                 # Static assets (CSS, JS, images)
-├── templates/              # Template files
-│   ├── html/               # Main HTML templates
-│   │   ├── 404.html
-│   │   ├── 500.html
-│   │   ├── dashboard.html
-│   │   ├── homepage.html
-│   │   ├── InputForm.html
-│   │   ├── Login.html
-│   │   ├── Signup.html
-│   │   ├── upload.html
-│   │   └── User_settings.html
-│   ├── analytics.html      # Analytics dashboard
-│   ├── head_to_head.html   # Head-to-head comparison
-│   ├── player_analytics.html   # Individual player analysis
-│   ├── review_results.html     # CSV review page
-│   └── tournament_analytics.html   # Tournament analysis
-└── README.md               # This file
+badminton-tournament-manager/
+├── app.py              # Main Flask application
+├── analytics.py        # Analytics module
+├── models.py           # Database models
+├── seeddatabase.py     # Database initialization script
+├── requirements.txt    # Project dependencies
+├── static/             # Static files (CSS, JS, images)
+├── templates/          # HTML templates
+│   ├── layout.html     # Base template
+│   ├── analytics.html
+│   ├── head_to_head.html
+│   ├── player_analytics.html
+│   ├── review_results.html
+│   ├── tournament_analytics.html
+│   └── html/           # HTML templates for main pages
+│       ├── 404.html
+│       ├── 500.html
+│       ├── dashboard.html
+│       ├── homepage.html
+│       ├── InputForm.html
+│       ├── Login.html
+│       ├── Signup.html
+│       ├── upload.html
+│       └── User_settings.html
+└── uploads/            # Directory for uploaded files
 ```
 
-## Template Structure
+## Template Rendering Issue Fix
 
-The application uses a specific template structure:
+If you're experiencing issues with template rendering (template code showing as raw text), try these fixes:
 
-1. **Main UI templates**: Located in `templates/html/` directory
-   - Referenced in code as `render_template("html/filename.html")`
-   - Example: `render_template("html/homepage.html")`
+1. Make sure your `layout.html` is in the correct location (directly in the `templates` folder)
 
-2. **Analytics templates**: Located directly in the `templates/` directory
-   - Referenced in code as `render_template("filename.html")`
-   - Example: `render_template("analytics.html")`
-
-## Setup and Installation
-
-### Prerequisites
-
-- Python 3.8+
-- SQLite (included with Python)
-
-### Installation
-
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd badminton-manager
-   ```
-
-2. Create and activate a virtual environment:
-   ```
-   python -m venv venv
-   source venv/bin/activate   # On Windows: venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```
-   pip install flask flask-sqlalchemy
-   ```
-
-4. Initialize the database:
-   ```
-   python app.py
-   ```
-
-5. (Optional) Seed the database with sample data:
-   ```
-   python seeddatabase.py
-   ```
-
-## Running the Application
-
-1. Start the Flask development server:
-   ```
-   python app.py
-   ```
-
-2. Access the application in your web browser:
-   ```
-   http://localhost:5000/
-   ```
-
-## Usage
-
-1. **Sign up/Log in**: Create an account or log in with existing credentials
-2. **Dashboard**: View tournament statistics and recent matches
-3. **Upload**: Import player data or match results via CSV
-4. **Manual Input**: Add tournament results manually via the form
-5. **Analytics**: Explore statistics and visualizations of player/tournament data
-
-## Important Notes on Template Paths
-
-When adding new templates or routes, be aware of the template structure:
-
-- If your template is a main UI page, place it in `templates/html/` and reference it as `html/filename.html`
-- If your template is an analytics page, place it directly in `templates/` and reference it as `filename.html`
-
-For example:
+2. Add the following configuration to your Flask app to enable template auto-reloading:
 ```python
-# For main UI pages
-@app.route("/example")
-def example_page():
-    return render_template("html/example.html")
-
-# For analytics pages
-@analytics.route("/analytics/example")
-def analytics_example():
-    return render_template("example.html")
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 ```
 
-Following this convention will prevent `TemplateNotFound` errors.
+3. Clear your browser cache or try in a private/incognito window
 
-## Development Notes
+4. If using PyCharm, try invalidating caches: File > Invalidate Caches / Restart
 
-### Database Models
+5. Check that the Jinja2 environment is properly configured:
+```python
+# Add this to app.py
+app.jinja_env.auto_reload = True
+app.jinja_env.cache = {}
+```
 
-The application uses SQLAlchemy with the following models:
-- `User`: User accounts
-- `Tournament`: Tournament records
-- `Player`: Individual player records
-- `Team`: Teams (composed of one or two players)
-- `Match`: Match results linking teams in tournaments
+## Security Implementation
 
-### Authentication
+The application includes security features:
+- Login required for all protected routes
+- Session management
+- Password hashing
 
-The application uses Flask sessions for authentication. Protected routes check for `user_id` in the session.
+## Database
+
+This project uses SQLite for simplicity. The database file is `badminton.db`.
 
 ## License
 
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.

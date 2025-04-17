@@ -1,201 +1,207 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Matchup Analysis - Badminton Manager</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+{% extends "layout.html" %}
 
-  <!-- Navi Bar -->
-  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">🏸 Matchup Analysis</h1>
+{% block title %}Matchup Analysis - Badminton Manager{% endblock %}
+{% block page_title %}Matchup Analysis{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex justify-between items-center">
+  <div>
+    <h2 class="text-2xl font-semibold">⚔️ Matchup Analysis</h2>
+    <p class="text-gray-600 mt-1">Compare the head-to-head records between two players</p>
+  </div>
+  <div>
+    <a href="/analytics" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Back to Analytics
+    </a>
+  </div>
+</div>
+
+<!-- Player Select -->
+<div class="bg-white rounded shadow p-6 mb-6">
+  <form action="/analytics/head_to_head" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div>
-      <a href="/analytics" class="px-3 hover:underline">← Back to Analysis</a>
-      <a href="/dashboard" class="px-3 hover:underline">Dashboard</a>
-      <a href="/upload" class="px-3 hover:underline">Upload</a>
-      <a href="/logout" class="px-3 hover:underline text-red-300">Log out</a>
+      <label class="block font-medium mb-1">Player 1</label>
+      <select name="player1" class="w-full border px-4 py-2 rounded" required>
+        <option value="">Select Player...</option>
+        {% for player in players %}
+          <option value="{{ player.id }}" {% if player.id == player1_id %}selected{% endif %}>
+            {{ player.name }}
+          </option>
+        {% endfor %}
+      </select>
     </div>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="flex-1 max-w-6xl mx-auto px-4 py-6">
-    <div class="mb-6">
-      <h2 class="text-2xl font-semibold">⚔️ Matchup Analysis</h2>
-      <p class="text-gray-600 mt-1">Compare the head-to-head records between two players</p>
+    <div>
+      <label class="block font-medium mb-1">Player 2</label>
+      <select name="player2" class="w-full border px-4 py-2 rounded" required>
+        <option value="">Select Player...</option>
+        {% for player in players %}
+          <option value="{{ player.id }}" {% if player.id == player2_id %}selected{% endif %}>
+            {{ player.name }}
+          </option>
+        {% endfor %}
+      </select>
     </div>
-
-    <!-- Player Select -->
-    <div class="bg-white rounded shadow p-6 mb-6">
-      <form action="/analytics/head_to_head" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block font-medium mb-1">Player 1</label>
-          <select name="player1" class="w-full border px-4 py-2 rounded" required>
-            <option value="">Select Player...</option>
-            {% for player in players %}
-              <option value="{{ player.id }}" {% if player.id == player1_id %}selected{% endif %}>
-                {{ player.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-        <div>
-          <label class="block font-medium mb-1">Player 2</label>
-          <select name="player2" class="w-full border px-4 py-2 rounded" required>
-            <option value="">Select Player...</option>
-            {% for player in players %}
-              <option value="{{ player.id }}" {% if player.id == player2_id %}selected{% endif %}>
-                {{ player.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="flex items-end">
-          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-            Analyse the Matchup
-          </button>
-        </div>
-      </form>
+    <div class="flex items-end">
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+        Analyse the Matchup
+      </button>
     </div>
+  </form>
+</div>
 
-    {% if head_to_head %}
-      <!-- Matchup Overview -->
-      <div class="bg-white rounded shadow p-6 mb-8">
-        <h3 class="text-xl font-bold mb-6">🥊 Head-to-head record</h3>
+{% if head_to_head %}
+  <!-- Matchup Overview -->
+  <div class="bg-white rounded shadow p-6 mb-8">
+    <h3 class="text-xl font-bold mb-6">🥊 Head-to-head record</h3>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div class="col-span-1 bg-blue-50 p-4 rounded text-center">
-            <h4 class="font-bold text-lg text-blue-800">{{ head_to_head.player1.name }}</h4>
-            <p class="text-3xl font-bold mt-2 text-blue-700">{{ head_to_head.player1.wins }}</p>
-            <p class="text-sm text-gray-600 mt-1">Wins</p>
-          </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="col-span-1 bg-blue-50 p-4 rounded text-center">
+        <h4 class="font-bold text-lg text-blue-800">{{ head_to_head.player1.name }}</h4>
+        <p class="text-3xl font-bold mt-2 text-blue-700">{{ head_to_head.player1.wins }}</p>
+        <p class="text-sm text-gray-600 mt-1">Wins</p>
+        <a href="/analytics/player/{{ head_to_head.player1.id }}" class="text-blue-600 hover:underline mt-2 inline-block">
+          View Player Stats
+        </a>
+      </div>
 
-          <div class="md:col-span-1 flex items-center justify-center">
-            <div class="text-center">
-              <p class="text-lg font-bold">Total</p>
-              <p class="text-4xl font-bold mt-1">{{ head_to_head.total_matches }}</p>
-              <p class="text-sm text-gray-600 mt-1">Games</p>
-            </div>
-          </div>
-
-          <div class="col-span-1 bg-red-50 p-4 rounded text-center">
-            <h4 class="font-bold text-lg text-red-800">{{ head_to_head.player2.name }}</h4>
-            <p class="text-3xl font-bold mt-2 text-red-700">{{ head_to_head.player2.wins }}</p>
-            <p class="text-sm text-gray-600 mt-1">Wins</p>
-          </div>
-        </div>
-
-        <div class="mt-6">
-          <canvas id="winRateChart" height="100"></canvas>
+      <div class="md:col-span-1 flex items-center justify-center">
+        <div class="text-center">
+          <p class="text-lg font-bold">Total</p>
+          <p class="text-4xl font-bold mt-1">{{ head_to_head.total_matches }}</p>
+          <p class="text-sm text-gray-600 mt-1">Games</p>
         </div>
       </div>
 
-      <!-- Competition history -->
-      <div class="bg-white rounded shadow p-6 mb-10">
-        <h3 class="text-xl font-bold mb-4">📜 Competition history</h3>
-        {% if head_to_head.matches %}
-          <div class="overflow-x-auto">
-            <table class="min-w-full">
-              <thead>
-                <tr class="bg-gray-100 text-gray-600 text-sm leading-normal">
-                  <th class="py-3 px-4 text-left">Date</th>
-                  <th class="py-3 px-4 text-left">Tournament</th>
-                  <th class="py-3 px-4 text-left">Game Type</th>
-                  <th class="py-3 px-4 text-left">Team 1</th>
-                  <th class="py-3 px-4 text-left">Team 2</th>
-                  <th class="py-3 px-4 text-left">Score</th>
-                  <th class="py-3 px-4 text-left">Winner</th>
-                </tr>
-              </thead>
-              <tbody class="text-gray-600">
-                {% for match in head_to_head.matches %}
-                  <tr class="border-b hover:bg-gray-50">
-                    <td class="py-3 px-4">{{ match.date }}</td>
-                    <td class="py-3 px-4">{{ match.tournament }}</td>
-                    <td class="py-3 px-4">{{ match.match_type }}</td>
-                    <td class="py-3 px-4">{{ match.team1 }}</td>
-                    <td class="py-3 px-4">{{ match.team2 }}</td>
-                    <td class="py-3 px-4">{{ match.score1 }}</td>
-                    <td class="py-3 px-4">
-                      {% if match.winner_id == head_to_head.player1.id %}
-                        <span class="text-blue-600 font-medium">{{ head_to_head.player1.name }}</span>
-                      {% else %}
-                        <span class="text-red-600 font-medium">{{ head_to_head.player2.name }}</span>
-                      {% endif %}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p class="text-gray-600 text-center py-6">
-            There is no record of matches between these two players.
-          </p>
-        {% endif %}
+      <div class="col-span-1 bg-red-50 p-4 rounded text-center">
+        <h4 class="font-bold text-lg text-red-800">{{ head_to_head.player2.name }}</h4>
+        <p class="text-3xl font-bold mt-2 text-red-700">{{ head_to_head.player2.wins }}</p>
+        <p class="text-sm text-gray-600 mt-1">Wins</p>
+        <a href="/analytics/player/{{ head_to_head.player2.id }}" class="text-red-600 hover:underline mt-2 inline-block">
+          View Player Stats
+        </a>
       </div>
+    </div>
+
+    <div class="mt-6">
+      <canvas id="winRateChart" height="100"></canvas>
+    </div>
+  </div>
+
+  <!-- Competition history -->
+  <div class="bg-white rounded shadow p-6 mb-10">
+    <h3 class="text-xl font-bold mb-4">📜 Match History</h3>
+    {% if head_to_head.matches %}
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-sm leading-normal">
+              <th class="py-3 px-4 text-left">Date</th>
+              <th class="py-3 px-4 text-left">Tournament</th>
+              <th class="py-3 px-4 text-left">Game Type</th>
+              <th class="py-3 px-4 text-left">Team 1</th>
+              <th class="py-3 px-4 text-left">Team 2</th>
+              <th class="py-3 px-4 text-left">Score</th>
+              <th class="py-3 px-4 text-left">Winner</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600">
+            {% for match in head_to_head.matches %}
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-4">{{ match.date }}</td>
+                <td class="py-3 px-4">{{ match.tournament }}</td>
+                <td class="py-3 px-4">{{ match.match_type }}</td>
+                <td class="py-3 px-4">{{ match.team1 }}</td>
+                <td class="py-3 px-4">{{ match.team2 }}</td>
+                <td class="py-3 px-4">{{ match.score1 }}</td>
+                <td class="py-3 px-4">
+                  {% if match.winner_id == head_to_head.player1.id %}
+                    <span class="text-blue-600 font-medium">{{ head_to_head.player1.name }}</span>
+                  {% else %}
+                    <span class="text-red-600 font-medium">{{ head_to_head.player2.name }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-gray-600 text-center py-6">
+        There is no record of matches between these two players.
+      </p>
     {% endif %}
-  </main>
+  </div>
 
-  <!-- Foot -->
-  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
-    © 2025 Badminton Manager · Copyrights reserved
-  </footer>
+  <!-- Quick Navigation Buttons -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <a href="/analytics" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
+      Back to Analytics
+    </a>
+    <a href="/analytics/player/{{ head_to_head.player1.id }}" class="bg-indigo-600 text-white p-4 rounded-lg shadow hover:bg-indigo-700 transition text-center">
+      View {{ head_to_head.player1.name }}'s Stats
+    </a>
+    <a href="/analytics/player/{{ head_to_head.player2.id }}" class="bg-purple-600 text-white p-4 rounded-lg shadow hover:bg-purple-700 transition text-center">
+      View {{ head_to_head.player2.name }}'s Stats
+    </a>
+  </div>
+{% endif %}
+{% endblock %}
 
-  {% if head_to_head %}
-    <script>
-      //
-      document.addEventListener('DOMContentLoaded', function() {
-        const winRateCtx = document.getElementById('winRateChart').getContext('2d');
-        const player1Name = "{{ head_to_head.player1.name }}";
-        const player2Name = "{{ head_to_head.player2.name }}";
-        const player1Wins = {{ head_to_head.player1.wins }};
-        const player2Wins = {{ head_to_head.player2.wins }};
-        const totalMatches = {{ head_to_head.total_matches }};
+{% block scripts %}
+{% if head_to_head %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const winRateCtx = document.getElementById('winRateChart').getContext('2d');
+      const player1Name = "{{ head_to_head.player1.name }}";
+      const player2Name = "{{ head_to_head.player2.name }}";
+      const player1Wins = {{ head_to_head.player1.wins }};
+      const player2Wins = {{ head_to_head.player2.wins }};
+      const totalMatches = {{ head_to_head.total_matches }};
 
-        const player1WinRate = totalMatches > 0 ? (player1Wins / totalMatches * 100).toFixed(1) : 0;
-        const player2WinRate = totalMatches > 0 ? (player2Wins / totalMatches * 100).toFixed(1) : 0;
+      const player1WinRate = totalMatches > 0 ? (player1Wins / totalMatches * 100).toFixed(1) : 0;
+      const player2WinRate = totalMatches > 0 ? (player2Wins / totalMatches * 100).toFixed(1) : 0;
 
-        const winRateChart = new Chart(winRateCtx, {
-          type: 'horizontalBar',
-          data: {
-            labels: ['Win Rate'],
-            datasets: [
-              {
-                label: player1Name,
-                data: [player1WinRate],
-                backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                borderWidth: 0
-              },
-              {
-                label: player2Name,
-                data: [player2WinRate],
-                backgroundColor: 'rgba(239, 68, 68, 0.7)',
-                borderWidth: 0
-              }
-            ]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                beginAtZero: true,
-                max: 100,
-                ticks: {
-                  callback: function(value) {
-                    return value + '%';
-                  }
+      const winRateChart = new Chart(winRateCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Win Rate'],
+          datasets: [
+            {
+              label: player1Name,
+              data: [player1WinRate],
+              backgroundColor: 'rgba(59, 130, 246, 0.7)',
+              borderWidth: 0
+            },
+            {
+              label: player2Name,
+              data: [player2WinRate],
+              backgroundColor: 'rgba(239, 68, 68, 0.7)',
+              borderWidth: 0
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
                 }
               }
             }
           }
-        });
+        }
       });
-    </script>
-  {% endif %}
-</body>
-</html>
+    });
+  </script>
+{% endif %}
+{% endblock %}

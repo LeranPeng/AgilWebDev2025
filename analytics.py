@@ -6,12 +6,23 @@ from flask import Blueprint, render_template, session, redirect, url_for, jsonif
 from sqlalchemy import func, desc, and_
 from datetime import datetime, timedelta
 import json
+from functools import wraps
+from flask import flash
 
 # Import database models from models.py
 from models import db, Tournament, Match, Team, Player
 
 # Create blueprint
 analytics = Blueprint('analytics', __name__)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please log in to access this page')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def get_player_stats(player_id=None, user_id=None):
     """Get player statistics"""
@@ -554,12 +565,11 @@ def get_monthly_match_counts(user_id=None, months=12):
 
     return result
 
+
 @analytics.route('/analytics')
+@login_required
 def analytics_dashboard():
     """Analytics dashboard view"""
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
     user_id = session.get("user_id")
 
     # Get basic statistics
@@ -574,7 +584,7 @@ def analytics_dashboard():
     tournaments = Tournament.query.filter_by(user_id=user_id).all()
 
     return render_template(
-        "analytics.html",  # Changed from "html/analytics.html"
+        "analytics.html",
         match_distribution=json.dumps(match_distribution),
         player_win_rates=json.dumps(player_win_rates),
         monthly_matches=json.dumps(monthly_matches),
@@ -582,7 +592,9 @@ def analytics_dashboard():
         tournaments=tournaments
     )
 
+
 @analytics.route('/analytics/player/<int:player_id>')
+@login_required
 def player_analytics(player_id):
     """Individual player analysis view"""
     if "user_id" not in session:
@@ -603,11 +615,9 @@ def player_analytics(player_id):
     )
 
 @analytics.route('/analytics/tournament/<int:tournament_id>')
+@login_required
 def tournament_analytics(tournament_id):
     """Tournament analysis view"""
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-
     user_id = session.get("user_id")
 
     # Get tournament statistics
@@ -623,10 +633,9 @@ def tournament_analytics(tournament_id):
     )
 
 @analytics.route('/analytics/head_to_head')
+@login_required
 def head_to_head_view():
     """Head-to-head analysis view"""
-    if "user_id" not in session:
-        return redirect(url_for("login"))
 
     player1_id = request.args.get('player1', type=int)
     player2_id = request.args.get('player2', type=int)
@@ -648,10 +657,9 @@ def head_to_head_view():
     )
 
 @analytics.route('/api/player/<int:player_id>/stats')
+@login_required
 def api_player_stats(player_id):
     """Player statistics API"""
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
 
     user_id = session.get("user_id")
     stats = get_player_stats(player_id, user_id)
@@ -659,10 +667,9 @@ def api_player_stats(player_id):
     return jsonify(stats)
 
 @analytics.route('/api/tournament/<int:tournament_id>/stats')
+@login_required
 def api_tournament_stats(tournament_id):
     """Tournament statistics API"""
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
 
     user_id = session.get("user_id")
     stats = get_tournament_stats(tournament_id, user_id)
@@ -670,10 +677,9 @@ def api_tournament_stats(tournament_id):
     return jsonify(stats)
 
 @analytics.route('/api/head_to_head/<int:player1_id>/<int:player2_id>')
+@login_required
 def api_head_to_head(player1_id, player2_id):
     """Head-to-head statistics API"""
-    if "user_id" not in session:
-        return jsonify({"error": "Unauthorized"}), 401
 
     stats = get_head_to_head(player1_id, player2_id)
 

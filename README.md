@@ -68,7 +68,8 @@ badminton-tournament-manager/
 │       ├── Signup.html
 │       ├── upload.html
 │       └── User_settings.html
-└── uploads/            # Directory for uploaded files
+├── README.md
+└── uploads/            # Directory for uploaded files 
 ```
 
 ## Template Rendering Issue Fix

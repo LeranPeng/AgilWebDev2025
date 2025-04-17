@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="update for bug &quot;The page format and the button of page #4&quot; fixed">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/head_to_head.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/head_to_head.html" afterDir="false" />
-    </list>
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="README update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -134,6 +131,7 @@
       <workItem from="1744807614287" duration="64000" />
       <workItem from="1744818204449" duration="2179000" />
       <workItem from="1744850955252" duration="2149000" />
+      <workItem from="1744856728194" duration="187000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -287,7 +285,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744856579552</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="README update">
+      <option name="closed" value="true" />
+      <created>1744856905076</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1744856905076</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -313,7 +319,8 @@
     <MESSAGE value="README UPDATE" />
     <MESSAGE value="Important update to make sure all consistent navi bar and login required. Also, there are more steps to do." />
     <MESSAGE value="update for bug &quot;The page format and the button of page #4&quot; fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="update for bug &quot;The page format and the button of page #4&quot; fixed" />
+    <MESSAGE value="README update" />
+    <option name="LAST_COMMIT_MESSAGE" value="README update" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1744733753922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

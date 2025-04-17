@@ -2,13 +2,11 @@
 Data Analysis Module - Provides data analysis functionality for the badminton tournament management system
 """
 
-from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request
+from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request, flash
 from sqlalchemy import func, desc, and_
 from datetime import datetime, timedelta
 import json
 from functools import wraps
-from flask import flash
-
 # Import database models from models.py
 from models import db, Tournament, Match, Team, Player
 

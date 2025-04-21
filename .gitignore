@@ -6,3 +6,6 @@
 ._.DS_Store
 **/.DS_Store
 **/._.DS_Store
+/instance/badminton.db
+/env
+/__pycache__

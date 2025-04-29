@@ -460,14 +460,23 @@ def get_match_distribution_by_type(user_id=None):
 
     return result
 
+
 def get_win_rates_by_player(user_id=None, limit=10):
     """Get win rates by player"""
 
     # Get player statistics
     players = get_player_stats(user_id=user_id)
 
-    # Sort by win rate and limit count
-    players = sorted(players, key=lambda x: x['win_rate'], reverse=True)[:limit]
+    # Ensure players is a list of dictionaries
+    if players and isinstance(players, list):
+        # Filter out any non-dictionary items that might have been included
+        players = [player for player in players if isinstance(player, dict)]
+
+        # Sort by win rate and limit count
+        players = sorted(players, key=lambda x: x.get('win_rate', 0), reverse=True)[:limit]
+    else:
+        # If players is not a list or is empty, initialize an empty list
+        players = []
 
     # Format for chart data
     result = {
@@ -476,8 +485,8 @@ def get_win_rates_by_player(user_id=None, limit=10):
     }
 
     for player in players:
-        result['labels'].append(player['name'])
-        result['data'].append(player['win_rate'])
+        result['labels'].append(player.get('name', 'Unknown'))
+        result['data'].append(player.get('win_rate', 0))
 
     return result
 

@@ -8,15 +8,18 @@ import io
 import json
 from models import db, User, Tournament, Player, Team, Match
 from functools import wraps
-
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 
 # Create the Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
+csrf = CSRFProtect(app)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///badminton.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -245,14 +248,16 @@ def settings():
         try:
             # Update username and email
             if username and username != user.username:
-                if User.query.filter_by(username=username).first():
+                if User.query.filter_by(username=username).first() and User.query.filter_by(
+                        username=username).first().id != user.id:
                     flash("Username already taken")
                     return redirect(url_for("settings"))
                 user.username = username
                 session["username"] = username
 
             if email and email != user.email:
-                if User.query.filter_by(email=email).first():
+                if User.query.filter_by(email=email).first() and User.query.filter_by(
+                        email=email).first().id != user.id:
                     flash("Email already registered")
                     return redirect(url_for("settings"))
                 user.email = email
@@ -275,7 +280,11 @@ def settings():
             db.session.rollback()
             flash(f"Error updating settings: {str(e)}")
 
-    return render_template("html/User_settings.html", user=user)
+    # Create a hidden input field containing the CSRF token
+    from flask_wtf.csrf import generate_csrf
+    csrf_token_input = f'<input type="hidden" name="csrf_token" value="{generate_csrf()}">'
+
+    return render_template("html/User_settings.html", user=user, csrf_token_input=csrf_token_input)
 
 
 @app.route("/upload")

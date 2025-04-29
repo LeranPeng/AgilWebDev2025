@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="Fix issue that delete the profile picture.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/instance/badminton.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/badminton.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/html/User_settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/User_settings.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,6 +146,8 @@
       <workItem from="1745916880613" duration="176000" />
       <workItem from="1745943167504" duration="80000" />
       <workItem from="1745943577622" duration="4000" />
+      <workItem from="1745943634809" duration="82000" />
+      <workItem from="1745943814733" duration="861000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -370,7 +375,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1744733753922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1745943213746" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1745944674396" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$Backend_Auth_Flask.coverage" NAME="app Coverage Results" MODIFIED="1744715012097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$analytics.coverage" NAME="analytics Coverage Results" MODIFIED="1744856453390" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

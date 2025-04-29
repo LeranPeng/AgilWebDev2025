@@ -77,6 +77,7 @@ def process_team(team_names):
 
 # Routes
 @app.route("/")
+@app.route("/home")
 def index():
     return render_template("html/homepage.html")
 

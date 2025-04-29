@@ -21,13 +21,13 @@
       <!-- Username -->
       <div>
         <label class="block font-medium mb-1">Username</label>
-        <input type="text" id="username" class="w-full border px-4 py-2 rounded" required />
+        <input type="text" id="username" class="w-full border px-4 py-2 rounded" placeholder="{{username}}" required />
       </div>
 
       <!-- Email -->
       <div>
         <label class="block font-medium mb-1">Email</label>
-        <input type="email" id="email" class="w-full border px-4 py-2 rounded" required />
+        <input type="email" id="email" class="w-full border px-4 py-2 rounded" placeholder="{{email}}" required />
       </div>
 
       <!-- Password Change -->
@@ -62,12 +62,16 @@
   </footer>
 
   <!-- Script -->
+  <!-- THIS SCRIPT CANT BE ON THE FRONT END, I THINK IT IS A SECURTIY CONCERN?-->
   <script>
     // Load user info from localStorage (for demo)
+    
+    /*
     const storedUsername = localStorage.getItem("username") || "Leran";
     const storedEmail = localStorage.getItem("email") || "leran@example.com";
     document.getElementById("username").value = storedUsername;
     document.getElementById("email").value = storedEmail;
+    */
 
     // Form submission
     document.getElementById("settingsForm").addEventListener("submit", function(e) {
@@ -79,15 +83,14 @@
       const newPassword = document.getElementById("newPassword").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
 
-      // Demo validation
+      // Simple password validation
       if (newPassword && newPassword !== confirmPassword) {
         alert("New passwords do not match.");
         return;
       }
 
-      // Save to localStorage (you can replace this with real backend call)
-      localStorage.setItem("username", username);
-      localStorage.setItem("email", email);
+      // Call to the backend to change the password
+
 
       // Reset password fields
       document.getElementById("currentPassword").value = '';

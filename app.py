@@ -161,13 +161,6 @@ def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user_id = session.get("user_id")
-    user = User.query.get(user_id)
-
-    if not user:
-        session.clear()
-        return redirect(url_for("login"))
-
     # Get stats for the dashboard
     tournament_count = Tournament.query.filter_by(user_id=user.id).count()
 
@@ -226,13 +219,17 @@ def logout():
 @app.route("/settings", methods=["GET", "POST"])
 @login_required
 def settings():
+
+    # WC: First check if the user is in the active session (currently logged in), if not then send to login page
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    #WC: I think that asks the data base if the user exists, if it doesnt, it will return null and browser will be sent to login page
     user = User.query.get(session["user_id"])
     if not user:
         session.clear()
         return redirect(url_for("login"))
+    
 
     if request.method == "POST":
         username = request.form.get("username")
@@ -274,7 +271,7 @@ def settings():
             db.session.rollback()
             flash(f"Error updating settings: {str(e)}")
 
-    return render_template("html/User_settings.html", user=user)
+    return render_template("html/User_settings.html", user=user, email=user.email, username=user.username)
 
 
 @app.route("/upload")

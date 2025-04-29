@@ -13,13 +13,13 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 # Create the Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
-csrf = CSRFProtect(app)
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///badminton.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
+# Configure CSRF protection
+csrf = CSRFProtect(app)
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -303,6 +303,22 @@ def input_form():
     return render_template("html/InputForm.html")
 
 
+def validate_match_players(team1, team2):
+    """Validate that no player appears on both sides of the match"""
+    team1_players = {team1.player1_id}
+    if team1.player2_id:
+        team1_players.add(team1.player2_id)
+
+    team2_players = {team2.player1_id}
+    if team2.player2_id:
+        team2_players.add(team2.player2_id)
+
+    # Check for intersection between the two sets
+    if team1_players.intersection(team2_players):
+        return False  # Players appearing on both sides
+
+    return True  # No duplicates
+
 @app.route("/submit_results", methods=["POST"])
 @login_required
 def submit_results():
@@ -347,6 +363,11 @@ def submit_results():
                 team1 = process_team(team1_names[i])
                 team2 = process_team(team2_names[i])
 
+                # Add validation to prevent players appearing on both sides in doubles
+                if match_types[i].endswith('Doubles') and not validate_match_players(team1, team2):
+                    flash(f"Error: A player cannot be on both sides of the match (in match #{i + 1})")
+                    return redirect(url_for("input_form"))
+
                 group_name = groups[i] if i < len(groups) else ""
 
                 # Create match
@@ -372,6 +393,8 @@ def submit_results():
         app.logger.error(f"Error submitting results: {str(e)}")
         flash(f"Error submitting results: {str(e)}")
         return redirect(url_for("input_form"))
+
+
 
 
 @app.route("/upload/pre", methods=["POST"])
@@ -482,6 +505,13 @@ def confirm_results(filename):
                     try:
                         team1 = process_team(row[0])
                         team2 = process_team(row[1])
+
+                        # Check if players appear on both sides
+                        match_type = row[5] if len(row) > 5 else "Unknown"
+                        if "Doubles" in match_type and not validate_match_players(team1, team2):
+                            flash(
+                                f"Error: In doubles matches, players cannot appear on both sides (in {row[0]} vs {row[1]})")
+                            return redirect(url_for('upload_page'))
 
                         match = Match(
                             tournament_id=tournament.id,

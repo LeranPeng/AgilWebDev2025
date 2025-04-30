@@ -12,7 +12,7 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 
 # Create the Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
+app.config['SECRET_KEY'] = 'JESUS SECRET KEY'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///badminton.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'

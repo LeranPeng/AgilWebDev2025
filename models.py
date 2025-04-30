@@ -11,6 +11,7 @@ class User(db.Model):
     tournaments = db.relationship('Tournament', backref='organizer', lazy=True)
 
     def set_password(self, password):
+        # local import to secure the password
         from werkzeug.security import generate_password_hash
         self.password_hash = generate_password_hash(password)
 

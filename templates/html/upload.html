@@ -7,20 +7,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans">
-
-  <!-- Header -->
-  <header class="bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-blue-600">🏸 Badminton Manager</h1>
-      <nav class="space-x-4">
-        <a href="/home" class="text-gray-700 hover:text-blue-500">Home</a>
-        <a href="/upload" class="text-gray-700 hover:text-blue-500 font-semibold">Upload</a>
-        <a href="/input_form" class="text-gray-700 hover:text-blue-500">Groups</a>
-        <a href="/dashboard" class="text-gray-700 hover:text-blue-500">Matches</a>
-      </nav>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <!-- Navbar -->
+  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">🏸 Badminton Manager</h1>
+    <div>
+      <a href="/home" class="px-3 hover:underline">Home</a>
+      <a href="/upload" class="px-3 hover:underline font-semibold">Upload</a>
+      <a href="/input_form" class="px-3 hover:underline">Groups</a>
+      <a href="/dashboard" class="px-3 hover:underline">Matches</a>
+      <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
     </div>
-  </header>
+  </nav>
 
   <!-- Upload Section -->
   <main class="max-w-3xl mx-auto px-4 py-10">

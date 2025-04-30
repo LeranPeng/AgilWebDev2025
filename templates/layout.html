@@ -14,17 +14,17 @@
     <h1 class="text-xl font-bold">🏸 {% block page_title %}Badminton Manager{% endblock %}</h1>
     <div>
       {% if session.get('user_id') %}
-        <a href="/dashboard" class="px-3 hover:underline">Dashboard</a>
-        <a href="/upload" class="px-3 hover:underline">Upload</a>
-        <a href="/input_form" class="px-3 hover:underline">Add Match</a>
-        <a href="/analytics" class="px-3 hover:underline">Analytics</a>
-        <a href="/settings" class="px-3 hover:underline">Settings</a>
-        <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
-      {% else %}
-        <a href="/" class="px-3 hover:underline">Home</a>
-        <a href="/login" class="px-3 hover:underline">Login</a>
-        <a href="/signup" class="px-3 hover:underline">Sign Up</a>
-      {% endif %}
+      <a href="/dashboard" class="px-3 hover:underline {% if request.path == '/dashboard' %}font-semibold{% endif %}">Dashboard</a>
+      <a href="/upload" class="px-3 hover:underline {% if request.path == '/upload' %}font-semibold{% endif %}">Upload</a>
+      <a href="/input_form" class="px-3 hover:underline {% if request.path == '/input_form' %}font-semibold{% endif %}">Add Match</a>
+      <a href="/analytics" class="px-3 hover:underline {% if request.path == '/analytics' %}font-semibold{% endif %}">Analytics</a>
+      <a href="/settings" class="px-3 hover:underline {% if request.path == '/settings' %}font-semibold{% endif %}">Settings</a>
+      <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
+     {% else %}
+      <a href="/" class="px-3 hover:underline {% if request.path == '/' %}font-semibold{% endif %}">Home</a>
+      <a href="/login" class="px-3 hover:underline {% if request.path == '/login' %}font-semibold{% endif %}">Login</a>
+      <a href="/signup" class="px-3 hover:underline {% if request.path == '/signup' %}font-semibold{% endif %}">Sign Up</a>
+     {% endif %}
     </div>
   </nav>
 

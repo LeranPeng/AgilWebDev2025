@@ -63,36 +63,40 @@
 <!-- Recent Matches -->
 <div class="bg-white rounded shadow p-6 mb-8">
   <h3 class="text-xl font-bold mb-4">🕒 Recent Matches</h3>
-  <div class="overflow-x-auto">
-    <table class="min-w-full">
-      <thead>
-        <tr class="bg-gray-100 text-gray-600 text-sm leading-normal">
-          <th class="py-3 px-4 text-left">Date</th>
-          <th class="py-3 px-4 text-left">Tournament</th>
-          <th class="py-3 px-4 text-left">Opponent</th>
-          <th class="py-3 px-4 text-left">Result</th>
-          <th class="py-3 px-4 text-left">Scores</th>
-        </tr>
-      </thead>
-      <tbody class="text-gray-600">
-        {% for match in player.recent_matches %}
-          <tr class="border-b hover:bg-gray-50">
-            <td class="py-3 px-4">{{ match.date }}</td>
-            <td class="py-3 px-4">{{ match.tournament }}</td>
-            <td class="py-3 px-4">{{ match.opponent }}</td>
-            <td class="py-3 px-4">
-              {% if match.result == 'Win' %}
-                <span class="text-green-600 font-medium">Win</span>
-              {% else %}
-                <span class="text-red-600 font-medium">Loss</span>
-              {% endif %}
-            </td>
-            <td class="py-3 px-4">{{ match.score }}</td>
+  {% if player.recent_matches and player.recent_matches|length > 0 %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead>
+          <tr class="bg-gray-100 text-gray-600 text-sm leading-normal">
+            <th class="py-3 px-4 text-left">Date</th>
+            <th class="py-3 px-4 text-left">Tournament</th>
+            <th class="py-3 px-4 text-left">Opponent</th>
+            <th class="py-3 px-4 text-left">Result</th>
+            <th class="py-3 px-4 text-left">Scores</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody class="text-gray-600">
+          {% for match in player.recent_matches %}
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-3 px-4">{{ match.date }}</td>
+              <td class="py-3 px-4">{{ match.tournament }}</td>
+              <td class="py-3 px-4">{{ match.opponent }}</td>
+              <td class="py-3 px-4">
+                {% if match.result == 'Win' %}
+                  <span class="text-green-600 font-medium">Win</span>
+                {% else %}
+                  <span class="text-red-600 font-medium">Loss</span>
+                {% endif %}
+              </td>
+              <td class="py-3 px-4">{{ match.score }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-gray-600 text-center py-4">No recent matches found for this player.</p>
+  {% endif %}
 </div>
 
 <!-- Game Analysis -->
@@ -144,8 +148,8 @@
 
     for (const type in matchTypes) {
       matchTypeLabels.push(type);
-      const wins = matchTypes[type].wins;
-      const total = matchTypes[type].matches;
+      const wins = matchTypes[type].wins || 0;
+      const total = matchTypes[type].matches || 0;
       matchTypeWins.push(wins);
       matchTypeLosses.push(total - wins);
     }
@@ -193,7 +197,7 @@
         labels: ['Points Scored', 'Points Conceded'],
         datasets: [{
           label: 'Total Points',
-          data: [{{ player.points_scored }}, {{ player.points_conceded }}],
+          data: [{{ player.points_scored || 0 }}, {{ player.points_conceded || 0 }}],
           backgroundColor: [
             'rgba(79, 70, 229, 0.7)',
             'rgba(245, 158, 11, 0.7)'

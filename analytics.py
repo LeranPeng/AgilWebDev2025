@@ -600,6 +600,8 @@ def analytics_dashboard():
     )
 
 
+# Update the player_analytics function in analytics.py
+
 @analytics.route('/analytics/player/<int:player_id>')
 @login_required
 def player_analytics(player_id):
@@ -612,11 +614,47 @@ def player_analytics(player_id):
     # Get player statistics
     player_stats = get_player_stats(player_id, user_id)
 
+    # Handle case where player stats is None or not found
+    if not player_stats:
+        flash("Player not found or no statistics available")
+        return redirect(url_for("analytics.analytics_dashboard"))
+
+    # Make sure match_types is properly initialized
+    if 'match_types' not in player_stats or player_stats['match_types'] is None:
+        player_stats['match_types'] = {}
+
+    # Ensure all expected fields exist in player_stats to avoid undefined issues
+    default_fields = {
+        'name': 'Unknown Player',
+        'matches': 0,
+        'wins': 0,
+        'losses': 0,
+        'win_rate': 0,
+        'points_scored': 0,
+        'points_conceded': 0,
+        'recent_matches': []
+    }
+
+    # Add any missing fields with default values
+    for field, default_value in default_fields.items():
+        if field not in player_stats or player_stats[field] is None:
+            player_stats[field] = default_value
+
     # Get all players (for comparison)
     players = Player.query.all()
 
+    # Convert match_types to JSON-serializable format if needed
+    for match_type, stats in player_stats['match_types'].items():
+        # Ensure each match_type stats has all required fields
+        if 'matches' not in stats or stats['matches'] is None:
+            stats['matches'] = 0
+        if 'wins' not in stats or stats['wins'] is None:
+            stats['wins'] = 0
+        if 'win_rate' not in stats:
+            stats['win_rate'] = 0 if stats['matches'] == 0 else (stats['wins'] / stats['matches'] * 100)
+
     return render_template(
-        "player_analytics.html",  # Changed from "html/player_analytics.html"
+        "player_analytics.html",
         player=player_stats,
         players=players
     )

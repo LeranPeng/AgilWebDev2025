@@ -1,129 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Tournament Results</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-</head>
+{% extends "layout.html" %}
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Navbar -->
-  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">🏸 Badminton Dashboard</h1>
-    <div>
-      <a href="/upload" class="px-3 hover:underline">Upload</a>
-      <a href="/input_form" class="px-3 hover:underline font-semibold">My Matches</a>
-      <a href="/analytics" class="px-3 hover:underline">Analytics</a>
-      <a href="/settings" class="px-3 hover:underline">Settings</a>
-      <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
-    </div>
-  </nav>
+{% block title %}Input Tournament - Badminton MASTER{% endblock %}
+{% block page_title %}Badminton MASTER{% endblock %}
 
-<body class="bg-gray-100 min-h-screen text-gray-800">
-  <div class="max-w-5xl mx-auto px-6 py-10">
-    <h1 class="text-3xl font-bold mb-6 text-blue-700">🏸 Upload Tournament Results</h1>
+{% block content %}
 
-    <form id="resultsForm" action="/submit_results" method="post" class="space-y-6">
-      <!-- Tournament Details -->
-      <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Tournament Info</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input type="text" name="tournament_name" placeholder="Tournament Name" class="input" required>
-          <input type="date" name="tournament_date" class="input" required>
-          <input type="text" name="location" placeholder="Location" class="input">
-        </div>
+
+<div>
+ <h1 class="text-3xl font-bold mb-6 text-blue-700">🏸 Upload Tournament Results</h1>
+
+  <form id="resultsForm" action="/submit_results" method="post" class="space-y-6">
+    <!-- Tournament Details -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Tournament Info</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" name="tournament_name" placeholder="Tournament Name" class="input" required>
+        <input type="date" name="tournament_date" class="input" required>
+        <input type="text" name="location" placeholder="Location" class="input">
       </div>
+    </div>
 
-      <!-- Match Upload Section -->
-      <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Match Data</h2>
-        <div id="matches">
-          <!-- Match Row Template -->
-          <div class="match-row grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded bg-gray-50">
-            <div>
-              <label class="block mb-1 font-medium">Round</label>
-              <input type="text" name="round[]" placeholder="e.g., Quarterfinal" class="input" required>
-            </div>
+    <!-- Match Upload Section -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Match Data</h2>
+      <div id="matches">
+        <!-- Match Row Template -->
+        <div class="match-row grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded bg-gray-50">
+          <div>
+            <label class="block mb-1 font-medium">Round</label>
+            <input type="text" name="round[]" placeholder="e.g., Quarterfinal" class="input" required>
+          </div>
 
-            <div>
-              <label class="block mb-1 font-medium">Group (Optional)</label>
-              <input type="text" name="group[]" placeholder="Group A" class="input">
-            </div>
+          <div>
+            <label class="block mb-1 font-medium">Group (Optional)</label>
+            <input type="text" name="group[]" placeholder="Group A" class="input">
+          </div>
 
-            <div>
-              <label class="block mb-1 font-medium">Team 1 (Names comma-separated)</label>
-              <input type="text" name="team1[]" placeholder="Alice, Bob" class="input" required>
-            </div>
+          <div>
+            <label class="block mb-1 font-medium">Team 1 (Names comma-separated)</label>
+            <input type="text" name="team1[]" placeholder="Alice, Bob" class="input" required>
+          </div>
 
-            <div>
-              <label class="block mb-1 font-medium">Team 2 (Names comma-separated)</label>
-              <input type="text" name="team2[]" placeholder="Charlie, Dana" class="input" required>
-            </div>
+          <div>
+            <label class="block mb-1 font-medium">Team 2 (Names comma-separated)</label>
+            <input type="text" name="team2[]" placeholder="Charlie, Dana" class="input" required>
+          </div>
 
-            <div>
-              <label class="block mb-1 font-medium">Score (Team 1)</label>
-              <input type="text" name="score1[]" placeholder="21-19, 19-21, 21-18" class="input" required>
-            </div>
+          <div>
+            <label class="block mb-1 font-medium">Score (Team 1)</label>
+            <input type="text" name="score1[]" placeholder="21-19, 19-21, 21-18" class="input" required>
+          </div>
 
-            <div>
-              <label class="block mb-1 font-medium">Score (Team 2)</label>
-              <input type="text" name="score2[]" placeholder="19-21, 21-19, 18-21" class="input" required>
-            </div>
+          <div>
+            <label class="block mb-1 font-medium">Score (Team 2)</label>
+            <input type="text" name="score2[]" placeholder="19-21, 21-19, 18-21" class="input" required>
+          </div>
 
-            <div>
-              <label class="block mb-1 font-medium">Match Type</label>
-              <select name="match_type[]" class="input" required>
-                <option value="Men's Singles">Men's Singles</option>
-                <option value="Women's Singles">Women's Singles</option>
-                <option value="Men's Doubles">Men's Doubles</option>
-                <option value="Women's Doubles">Women's Doubles</option>
-                <option value="Mixed Doubles">Mixed Doubles</option>
-              </select>
-            </div>
+          <div>
+            <label class="block mb-1 font-medium">Match Type</label>
+            <select name="match_type[]" class="input" required>
+              <option value="Men's Singles">Men's Singles</option>
+              <option value="Women's Singles">Women's Singles</option>
+              <option value="Men's Doubles">Men's Doubles</option>
+              <option value="Women's Doubles">Women's Doubles</option>
+              <option value="Mixed Doubles">Mixed Doubles</option>
+            </select>
           </div>
         </div>
-
-        <button type="button" onclick="addMatch()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mt-2">
-          ➕ Add Another Match
-        </button>
       </div>
 
-      <div class="text-center">
-        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded text-lg">Submit Results</button>
-      </div>
-    </form>
-  </div>
+      <button type="button" onclick="addMatch()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mt-2">
+        ➕ Add Another Match
+      </button>
+    </div>
 
-  <script>
-    function addMatch() {
-      const matchContainer = document.getElementById("matches");
-      const firstMatch = document.querySelector(".match-row");
-      const clone = firstMatch.cloneNode(true);
-      [...clone.querySelectorAll("input")].forEach(input => input.value = "");
-      matchContainer.appendChild(clone);
-    }
+    <div class="text-center">
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded text-lg">Submit Results</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+<script>
+  function addMatch() {
+    const matchContainer = document.getElementById("matches");
+    const firstMatch = document.querySelector(".match-row");
+    const clone = firstMatch.cloneNode(true);
+    [...clone.querySelectorAll("input")].forEach(input => input.value = "");
+    matchContainer.appendChild(clone);
+  }
 
-    document.getElementById('resultsForm').addEventListener('submit', function(e) {
-      // Serialize form for backend submission
-      const formData = new FormData(e.target);
-      const data = {};
-      formData.forEach((value, key) => {
-        if (!data[key]) data[key] = [];
-        data[key].push(value);
-      });
-      console.log("Submitted Data:", data);
-      alert("Form submitted! Check console for structured data.");
+  document.getElementById('resultsForm').addEventListener('submit', function(e) {
+    // Serialize form for backend submission
+    const formData = new FormData(e.target);
+    const data = {};
+    formData.forEach((value, key) => {
+      if (!data[key]) data[key] = [];
+      data[key].push(value);
     });
-  </script>
+    console.log("Submitted Data:", data);
+    alert("Form submitted! Check console for structured data.");
+  });
+</script>
 
-  <style>
-    .input {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 0.375rem;
-    }
-  </style>
-</body>
-</html>
+

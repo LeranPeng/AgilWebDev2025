@@ -1,108 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
+{% extends "layout.html" %}
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Navbar -->
-  <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">🏸 Badminton Dashboard</h1>
+{% block title %}Dashboard - Badminton MASTER{% endblock %}
+{% block page_title %}Badminton MASTER{% endblock %}
+
+{% block content %}
+  <!-- Welcome -->
+  <div class="mb-6 flex justify-between items-center">
     <div>
-      <a href="/upload" class="px-3 hover:underline">Upload</a>
-      <a href="/input_form" class="px-3 hover:underline">My Matches</a>
-      <a href="/analytics" class="px-3 hover:underline">Analytics</a>
-      <a href="/settings" class="px-3 hover:underline">Settings</a>
-      <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
+      <h2 class="text-3xl font-semibold">Welcome back, <span id="username">{{ username }}</span> 👋</h2>
+      <p class="text-gray-600 mt-1">Here's a quick overview of your activity:</p>
     </div>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="flex-1 max-w-6xl mx-auto px-4 py-10">
-    <!-- Welcome -->
-    <div class="mb-6 flex justify-between items-center">
-      <div>
-        <h2 class="text-3xl font-semibold">Welcome back, <span id="username">{{ username }}</span> 👋</h2>
-        <p class="text-gray-600 mt-1">Here's a quick overview of your activity:</p>
-      </div>
-      <!-- User Info Card -->
-      <div class="bg-white p-4 rounded shadow w-64">
-        <p class="text-sm text-gray-500">Logged in as</p>
-        <p class="font-semibold text-blue-700 text-lg" id="user-email">{{ email }}</p>
-        <p class="text-sm text-gray-500 mt-2">Last login: <span id="last-login">{{ last_login }}</span></p>
-        <a href="/settings" class="text-sm text-blue-600 mt-2 inline-block hover:underline">Edit Profile</a>
-      </div>
+    <!-- User Info Card -->
+    <div class="bg-white p-4 rounded shadow w-64">
+      <p class="text-sm text-gray-500">Logged in as</p>
+      <p class="font-semibold text-blue-700 text-lg" id="user-email">{{ email }}</p>
+      <p class="text-sm text-gray-500 mt-2">Last login: <span id="last-login">{{ last_login }}</span></p>
+      <a href="/settings" class="text-sm text-blue-600 mt-2 inline-block hover:underline">Edit Profile</a>
     </div>
+  </div>
 
-    <!-- Overview Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <div class="bg-white p-6 rounded shadow text-center">
-        <p class="text-gray-500">Total Matches Uploaded</p>
-        <p class="text-2xl font-bold text-blue-700">{{ tournament_count }}</p>
-      </div>
-      <div class="bg-white p-6 rounded shadow text-center">
-        <p class="text-gray-500">Latest Upload</p>
-        <p class="text-lg font-semibold text-green-600">{{ latest_upload }}</p>
-      </div>
-      <div class="bg-white p-6 rounded shadow text-center">
-        <p class="text-gray-500">Upcoming Matches</p>
-        <p class="text-2xl font-bold text-yellow-600">{{ upcoming_matches }}</p>
-      </div>
+  <!-- Overview Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="bg-white p-6 rounded shadow text-center">
+      <p class="text-gray-500">Total Matches Uploaded</p>
+      <p class="text-2xl font-bold text-blue-700">{{ tournament_count }}</p>
     </div>
-
-    <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <a href="/upload" class="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition">
-        <h3 class="text-xl font-bold mb-2">📤 Upload Match Results</h3>
-        <p>Submit results for completed games.</p>
-      </a>
-      <a href="/input_form" class="bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 transition">
-        <h3 class="text-xl font-bold mb-2">📅 Record Matches</h3>
-        <p>Enter match details directly.</p>
-      </a>
-      <a href="/analytics" class="bg-purple-600 text-white p-6 rounded-lg shadow hover:bg-purple-700 transition">
-        <h3 class="text-xl font-bold mb-2">📊 Data Analytics</h3>
-        <p>View statistics and player performance.</p>
-      </a>
+    <div class="bg-white p-6 rounded shadow text-center">
+      <p class="text-gray-500">Latest Upload</p>
+      <p class="text-lg font-semibold text-green-600">{{ latest_upload }}</p>
     </div>
-
-    <!-- Recent History -->
-    <div class="bg-white rounded shadow p-6 mb-10">
-      <h3 class="text-xl font-bold mb-4">📈 Recent Matches</h3>
-      {% if recent_matches %}
-        <ul class="space-y-3">
-          {% for match in recent_matches %}
-            <li class="border-b pb-2 flex justify-between">
-              <span>
-                {% if match.is_winner %}🟢{% else %}🔴{% endif %}
-                {{ match.team1 }}
-              </span>
-              <span>{{ match.score }} · {{ match.match_date }}</span>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p class="text-gray-500 text-center py-4">No recent matches found. Start by uploading match results!</p>
-      {% endif %}
+    <div class="bg-white p-6 rounded shadow text-center">
+      <p class="text-gray-500">Upcoming Matches</p>
+      <p class="text-2xl font-bold text-yellow-600">{{ upcoming_matches }}</p>
     </div>
+  </div>
 
-    <!-- Upcoming Reminders -->
-    <div class="bg-white rounded shadow p-6 mb-20">
-      <h3 class="text-xl font-bold mb-4">⏰ Upcoming Events</h3>
-      <ul class="space-y-2 text-gray-700">
-        <li>• Group Stage Draw: <span class="text-blue-600 font-medium">April 16</span></li>
-        <li>• Semi-Final Schedule Announcement: <span class="text-blue-600 font-medium">April 18</span></li>
-        <li>• Friendly Tournament (UWA Club): <span class="text-blue-600 font-medium">April 21</span></li>
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <a href="/upload" class="bg-blue-600 text-white p-6 rounded-lg shadow hover:bg-blue-700 transition">
+      <h3 class="text-xl font-bold mb-2">📤 Upload Match Results</h3>
+      <p>Submit results for completed games.</p>
+    </a>
+    <a href="/input_form" class="bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 transition">
+      <h3 class="text-xl font-bold mb-2">📅 Record Matches</h3>
+      <p>Enter match details directly.</p>
+    </a>
+    <a href="/analytics" class="bg-purple-600 text-white p-6 rounded-lg shadow hover:bg-purple-700 transition">
+      <h3 class="text-xl font-bold mb-2">📊 Data Analytics</h3>
+      <p>View statistics and player performance.</p>
+    </a>
+  </div>
+
+  <!-- Recent History -->
+  <div class="bg-white rounded shadow p-6 mb-10">
+    <h3 class="text-xl font-bold mb-4">📈 Recent Matches</h3>
+    {% if recent_matches %}
+      <ul class="space-y-3">
+        {% for match in recent_matches %}
+          <li class="border-b pb-2 flex justify-between">
+            <span>
+              {% if match.is_winner %}🟢{% else %}🔴{% endif %}
+              {{ match.team1 }}
+            </span>
+            <span>{{ match.score }} · {{ match.match_date }}</span>
+          </li>
+        {% endfor %}
       </ul>
-    </div>
-  </main>
+    {% else %}
+      <p class="text-gray-500 text-center py-4">No recent matches found. Start by uploading match results!</p>
+    {% endif %}
+  </div>
 
-  <!-- Footer -->
-  <footer class="bg-white text-gray-600 text-sm text-center py-4 border-t">
-    © 2025 Badminton Manager · All Rights Reserved
-  </footer>
-</body>
-</html>
+  <!-- Upcoming Reminders -->
+  <div class="bg-white rounded shadow p-6 mb-20">
+    <h3 class="text-xl font-bold mb-4">⏰ Upcoming Events</h3>
+    <ul class="space-y-2 text-gray-700">
+      <li>• Group Stage Draw: <span class="text-blue-600 font-medium">April 16</span></li>
+      <li>• Semi-Final Schedule Announcement: <span class="text-blue-600 font-medium">April 18</span></li>
+      <li>• Friendly Tournament (UWA Club): <span class="text-blue-600 font-medium">April 21</span></li>
+    </ul>
+  </div>
+{% endblock %}
+  

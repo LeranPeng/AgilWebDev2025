@@ -144,7 +144,10 @@ def login():
             session["user_id"] = user.id
             session["username"] = user.username
 
-            # Update last login time
+            # Save previous login to session before updating it
+            session["last_login"] = user.last_login.strftime('%Y-%m-%dT%H:%M:%SZ') if user.last_login else None
+
+            # Update login time
             user.last_login = datetime.utcnow()
             db.session.commit()
 
@@ -155,47 +158,32 @@ def login():
 
     return render_template("html/Login.html")
 
-
 @app.route("/dashboard")
 def dashboard():
-    user_id = session.get("user_id")
-    user = User.query.get(user_id)
-    tournament_count = Tournament.query.filter_by(user_id=user.id).count()
-
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    user_id = session.get("user_id")
-    user = User.query.get(user_id)
-
+    user = User.query.get(session["user_id"])
     if not user:
         session.clear()
         return redirect(url_for("login"))
 
-    # Get stats for the dashboard
     tournament_count = Tournament.query.filter_by(user_id=user.id).count()
-
-    # Get latest tournament
     latest_tournament = Tournament.query.filter_by(user_id=user.id).order_by(Tournament.created_at.desc()).first()
     latest_date = latest_tournament.date.strftime("%b %d, %Y") if latest_tournament else "No tournaments yet"
 
-    # Get recent matches
     recent_matches = []
-    matches = Match.query.join(Tournament).filter(Tournament.user_id == user.id).order_by(Match.timestamp.desc()).limit(
-        5).all()
+    matches = Match.query.join(Tournament).filter(Tournament.user_id == user.id).order_by(Match.timestamp.desc()).limit(5).all()
 
     for match in matches:
         team1_players = [match.team1.player1.name]
         if match.team1.player2:
             team1_players.append(match.team1.player2.name)
-
         team2_players = [match.team2.player1.name]
         if match.team2.player2:
             team2_players.append(match.team2.player2.name)
-
         winner = match.get_winner()
         is_winner_team1 = winner.id == match.team1.id
-
         recent_matches.append({
             "team1": " vs ".join(team1_players),
             "team2": " vs ".join(team2_players),
@@ -204,18 +192,17 @@ def dashboard():
             "match_date": match.timestamp.strftime('%Y-%m-%d')
         })
 
-    # For demo purposes
-    upcoming_matches = 3
+    last_login = session.get("last_login")
 
     return render_template(
         "html/dashboard.html",
         user=user,
         username=user.username,
         email=user.email,
-        last_login=user.last_login.strftime('%Y-%m-%d %H:%M'),
+        last_login=last_login,  # Send ISO string to HTML
         tournament_count=tournament_count,
         latest_upload=latest_date,
-        upcoming_matches=upcoming_matches,
+        upcoming_matches=3,
         recent_matches=recent_matches
     )
 

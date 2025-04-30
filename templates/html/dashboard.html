@@ -14,7 +14,18 @@
     <div class="bg-white p-4 rounded shadow w-64">
       <p class="text-sm text-gray-500">Logged in as</p>
       <p class="font-semibold text-blue-700 text-lg" id="user-email">{{ email }}</p>
-      <p class="text-sm text-gray-500 mt-2">Last login: <span id="last-login">{{ last_login }}</span></p>
+      <p class="text-sm text-gray-500 mt-2">Last login: <span id="last-login">Loading...</span></p>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const lastLoginUTC = "{{ last_login }}";
+          if (lastLoginUTC) {
+            const date = new Date(lastLoginUTC);
+            document.getElementById("last-login").textContent = date.toLocaleString();
+          } else {
+            document.getElementById("last-login").textContent = "Never";
+          }
+        });
+      </script>
       <a href="/settings" class="text-sm text-blue-600 mt-2 inline-block hover:underline">Edit Profile</a>
     </div>
   </div>

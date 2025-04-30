@@ -586,6 +586,9 @@ def page_not_found(e):
 def server_error(e):
     return render_template('html/500.html'), 500
 
+@app.errorhandler(400)
+def bad_request(e):
+    return render_template('html/400.html'), 400
 
 
 if __name__ == "__main__":

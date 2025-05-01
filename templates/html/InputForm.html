@@ -26,7 +26,7 @@
       <h2 class="text-xl font-semibold mb-4">Match Data</h2>
       <div id="matches">
         <!-- Match Row Template -->
-        <div class="match-row grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded bg-gray-50">
+        <div class="match-row grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded bg-gray-50 relative">
           <div>
             <label class="block mb-1 font-medium">Round</label>
             <input type="text" name="round[]" placeholder="e.g., Quarterfinal" class="input border px-3 py-2 rounded w-full" required>
@@ -64,6 +64,11 @@
               <option value="Mixed Doubles">Mixed Doubles</option>
             </select>
           </div>
+          
+          <!-- Remove Button (hidden for first match) -->
+          <button type="button" class="remove-match hidden absolute top-2 right-2 text-red-600 hover:text-red-800" title="Remove Match">
+            ❌
+          </button>
         </div>
       </div>
 
@@ -86,8 +91,32 @@
     const firstMatch = document.querySelector(".match-row");
     const clone = firstMatch.cloneNode(true);
     [...clone.querySelectorAll("input")].forEach(input => input.value = "");
+    
+    // Show the remove button for this new match
+    const removeBtn = clone.querySelector(".remove-match");
+    removeBtn.classList.remove("hidden");
+    removeBtn.addEventListener("click", function() {
+      removeMatch(this);
+    });
+    
     matchContainer.appendChild(clone);
   }
+  
+  function removeMatch(button) {
+    const matchRow = button.closest(".match-row");
+    if (matchRow && document.querySelectorAll(".match-row").length > 1) {
+      matchRow.remove();
+    }
+  }
+
+  // Add event listeners to any existing remove buttons
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".remove-match").forEach(button => {
+      button.addEventListener("click", function() {
+        removeMatch(this);
+      });
+    });
+  });
 
   // Process the score into score1 and score2 format before submission
   document.getElementById('resultsForm').addEventListener('submit', function(e) {

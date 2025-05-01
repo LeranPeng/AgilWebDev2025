@@ -47,14 +47,11 @@
             <input type="text" name="team2[]" placeholder="Charlie, Dana" class="input border px-3 py-2 rounded w-full" required>
           </div>
 
-          <div>
-            <label class="block mb-1 font-medium">Score (Team 1)</label>
-            <input type="text" name="score1[]" placeholder="21-19, 19-21, 21-18" class="input border px-3 py-2 rounded w-full" required>
-          </div>
-
-          <div>
-            <label class="block mb-1 font-medium">Score (Team 2)</label>
-            <input type="text" name="score2[]" placeholder="19-21, 21-19, 18-21" class="input border px-3 py-2 rounded w-full" required>
+          <div class="md:col-span-2">
+            <label class="block mb-1 font-medium">Match Score (e.g., 21-19, 19-21, 21-18)</label>
+            <input type="text" name="score[]" placeholder="21-19, 19-21, 21-18" class="input border px-3 py-2 rounded w-full" required>
+            <input type="hidden" name="score1[]" id="score1">
+            <input type="hidden" name="score2[]" id="score2">
           </div>
 
           <div>
@@ -92,16 +89,47 @@
     matchContainer.appendChild(clone);
   }
 
-  // Log form data to console without preventing submission
+  // Process the score into score1 and score2 format before submission
   document.getElementById('resultsForm').addEventListener('submit', function(e) {
-    // Just log data, don't prevent default
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => {
-      if (!data[key]) data[key] = [];
-      data[key].push(value);
+    e.preventDefault(); // Temporarily prevent submission to process scores
+    
+    // Get all inputs
+    const scoreInputs = document.querySelectorAll('input[name="score[]"]');
+    
+    // For each input, calculate and set the corresponding score1 and score2
+    scoreInputs.forEach((scoreInput, index) => {
+      const scoreValue = scoreInput.value.trim();
+      const score1Element = scoreInput.parentNode.querySelector('input[name="score1[]"]');
+      const score2Element = scoreInput.parentNode.querySelector('input[name="score2[]"]');
+      
+      // Set the values for score1 and score2
+      score1Element.value = scoreValue; // Original score
+      score2Element.value = reverseScore(scoreValue); // Reversed score
     });
-    console.log("Submitted Data:", data);
+    
+    this.submit();
   });
+  
+  // Reverse the score (e.g., "21-19, 21-18" → "19-21, 18-21")
+  function reverseScore(score) {
+    if (!score) return "";
+    
+    // Split to handle multiple games
+    const games = score.split(',');
+    
+    // Process each game
+    const reversedGames = games.map(game => {
+      const trimmedGame = game.trim();
+      // Split to get points
+      const points = trimmedGame.split('-');
+      if (points.length === 2) {
+        return `${points[1]}-${points[0]}`; // Swap scores
+      }
+      return trimmedGame; // Return unchanged if format is unexpected
+    });
+    
+    // Join back together 
+    return reversedGames.join(', ');
+  }
 </script>
 {% endblock %}

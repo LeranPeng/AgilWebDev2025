@@ -11,7 +11,7 @@
 
   <!-- Navbar -->
   <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">🏸 {% block page_title %}Badminton Manager{% endblock %}</h1>
+    <a href="/" class="text-xl font-bold hover:text-blue-200 transition">🏸 {% block page_title %}Badminton Manager{% endblock %}</a>
     <div>
       {% if session.get('user_id') %}
       <a href="/dashboard" class="px-3 hover:underline {% if request.path == '/dashboard' %}font-semibold{% endif %}">Dashboard</a>

@@ -563,6 +563,9 @@ def get_matches(tournament_id):
 
     return jsonify(results)
 
+@app.route("/how-it-works")
+def how_it_works():
+    return render_template("html/how_it_works.html")
 
 @app.errorhandler(404)
 def page_not_found(e):

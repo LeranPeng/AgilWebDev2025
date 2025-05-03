@@ -6,7 +6,7 @@
 {% block extra_css %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 {% endblock %}
- vvvvvvvvvv
+
 {% block content %}
 <div class="mb-6 flex justify-between items-center">
   <div>
@@ -197,7 +197,7 @@
         labels: ['Points Scored', 'Points Conceded'],
         datasets: [{
           label: 'Total Points',
-          data: [{{ player.points_scored || 0 }}, {{ player.points_conceded || 0 }}],
+          data: [{{ player.points_scored|default(0) }}, {{ player.points_conceded|default(0) }}],
           backgroundColor: [
             'rgba(79, 70, 229, 0.7)',
             'rgba(245, 158, 11, 0.7)'

@@ -495,7 +495,7 @@ def confirm_results(filename):
 
                         # Check if players appear on both sides
                         match_type = row[5] if len(row) > 5 else "Unknown"
-                        if "Doubles" in match_type and not validate_match_players(team1, team2):
+                        if match_type.endswith('Doubles') and not validate_match_players(team1, team2):
                             flash(
                                 f"Error: In doubles matches, players cannot appear on both sides (in {row[0]} vs {row[1]})")
                             return redirect(url_for('upload_page'))

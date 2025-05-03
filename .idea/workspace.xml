@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="Bug fix: Data analytics page expands vertically despite not having any data in it #13" />
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="Submitting the &quot;tournament results&quot; form causes 400 #23 fixed and closed">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,6 +25,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
@@ -155,6 +163,15 @@
       <workItem from="1746019906736" duration="1392000" />
       <workItem from="1746029892575" duration="3000" />
       <workItem from="1746029920379" duration="618000" />
+      <workItem from="1746030813291" duration="172000" />
+      <workItem from="1746031167523" duration="282000" />
+      <workItem from="1746072168686" duration="545000" />
+      <workItem from="1746102897084" duration="101000" />
+      <workItem from="1746103329370" duration="4170000" />
+      <workItem from="1746148400540" duration="181000" />
+      <workItem from="1746148672399" duration="523000" />
+      <workItem from="1746159053489" duration="255000" />
+      <workItem from="1746247305167" duration="930000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -396,7 +413,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746030523855</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Submitting the &quot;tournament results&quot; form causes 400 #23 fixed and closed">
+      <option name="closed" value="true" />
+      <created>1746030982781</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1746030982781</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -415,7 +440,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="delete the old style.css" />
     <MESSAGE value="css libraries applied to all" />
     <MESSAGE value="dashboard html frontend upload" />
     <MESSAGE value="User settings html upload" />
@@ -440,11 +464,12 @@
     <MESSAGE value="400 error" />
     <MESSAGE value="view player analytics bugs fix" />
     <MESSAGE value="Bug fix: Data analytics page expands vertically despite not having any data in it #13" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fix: Data analytics page expands vertically despite not having any data in it #13" />
+    <MESSAGE value="Submitting the &quot;tournament results&quot; form causes 400 #23 fixed and closed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Submitting the &quot;tournament results&quot; form causes 400 #23 fixed and closed" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1746021031819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1746030396316" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1746148819062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1746148824020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$Backend_Auth_Flask.coverage" NAME="app Coverage Results" MODIFIED="1744715012097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$analytics.coverage" NAME="analytics Coverage Results" MODIFIED="1744856453390" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

@@ -115,6 +115,12 @@
         icon.classList.add('fa-eye');
       }
     });
+
+    // Ensure form submission follows redirects properly
+    document.querySelector('form').addEventListener('submit', function(e) {
+      // Regular form submission should handle redirects properly
+      // No preventDefault() call that might interfere with normal form submission
+    });
   </script>
 </body>
 </html>

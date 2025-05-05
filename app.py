@@ -118,7 +118,8 @@ def signup():
             db.session.commit()
 
             flash("Account created successfully! Please log in.")
-            return redirect(url_for("login"))
+            # Use an absolute URL for the redirect to ensure it works
+            return redirect(url_for("login", _external=True))
         except Exception as e:
             db.session.rollback()
             flash(f"Error creating account: {str(e)}")

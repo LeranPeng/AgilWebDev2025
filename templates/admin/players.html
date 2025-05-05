@@ -1,0 +1,147 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}Player Management{% endblock %}
+{% block admin_subtitle %}View and manage players in the system{% endblock %}
+
+{% block admin_content %}
+<!-- Filters and Search -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <form action="{{ url_for('admin.manage_players') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Search by Name</label>
+      <input type="text" name="search" placeholder="Player name"
+             class="w-full border rounded px-3 py-2">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Match Type</label>
+      <select name="match_type" class="w-full border rounded px-3 py-2">
+        <option value="">All Match Types</option>
+        <option value="Singles">Singles</option>
+        <option value="Doubles">Doubles</option>
+        <option value="Mixed">Mixed Doubles</option>
+      </select>
+    </div>
+
+    <div class="flex items-end">
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Apply Filters
+      </button>
+      <a href="{{ url_for('admin.manage_players') }}" class="ml-2 px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+        Clear
+      </a>
+    </div>
+  </form>
+</div>
+
+<!-- Players Table -->
+<div class="bg-white rounded-lg shadow overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          ID
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Player Name
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Singles Matches
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Doubles Matches
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Teams
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for player in players %}
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ player.id }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">{{ player.name }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ player.teams_as_player1|selectattr('player2_id', 'none')|list|length }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {% set doubles_teams = player.teams_as_player1|rejectattr('player2_id', 'none')|list %}
+            {% set doubles_teams_p2 = player.teams_as_player2|list %}
+            {{ doubles_teams|length + doubles_teams_p2|length }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ player.teams_as_player1|length + player.teams_as_player2|length }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <div class="flex space-x-2">
+              <a href="{{ url_for('admin.view_player', player_id=player.id) }}"
+                 class="text-indigo-600 hover:text-indigo-900">
+                <span class="px-2 py-1 bg-indigo-100 rounded text-xs">View</span>
+              </a>
+              <a href="{{ url_for('admin.merge_player', player_id=player.id) }}"
+                 class="text-green-600 hover:text-green-900">
+                <span class="px-2 py-1 bg-green-100 rounded text-xs">Merge</span>
+              </a>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Potential duplicates section -->
+<div class="mt-8 bg-yellow-50 rounded-lg shadow p-6">
+  <h3 class="text-lg font-medium text-yellow-800 mb-4">Potential Duplicate Detection</h3>
+  <p class="text-sm text-gray-600 mb-4">
+    The system has identified the following potential duplicates based on similar names.
+    Use the "Merge" function to combine duplicate player records.
+  </p>
+
+  <div class="overflow-x-auto bg-white rounded border">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Player Name
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Similar To
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <!-- This would be populated dynamically - placeholder for demonstration -->
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">John Smith</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John A. Smith</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <a href="#" class="text-indigo-600 hover:text-indigo-900">
+              <span class="px-2 py-1 bg-indigo-100 rounded text-xs">Compare</span>
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Jane Wilson</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jane Willson</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <a href="#" class="text-indigo-600 hover:text-indigo-900">
+              <span class="px-2 py-1 bg-indigo-100 rounded text-xs">Compare</span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

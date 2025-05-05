@@ -6,42 +6,34 @@ from datetime import datetime, timedelta
 import csv
 import io
 import json
-from models import db, User, Tournament, Player, Team, Match
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_migrate import Migrate
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv("key.env")
-
-# Create the Flask app
 app = Flask(__name__)
 
-# Get secret key from environment variable
+load_dotenv("key.env")
+
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 if not app.config['SECRET_KEY']:
-    raise ValueError("No SECRET_KEY set for Flask application. Set the SECRET_KEY environment variable")
+    raise ValueError("No SECRET_KEY set for Flask application")
 
-# Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', 'sqlite:///badminton.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=int(os.environ.get('SESSION_LIFETIME_DAYS', 7)))
 
-# Configure CSRF protection
-csrf = CSRFProtect(app)
-
-# Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Initialize the database with the app
+csrf = CSRFProtect(app)
+
+from models import db
 db.init_app(app)
 
-# Import analytics AFTER initializing db
-from analytics import analytics
+migrate = Migrate(app, db)
 
-# Register the analytics blueprint
-app.register_blueprint(analytics)
+from models import User, Tournament, Player, Team, Match
 
 def login_required(f):
     @wraps(f)
@@ -50,6 +42,28 @@ def login_required(f):
             flash('Please log in to access this page')
             return redirect(url_for('login'))
         return f(*args, **kwargs)
+    return decorated_function
+
+from analytics import analytics
+from admin import admin
+
+app.register_blueprint(analytics)
+app.register_blueprint(admin)
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please log in to access this page')
+            return redirect(url_for('login'))
+
+        user = User.query.get(session['user_id'])
+        if not user or not user.is_admin:
+            flash('You do not have permission to access this page')
+            return redirect(url_for('dashboard'))
+
+        return f(*args, **kwargs)
+
     return decorated_function
 
 # Helper function to find or create a player
@@ -836,4 +850,14 @@ def bad_request(e):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True,port=5000)
+
+        # Check if admin user exists, if not create one
+        admin_user = User.query.filter_by(username="admin").first()
+        if not admin_user:
+            admin_user = User(username="admin", email="admin@example.com", is_admin=True)
+            admin_user.set_password("admin123")  # Change this in production!
+            db.session.add(admin_user)
+            db.session.commit()
+            print("Admin user created: admin / admin123")
+
+    app.run(debug=True, port=5000)

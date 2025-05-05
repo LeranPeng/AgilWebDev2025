@@ -1,0 +1,100 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}User Management{% endblock %}
+{% block admin_subtitle %}View and manage system users{% endblock %}
+
+{% block admin_content %}
+<!-- Actions Bar -->
+<div class="flex justify-between mb-6">
+  <div class="flex gap-2">
+    <a href="{{ url_for('admin.create_user') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Create New User
+    </a>
+  </div>
+
+  <form action="{{ url_for('admin.manage_users') }}" method="GET" class="flex">
+    <input type="text" name="search" placeholder="Search users..." class="border rounded-l px-4 py-2">
+    <button type="submit" class="bg-gray-300 px-4 py-2 rounded-r hover:bg-gray-400">
+      Search
+    </button>
+  </form>
+</div>
+
+<!-- Users Table -->
+<div class="bg-white rounded-lg shadow overflow-hidden">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          ID
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          User
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Email
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Last Login
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Role
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for user in users %}
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ user.id }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-500">{{ user.email }}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {% if user.last_login %}
+              {{ user.last_login.strftime('%Y-%m-%d %H:%M') }}
+            {% else %}
+              Never
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            {% if user.is_admin %}
+              <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full">
+                Admin
+              </span>
+            {% else %}
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                User
+              </span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <div class="flex space-x-2">
+              <a href="{{ url_for('admin.edit_user', user_id=user.id) }}"
+                 class="text-indigo-600 hover:text-indigo-900">
+                <span class="px-2 py-1 bg-indigo-100 rounded text-xs">Edit</span>
+              </a>
+              {% if user.id != session.get('user_id') %}
+                <form action="{{ url_for('admin.delete_user', user_id=user.id) }}" method="POST"
+                      onsubmit="return confirm('Are you sure you want to delete this user? This cannot be undone.');">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="px-2 py-1 bg-red-100 text-red-600 rounded text-xs hover:bg-red-200">
+                    Delete
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

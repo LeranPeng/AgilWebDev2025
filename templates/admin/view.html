@@ -1,0 +1,222 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}Tournament Details{% endblock %}
+{% block admin_subtitle %}View tournament information and matches{% endblock %}
+
+{% block admin_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Tournament Info -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <div class="flex justify-between items-start">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">{{ tournament.name }}</h2>
+      <p class="text-gray-600 mt-1">
+        {{ tournament.date.strftime('%B %d, %Y') }} at {{ tournament.location or 'No location specified' }}
+      </p>
+    </div>
+
+    <div>
+      <form action="{{ url_for('admin.delete_tournament', tournament_id=tournament.id) }}" method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this tournament and all associated matches? This cannot be undone.');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+          Delete Tournament
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="p-4 bg-blue-50 rounded">
+      <p class="text-sm text-gray-500">Organizer</p>
+      <p class="font-medium">{{ organizer.username }}</p>
+      <p class="text-sm text-gray-500">{{ organizer.email }}</p>
+    </div>
+
+    <div class="p-4 bg-green-50 rounded">
+      <p class="text-sm text-gray-500">Match Count</p>
+      <p class="font-medium">{{ matches|length }} matches</p>
+    </div>
+
+    <div class="p-4 bg-purple-50 rounded">
+      <p class="text-sm text-gray-500">Created</p>
+      <p class="font-medium">{{ tournament.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Match Types Chart -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Rounds Distribution</h3>
+    <canvas id="roundsChart" height="200"></canvas>
+  </div>
+</div>
+
+<!-- Matches Table -->
+<div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+  <div class="px-6 py-4 border-b">
+    <h3 class="text-lg font-medium">Match List</h3>
+  </div>
+
+  {% if matches %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Round
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Team 1
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Team 2
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Score
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Type
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Winner
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for match in matches %}
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ match.round }}
+                {% if match.group %}
+                  <span class="text-xs text-gray-400">({{ match.group }})</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ match.team1 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ match.team2 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ match.score1 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ match.match_type }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                {{ match.winner }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="p-6 text-center text-gray-500">
+      No matches found for this tournament.
+    </div>
+  {% endif %}
+</div>
+
+<!-- Back button -->
+<div class="flex justify-between">
+  <a href="{{ url_for('admin.manage_tournaments') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+    Back to Tournaments
+  </a>
+</div>
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Calculate match type distribution
+    const matches = {{ matches|tojson }};
+    const matchTypeData = {};
+
+    matches.forEach(match => {
+      if (matchTypeData[match.match_type]) {
+        matchTypeData[match.match_type]++;
+      } else {
+        matchTypeData[match.match_type] = 1;
+      }
+    });
+
+    // Create match type chart
+    const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
+    new Chart(matchTypeCtx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(matchTypeData),
+        datasets: [{
+          data: Object.values(matchTypeData),
+          backgroundColor: [
+            'rgba(59, 130, 246, 0.7)', // Blue
+            'rgba(16, 185, 129, 0.7)', // Green
+            'rgba(245, 158, 11, 0.7)', // Yellow
+            'rgba(239, 68, 68, 0.7)',  // Red
+            'rgba(139, 92, 246, 0.7)'  // Purple
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // Calculate rounds distribution
+    const roundsData = {};
+
+    matches.forEach(match => {
+      if (roundsData[match.round]) {
+        roundsData[match.round]++;
+      } else {
+        roundsData[match.round] = 1;
+      }
+    });
+
+    // Create rounds chart
+    const roundsCtx = document.getElementById('roundsChart').getContext('2d');
+    new Chart(roundsCtx, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(roundsData),
+        datasets: [{
+          label: 'Matches',
+          data: Object.values(roundsData),
+          backgroundColor: 'rgba(99, 102, 241, 0.7)',
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

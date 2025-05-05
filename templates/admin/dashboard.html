@@ -1,0 +1,103 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}Admin Dashboard{% endblock %}
+{% block admin_subtitle %}System overview and quick actions{% endblock %}
+
+{% block admin_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white p-5 rounded shadow text-center">
+    <p class="text-gray-500">Total Users</p>
+    <p class="text-3xl font-bold text-blue-700 mt-2">{{ user_count }}</p>
+    <a href="{{ url_for('admin.manage_users') }}" class="text-sm text-blue-600 hover:underline">Manage Users</a>
+  </div>
+
+  <div class="bg-white p-5 rounded shadow text-center">
+    <p class="text-gray-500">Tournaments</p>
+    <p class="text-3xl font-bold text-green-600 mt-2">{{ tournament_count }}</p>
+    <a href="{{ url_for('admin.manage_tournaments') }}" class="text-sm text-green-600 hover:underline">View Tournaments</a>
+  </div>
+
+  <div class="bg-white p-5 rounded shadow text-center">
+    <p class="text-gray-500">Matches</p>
+    <p class="text-3xl font-bold text-yellow-600 mt-2">{{ match_count }}</p>
+  </div>
+
+  <div class="bg-white p-5 rounded shadow text-center">
+    <p class="text-gray-500">Players</p>
+    <p class="text-3xl font-bold text-purple-600 mt-2">{{ player_count }}</p>
+    <a href="{{ url_for('admin.manage_players') }}" class="text-sm text-purple-600 hover:underline">Manage Players</a>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="bg-white rounded shadow p-6 mb-8">
+  <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <a href="{{ url_for('admin.create_user') }}" class="bg-blue-600 text-white p-4 rounded hover:bg-blue-700 text-center">
+      Create New User
+    </a>
+    <a href="{{ url_for('admin.system_stats') }}" class="bg-green-600 text-white p-4 rounded hover:bg-green-700 text-center">
+      View System Stats
+    </a>
+    <a href="{{ url_for('admin.database_maintenance') }}" class="bg-yellow-500 text-white p-4 rounded hover:bg-yellow-600 text-center">
+      Database Maintenance
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <!-- Recent Users -->
+  <div class="bg-white rounded shadow p-6">
+    <h3 class="text-lg font-semibold mb-4">Recent User Activity</h3>
+    {% if recent_users %}
+      <ul class="divide-y">
+        {% for user in recent_users %}
+          <li class="py-3 flex justify-between">
+            <div>
+              <span class="font-medium">{{ user.username }}</span>
+              <span class="text-sm text-gray-500">{{ user.email }}</span>
+            </div>
+            <div class="text-sm text-gray-600">
+              {% if user.last_login %}
+                Last login: {{ user.last_login.strftime('%Y-%m-%d %H:%M') }}
+              {% else %}
+                Never logged in
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500 text-center py-4">No recent user activity</p>
+    {% endif %}
+  </div>
+
+  <!-- Recent Tournaments -->
+  <div class="bg-white rounded shadow p-6">
+    <h3 class="text-lg font-semibold mb-4">Recent Tournaments</h3>
+    {% if recent_tournaments %}
+      <ul class="divide-y">
+        {% for tournament in recent_tournaments %}
+          <li class="py-3 flex justify-between">
+            <div>
+              <span class="font-medium">{{ tournament.name }}</span>
+              <span class="text-sm text-gray-500">{{ tournament.location }}</span>
+            </div>
+            <div class="text-sm text-gray-600">
+              {{ tournament.date.strftime('%Y-%m-%d') }}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500 text-center py-4">No tournaments created yet</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

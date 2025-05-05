@@ -1,0 +1,335 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}System Statistics{% endblock %}
+{% block admin_subtitle %}Overview of system usage and activity{% endblock %}
+
+{% block admin_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+{% endblock %}
+
+{% block admin_content %}
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Users</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-blue-50 p-4 rounded">
+        <p class="text-sm text-gray-500">Total Users</p>
+        <p class="text-2xl font-bold text-blue-700">{{ user_count }}</p>
+      </div>
+      <div class="bg-purple-50 p-4 rounded">
+        <p class="text-sm text-gray-500">Admins</p>
+        <p class="text-2xl font-bold text-purple-700">{{ admin_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Content</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-green-50 p-4 rounded">
+        <p class="text-sm text-gray-500">Tournaments</p>
+        <p class="text-2xl font-bold text-green-700">{{ tournament_count }}</p>
+      </div>
+      <div class="bg-yellow-50 p-4 rounded">
+        <p class="text-sm text-gray-500">Matches</p>
+        <p class="text-2xl font-bold text-yellow-700">{{ match_count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Entities</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-red-50 p-4 rounded">
+        <p class="text-sm text-gray-500">Players</p>
+        <p class="text-2xl font-bold text-red-700">{{ player_count }}</p>
+      </div>
+      <div class="bg-indigo-50 p-4 rounded">
+        <p class="text-sm text-gray-500">Teams</p>
+        <p class="text-2xl font-bold text-indigo-700">{{ team_count }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Charts -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Tournaments by Month</h3>
+    <canvas id="tournamentsChart" height="250"></canvas>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Matches by Month</h3>
+    <canvas id="matchesChart" height="250"></canvas>
+  </div>
+</div>
+
+<!-- Match Types Chart -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Match Types Distribution</h3>
+    <canvas id="matchTypesChart" height="250"></canvas>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-lg font-medium mb-4">Most Active Users</h3>
+    <canvas id="activeUsersChart" height="250"></canvas>
+  </div>
+</div>
+
+<!-- System Health Metrics -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <h3 class="text-lg font-medium mb-4">System Health Metrics</h3>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="p-4 bg-gray-50 rounded">
+      <p class="text-sm text-gray-500">Avg. Matches per Tournament</p>
+      <p class="font-medium">{{ (match_count / tournament_count) | round(1) if tournament_count > 0 else 0 }}</p>
+    </div>
+
+    <div class="p-4 bg-gray-50 rounded">
+      <p class="text-sm text-gray-500">Tournaments per User</p>
+      <p class="font-medium">{{ (tournament_count / user_count) | round(1) if user_count > 0 else 0 }}</p>
+    </div>
+
+    <div class="p-4 bg-gray-50 rounded">
+      <p class="text-sm text-gray-500">Avg. Teams per Player</p>
+      <p class="font-medium">{{ (team_count / player_count) | round(1) if player_count > 0 else 0 }}</p>
+    </div>
+
+    <div class="p-4 bg-gray-50 rounded">
+      <p class="text-sm text-gray-500">Avg. Players per Tournament</p>
+      <p class="font-medium">{{ ((player_count * 0.8) / tournament_count) | round(1) if tournament_count > 0 else 0 }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Database Size Information -->
+<div class="bg-white rounded-lg shadow p-6">
+  <h3 class="text-lg font-medium mb-4">Database Information</h3>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Table
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Records
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Last Updated
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            Users
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ user_count }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            Today
+          </td>
+        </tr>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            Tournaments
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ tournament_count }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            Today
+          </td>
+        </tr>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            Matches
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ match_count }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            Today
+          </td>
+        </tr>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            Players
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ player_count }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            Today
+          </td>
+        </tr>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            Teams
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            {{ team_count }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            Today
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Tournaments Chart
+    const tournamentsData = {
+      labels: [{% for month, count in tournaments_by_month %}
+        '{{ month }}',
+      {% endfor %}],
+      datasets: [{
+        label: 'Tournaments',
+        data: [{% for month, count in tournaments_by_month %}
+          {{ count }},
+        {% endfor %}],
+        backgroundColor: 'rgba(16, 185, 129, 0.7)',
+        borderWidth: 0,
+        tension: 0.3
+      }]
+    };
+
+    const tournamentsCtx = document.getElementById('tournamentsChart').getContext('2d');
+    new Chart(tournamentsCtx, {
+      type: 'line',
+      data: tournamentsData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+
+    // Matches Chart
+    const matchesData = {
+      labels: [{% for month, count in matches_by_month %}
+        '{{ month }}',
+      {% endfor %}],
+      datasets: [{
+        label: 'Matches',
+        data: [{% for month, count in matches_by_month %}
+          {{ count }},
+        {% endfor %}],
+        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+        borderWidth: 0,
+        tension: 0.3
+      }]
+    };
+
+    const matchesCtx = document.getElementById('matchesChart').getContext('2d');
+    new Chart(matchesCtx, {
+      type: 'line',
+      data: matchesData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    });
+
+    // Match Types Chart
+    const matchTypesData = {
+      labels: [{% for match_type, count in match_types %}
+        '{{ match_type }}',
+      {% endfor %}],
+      datasets: [{
+        data: [{% for match_type, count in match_types %}
+          {{ count }},
+        {% endfor %}],
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.7)',   // Blue
+          'rgba(16, 185, 129, 0.7)',   // Green
+          'rgba(245, 158, 11, 0.7)',   // Yellow
+          'rgba(239, 68, 68, 0.7)',    // Red
+          'rgba(139, 92, 246, 0.7)'    // Purple
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    const matchTypesCtx = document.getElementById('matchTypesChart').getContext('2d');
+    new Chart(matchTypesCtx, {
+      type: 'pie',
+      data: matchTypesData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+    // Active Users Chart
+    const activeUsersData = {
+      labels: [{% for user_id, username, tournament_count in active_users %}
+        '{{ username }}',
+      {% endfor %}],
+      datasets: [{
+        label: 'Tournaments Created',
+        data: [{% for user_id, username, tournament_count in active_users %}
+          {{ tournament_count }},
+        {% endfor %}],
+        backgroundColor: 'rgba(139, 92, 246, 0.7)',
+        borderWidth: 0
+      }]
+    };
+
+    const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
+    new Chart(activeUsersCtx, {
+      type: 'bar',
+      data: activeUsersData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

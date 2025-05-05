@@ -1,0 +1,86 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}Edit User{% endblock %}
+{% block admin_subtitle %}Modify user account information{% endblock %}
+
+{% block admin_content %}
+<div class="bg-white rounded-lg shadow p-6">
+  <form action="{{ url_for('admin.edit_user', user_id=user.id) }}" method="POST" class="space-y-6">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Username -->
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}" required
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" required
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- New Password (optional) -->
+      <div>
+        <label for="new_password" class="block text-sm font-medium text-gray-700 mb-1">New Password (optional)</label>
+        <input type="password" id="new_password" name="new_password" placeholder="Leave blank to keep current password"
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <p class="text-xs text-gray-500 mt-1">Leave blank to keep current password</p>
+      </div>
+
+      <!-- Admin Status -->
+      <div class="flex items-end">
+        <label class="flex items-center">
+          <input type="checkbox" name="is_admin" class="h-5 w-5 text-blue-600 rounded" {% if user.is_admin %}checked{% endif %}>
+          <span class="ml-2 text-gray-700">Administrator privileges</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- User Statistics -->
+    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+      <h3 class="font-medium text-gray-700 mb-3">User Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <span class="block text-gray-500">User ID</span>
+          <span class="font-medium">{{ user.id }}</span>
+        </div>
+        <div>
+          <span class="block text-gray-500">Last Login</span>
+          <span class="font-medium">
+            {% if user.last_login %}
+              {{ user.last_login.strftime('%Y-%m-%d %H:%M') }}
+            {% else %}
+              Never
+            {% endif %}
+          </span>
+        </div>
+
+        <!-- Count tournaments created by user -->
+        {% if user.tournaments %}
+          <div>
+            <span class="block text-gray-500">Tournaments Created</span>
+            <span class="font-medium">{{ user.tournaments|length }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-between pt-4">
+      <a href="{{ url_for('admin.manage_users') }}" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+        Cancel
+      </a>
+
+      <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Save Changes
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

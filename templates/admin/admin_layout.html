@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Panel - Badminton MASTER{% endblock %}
+{% block page_title %}Admin Panel{% endblock %}
+
+{% block extra_css %}
+<style>
+  .admin-sidebar {
+    min-width: 250px;
+    background-color: #1E3A8A;
+  }
+
+  .admin-sidebar a {
+    color: #E5E7EB;
+    padding: 0.75rem 1rem;
+    display: block;
+    border-left: 3px solid transparent;
+  }
+
+  .admin-sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: #3B82F6;
+  }
+
+  .admin-sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left-color: #3B82F6;
+    font-weight: 600;
+  }
+
+  .admin-content {
+    min-height: calc(100vh - 4rem - 4rem);
+  }
+</style>
+{% block admin_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="flex">
+  <!-- Admin Sidebar -->
+  <div class="admin-sidebar shadow-lg">
+    <div class="p-4 border-b border-blue-800">
+      <h2 class="text-xl font-bold text-white">Admin Panel</h2>
+    </div>
+
+    <nav class="py-2">
+      <a href="{{ url_for('admin.admin_dashboard') }}"
+         class="{% if request.path == '/admin' %}active{% endif %}">
+        📊 Dashboard
+      </a>
+      <a href="{{ url_for('admin.manage_users') }}"
+         class="{% if '/admin/users' in request.path %}active{% endif %}">
+        👥 Users
+      </a>
+      <a href="{{ url_for('admin.manage_tournaments') }}"
+         class="{% if '/admin/tournaments' in request.path %}active{% endif %}">
+        🏆 Tournaments
+      </a>
+      <a href="{{ url_for('admin.manage_players') }}"
+         class="{% if '/admin/players' in request.path %}active{% endif %}">
+        🏸 Players
+      </a>
+      <a href="{{ url_for('admin.system_stats') }}"
+         class="{% if request.path == '/admin/stats' %}active{% endif %}">
+        📈 System Stats
+      </a>
+      <a href="{{ url_for('admin.database_maintenance') }}"
+         class="{% if request.path == '/admin/maintenance' %}active{% endif %}">
+        🔧 Maintenance
+      </a>
+      <div class="mt-8 px-4 py-2 border-t border-blue-800">
+        <a href="{{ url_for('dashboard') }}" class="text-center text-sm">
+          ← Back to Main Site
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Admin Content -->
+  <div class="admin-content flex-grow p-6 bg-gray-50">
+    <!-- Page Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold">{% block admin_title %}Admin Dashboard{% endblock %}</h1>
+      <p class="text-gray-600">{% block admin_subtitle %}Manage your badminton tournament system{% endblock %}</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for message in messages %}
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-2">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

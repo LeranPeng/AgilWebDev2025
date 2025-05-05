@@ -1,0 +1,201 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block admin_title %}Merge Player Records{% endblock %}
+{% block admin_subtitle %}Combine duplicate player records{% endblock %}
+
+{% block admin_content %}
+<!-- Player Info -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <h2 class="text-xl font-bold text-gray-800 mb-2">Merging Player: {{ player.name }}</h2>
+  <p class="text-gray-600">
+    This player has participated in {{ player.teams_as_player1|length + player.teams_as_player2|length }} teams.
+    Merging will transfer all matches and teams to this player record.
+  </p>
+
+  <div class="mt-4 bg-yellow-50 p-4 rounded border border-yellow-200">
+    <div class="flex items-start">
+      <svg class="h-5 w-5 text-yellow-600 mt-0.5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+      </svg>
+      <div>
+        <h3 class="font-medium text-yellow-800">Warning</h3>
+        <p class="text-sm text-yellow-700 mt-1">
+          Merging is permanent and cannot be undone. The selected duplicate player will be completely removed from the system.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Merge Form -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <h3 class="text-lg font-medium mb-4">Select Player to Merge Into {{ player.name }}</h3>
+
+  <form action="{{ url_for('admin.merge_player', player_id=player.id) }}" method="POST" class="space-y-6">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    {% if potential_duplicates %}
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Select
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ID
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Player Name
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Teams Count
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name Similarity
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for duplicate in potential_duplicates %}
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <input type="radio" name="merge_with_id" value="{{ duplicate.id }}" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ duplicate.id }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ duplicate.name }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  High
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-4 text-gray-500">
+        No potential duplicates found for this player. Try using the search to find players to merge.
+      </div>
+    {% endif %}
+
+    <div class="mt-6 border-t pt-6">
+      <h4 class="font-medium mb-2">Search for Other Players to Merge</h4>
+      <div class="flex gap-2">
+        <input type="text" id="player_search" placeholder="Enter player name"
+               class="w-full border rounded px-3 py-2">
+        <button type="button" id="search_btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          Search
+        </button>
+      </div>
+
+      <div id="search_results" class="mt-4">
+        <!-- Search results will be displayed here -->
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-between pt-4">
+      <a href="{{ url_for('admin.view_player', player_id=player.id) }}" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">
+        Cancel
+      </a>
+
+      <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Merge Players
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Merge Confirmation -->
+<div class="bg-white rounded-lg shadow p-6">
+  <h3 class="text-lg font-medium mb-4">What Happens During a Merge?</h3>
+
+  <div class="space-y-4 text-sm text-gray-600">
+    <p>
+      When you merge two player records, the following changes occur:
+    </p>
+
+    <ol class="list-decimal ml-5 space-y-2">
+      <li>All teams where the duplicate player is Player 1 will be updated to use this player instead.</li>
+      <li>All teams where the duplicate player is Player 2 will be updated to use this player instead.</li>
+      <li>The duplicate player record will be permanently deleted from the database.</li>
+      <li>All statistics and analytics will be recalculated to reflect the merged player data.</li>
+    </ol>
+
+    <p>
+      This operation helps maintain data integrity by eliminating duplicate player records that may have been created due to:
+    </p>
+
+    <ul class="list-disc ml-5 space-y-1">
+      <li>Different spellings of the same name (e.g., "John Smith" vs "John A. Smith")</li>
+      <li>Typos in player names</li>
+      <li>Capitalization differences</li>
+      <li>Nickname vs full name usage</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block admin_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('search_btn');
+    const playerSearch = document.getElementById('player_search');
+    const searchResults = document.getElementById('search_results');
+
+    // Simulated search function - in a real application, this would call an API endpoint
+    searchBtn.addEventListener('click', function() {
+      const searchTerm = playerSearch.value.trim();
+
+      if (searchTerm.length < 2) {
+        searchResults.innerHTML = '<div class="text-red-500">Please enter at least 2 characters to search</div>';
+        return;
+      }
+
+      // Simulating search results - in a real app, this would be an API call
+      searchResults.innerHTML = '<div class="text-gray-500">Searching...</div>';
+
+      // Simulate API delay
+      setTimeout(() => {
+        // Generate sample results - in a real app, this would come from the server
+        searchResults.innerHTML = `
+          <div class="overflow-x-auto bg-gray-50 rounded border">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Select
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Player Name
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Teams
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <input type="radio" name="merge_with_id" value="999" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    Sample Player (${searchTerm})
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    3
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      }, 500);
+    });
+  });
+</script>
+{% endblock %}

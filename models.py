@@ -8,6 +8,7 @@ class User(db.Model):
     email = db.Column(db.String(150), nullable=False, unique=True)
     password_hash = db.Column(db.String(256), nullable=False)
     last_login = db.Column(db.DateTime, default=db.func.current_timestamp())
+    is_admin = db.Column(db.Boolean, default=False)  # New field for admin status
     tournaments = db.relationship('Tournament', backref='organizer', lazy=True)
 
     def set_password(self, password):

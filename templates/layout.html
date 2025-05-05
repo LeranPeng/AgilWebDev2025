@@ -10,6 +10,7 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
   <!-- Navbar -->
+  <!-- Update the navbar section in layout.html -->
   <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
     <a href="/" class="text-xl font-bold hover:text-blue-200 transition">🏸 {% block page_title %}Badminton Manager{% endblock %}</a>
     <div>
@@ -17,14 +18,15 @@
       <a href="/dashboard" class="px-3 hover:underline {% if request.path == '/dashboard' %}font-semibold{% endif %}">Dashboard</a>
       <a href="/upload" class="px-3 hover:underline {% if request.path == '/upload' %}font-semibold{% endif %}">Upload</a>
       <a href="/input_form" class="px-3 hover:underline {% if request.path == '/input_form' %}font-semibold{% endif %}">Add Match</a>
+      <a href="/matches" class="px-3 hover:underline {% if request.path == '/matches' %}font-semibold{% endif %}">Manage Matches</a>
       <a href="/analytics" class="px-3 hover:underline {% if request.path == '/analytics' %}font-semibold{% endif %}">Analytics</a>
       <a href="/settings" class="px-3 hover:underline {% if request.path == '/settings' %}font-semibold{% endif %}">Settings</a>
       <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
-     {% else %}
+    {% else %}
       <a href="/" class="px-3 hover:underline {% if request.path == '/' %}font-semibold{% endif %}">Home</a>
       <a href="/login" class="px-3 hover:underline {% if request.path == '/login' %}font-semibold{% endif %}">Login</a>
       <a href="/signup" class="px-3 hover:underline {% if request.path == '/signup' %}font-semibold{% endif %}">Sign Up</a>
-     {% endif %}
+    {% endif %}
     </div>
   </nav>
 

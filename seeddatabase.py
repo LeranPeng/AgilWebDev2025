@@ -1,13 +1,12 @@
 """
 Seed script to populate the database with initial data for testing
-Run this after setting up the application but before using it
-Features:
-- Around 20 players who each play many matches
-- Multiple tournaments with hundreds of matches
-- All in English
 """
 
-from app import app, db, User, Tournament, Player, Team, Match
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from app import app, db
+from models import User, Tournament, Player, Team, Match
 from datetime import datetime, timedelta
 import random
 import string

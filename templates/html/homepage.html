@@ -1,97 +1,473 @@
 {% extends "layout.html" %}
 
-{% block title %}Badminton MASTER{% endblock %}
+{% block title %}Badminton MASTER - Tournament Management Software{% endblock %}
 {% block page_title %}Badminton MASTER{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-section {
+    background-image: linear-gradient(rgba(0, 35, 80, 0.7), rgba(0, 35, 80, 0.7)), url('https://images.unsplash.com/photo-1613886737526-9e882361ce6a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+  }
+
+  .feature-card {
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .step-card {
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-connector {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .step-connector {
+      display: block;
+      position: absolute;
+      height: 3px;
+      background-color: #3B82F6;
+      top: 32px;
+      width: 100%;
+      left: 50%;
+      z-index: 0;
+    }
+  }
+
+  .testimonial-card {
+    border-left: 4px solid #3B82F6;
+  }
+
+  .stat-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: scale(1.03);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="bg-blue-100 py-20 text-center">
-  <div class="max-w-3xl mx-auto">
-    <h2 class="text-4xl font-bold text-blue-700 mb-4">Organize Your Badminton Tournament with Ease</h2>
-    <p class="text-lg text-gray-700 mb-6">
-      Upload player data, auto-generate groups and matches, manage scoring — all in one place.
+<section class="hero-section py-24 md:py-32">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h1 class="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight">
+      Badminton Tournament Management <span class="text-blue-300">Simplified</span>
+    </h1>
+    <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
+      Create, manage, and analyze badminton tournaments with powerful tools designed for organizers of all levels.
     </p>
-    <a href="/how-it-works" class="bg-blue-600 text-white px-6 py-3 rounded-full shadow hover:bg-blue-700 transition">
-      Get Started
-    </a>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/signup" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium transition duration-300 transform hover:scale-105">
+        Get Started Free
+      </a>
+      <a href="/how-it-works" class="bg-white hover:bg-gray-100 text-blue-600 px-8 py-4 rounded-lg shadow-lg text-lg font-medium transition duration-300">
+        See How It Works
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Showcase -->
+<section class="bg-gradient-to-r from-blue-500 to-blue-700 py-12 text-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="text-center">
+        <p class="text-4xl font-bold mb-1">10,000+</p>
+        <p class="text-gray-200">Matches Tracked</p>
+      </div>
+      <div class="text-center">
+        <p class="text-4xl font-bold mb-1">500+</p>
+        <p class="text-gray-200">Tournaments</p>
+      </div>
+      <div class="text-center">
+        <p class="text-4xl font-bold mb-1">2,500+</p>
+        <p class="text-gray-200">Players</p>
+      </div>
+      <div class="text-center">
+        <p class="text-4xl font-bold mb-1">98%</p>
+        <p class="text-gray-200">Satisfaction</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Features -->
-<section class="py-16 bg-white">
-  <div class="max-w-6xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-center text-gray-800 mb-10">Key Features</h3>
+<section class="py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4">Powerful Features for Tournament Success</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Everything you need to run successful badminton tournaments from start to finish
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-blue-100 text-blue-600 w-16 h-16 flex items-center justify-center rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Smart Data Import</h3>
+        <p class="text-gray-600">
+          Quickly upload player data via CSV. We'll automatically organize players and help you create balanced groups.
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-green-100 text-green-600 w-16 h-16 flex items-center justify-center rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Edit & Correct Data</h3>
+        <p class="text-gray-600">
+          Made a mistake? No problem. Edit match details or delete incorrect data with our intuitive management interface.
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-purple-100 text-purple-600 w-16 h-16 flex items-center justify-center rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Advanced Analytics</h3>
+        <p class="text-gray-600">
+          Dive deep into player stats, head-to-head records, win rates, and tournament progress with beautiful visualizations.
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-yellow-100 text-yellow-600 w-16 h-16 flex items-center justify-center rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Real-time Updates</h3>
+        <p class="text-gray-600">
+          Enter match results as they happen and watch rankings, standings, and analytics update instantly.
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-red-100 text-red-600 w-16 h-16 flex items-center justify-center rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Player Management</h3>
+        <p class="text-gray-600">
+          Track player histories across multiple tournaments, view performance trends, and manage player profiles.
+        </p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="feature-card bg-white p-8 rounded-xl shadow-md border border-gray-100">
+        <div class="bg-indigo-100 text-indigo-600 w-16 h-16 flex items-center justify-center rounded-full mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Tournament Planning</h3>
+        <p class="text-gray-600">
+          Plan and schedule matches, create brackets and groups, and manage complex tournament structures with ease.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works - Enhanced -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4">Simple 4-Step Process</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Get your tournament up and running in minutes, not hours
+      </p>
+    </div>
+
+    <div class="relative">
+      <!-- The connecting line -->
+      <div class="step-connector"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="bg-white rounded-xl shadow-md p-8 text-center h-full">
+            <div class="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span class="text-2xl font-bold">1</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Create Account</h3>
+            <p class="text-gray-600">
+              Sign up for free in less than a minute with just your basic information.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="bg-white rounded-xl shadow-md p-8 text-center h-full">
+            <div class="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span class="text-2xl font-bold">2</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Import Players</h3>
+            <p class="text-gray-600">
+              Upload your player list via CSV or add players manually through our interface.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="bg-white rounded-xl shadow-md p-8 text-center h-full">
+            <div class="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span class="text-2xl font-bold">3</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Manage Matches</h3>
+            <p class="text-gray-600">
+              Create, edit, and organize matches with our intuitive match management system.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card">
+          <div class="bg-white rounded-xl shadow-md p-8 text-center h-full">
+            <div class="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span class="text-2xl font-bold">4</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Analyze Results</h3>
+            <p class="text-gray-600">
+              Track performance, visualize statistics, and generate comprehensive reports.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-12">
+      <a href="/how-it-works" class="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition">
+        Learn more about our process
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4">What Tournament Organizers Say</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Join hundreds of satisfied organizers who have simplified their tournament management
+      </p>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-gray-100 p-6 rounded-xl shadow-sm">
-        <h4 class="text-xl font-semibold mb-2">📋 Easy Data Upload</h4>
-        <p>Upload your participant list using a CSV or Excel file before the tournament begins.</p>
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card bg-gray-50 p-8 rounded-lg shadow-sm">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">JD</div>
+          <div class="ml-4">
+            <h4 class="font-semibold">John Davis</h4>
+            <p class="text-sm text-gray-500">University Badminton Club</p>
+          </div>
+        </div>
+        <p class="text-gray-600">
+          "Running our annual tournament used to be a nightmare with spreadsheets. Badminton MASTER has cut our admin time in half and eliminated errors completely."
+        </p>
+        <div class="mt-4 flex text-yellow-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
       </div>
-      <div class="bg-gray-100 p-6 rounded-xl shadow-sm">
-        <h4 class="text-xl font-semibold mb-2">🤖 Smart Grouping</h4>
-        <p>Automatically divide players into groups or manually adjust them through the UI.</p>
+
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card bg-gray-50 p-8 rounded-lg shadow-sm">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">SW</div>
+          <div class="ml-4">
+            <h4 class="font-semibold">Sarah Wang</h4>
+            <p class="text-sm text-gray-500">City Badminton Association</p>
+          </div>
+        </div>
+        <p class="text-gray-600">
+          "The ability to edit match results saved us when we had incorrect scores. The analytics are phenomenal and our players love seeing their stats."
+        </p>
+        <div class="mt-4 flex text-yellow-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
       </div>
-      <div class="bg-gray-100 p-6 rounded-xl shadow-sm">
-        <h4 class="text-xl font-semibold mb-2">🕹 Match Management</h4>
-        <p>View, schedule, and score matches in real-time. Track rankings and export results.</p>
+
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card bg-gray-50 p-8 rounded-lg shadow-sm">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold">RM</div>
+          <div class="ml-4">
+            <h4 class="font-semibold">Robert Mills</h4>
+            <p class="text-sm text-gray-500">Corporate League Organizer</p>
+          </div>
+        </div>
+        <p class="text-gray-600">
+          "We've tried 3 different tournament platforms and Badminton MASTER is by far the best. The match editing feature saved us during our last tournament when we had data entry issues."
+        </p>
+        <div class="mt-4 flex text-yellow-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How It Works Preview -->
-<section class="py-16 bg-gray-50">
-  <div class="max-w-6xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-center text-gray-800 mb-10">How It Works</h3>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="text-center">
-        <div class="bg-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
-          <span class="text-2xl">1</span>
-        </div>
-        <h4 class="font-semibold mb-2">Create Account</h4>
-        <p class="text-sm text-gray-600">Sign up for a free account to access all features.</p>
+<!-- Feature Showcase with Screenshot -->
+<section class="py-20 bg-gray-900 text-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-4xl font-bold mb-6">Powerful Match Management</h2>
+        <p class="text-xl text-gray-300 mb-8">
+          Our new match management interface gives you complete control over your tournament data. Edit scores, update player information, or remove incorrect matches with just a few clicks.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Filter matches by tournament or player name</span>
+          </li>
+          <li class="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Edit match details including teams, scores, and types</span>
+          </li>
+          <li class="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Remove incorrect matches with confirmation</span>
+          </li>
+          <li class="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Analytics update instantly when matches are edited</span>
+          </li>
+        </ul>
+        <a href="/matches" class="inline-block mt-8 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-300">
+          Try Match Management
+        </a>
       </div>
-      <div class="text-center">
-        <div class="bg-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
-          <span class="text-2xl">2</span>
+      <div class="bg-gray-800 p-4 rounded-xl shadow-xl">
+        <!-- This would be a screenshot of the match management interface -->
+        <div class="bg-white text-gray-800 rounded-lg p-4 shadow-inner overflow-hidden">
+          <div class="bg-blue-600 text-white p-3 rounded-t-lg">
+            <h3 class="font-semibold">Match Management Dashboard</h3>
+          </div>
+          <div class="p-4 bg-gray-100 border-b border-gray-300">
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white p-2 rounded shadow text-sm">Tournament: Spring Open</div>
+              <div class="bg-white p-2 rounded shadow text-sm">Players: 42</div>
+              <div class="bg-white p-2 rounded shadow text-sm">Matches: 86</div>
+            </div>
+          </div>
+          <div class="p-3">
+            <table class="min-w-full">
+              <thead>
+                <tr class="border-b text-left text-sm">
+                  <th class="pb-2">Teams</th>
+                  <th class="pb-2">Score</th>
+                  <th class="pb-2">Type</th>
+                  <th class="pb-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr class="border-b">
+                  <td class="py-2">Lin Dan vs Lee C.W.</td>
+                  <td class="py-2">21-19, 18-21, 21-18</td>
+                  <td class="py-2">Men's Singles</td>
+                  <td class="py-2">
+                    <span class="px-2 py-1 bg-indigo-100 text-indigo-600 rounded text-xs">Edit</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-xs">Delete</span>
+                  </td>
+                </tr>
+                <tr class="border-b">
+                  <td class="py-2">Wang/Zhang vs Goh/Tan</td>
+                  <td class="py-2">21-15, 21-14</td>
+                  <td class="py-2">Women's Doubles</td>
+                  <td class="py-2">
+                    <span class="px-2 py-1 bg-indigo-100 text-indigo-600 rounded text-xs">Edit</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-xs">Delete</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-2">Zhao/Liu vs Ahmad/Chen</td>
+                  <td class="py-2">19-21, 21-19, 21-16</td>
+                  <td class="py-2">Mixed Doubles</td>
+                  <td class="py-2">
+                    <span class="px-2 py-1 bg-indigo-100 text-indigo-600 rounded text-xs">Edit</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-xs">Delete</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <h4 class="font-semibold mb-2">Upload Players</h4>
-        <p class="text-sm text-gray-600">Add participants via CSV upload or manual entry.</p>
       </div>
-      <div class="text-center">
-        <div class="bg-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
-          <span class="text-2xl">3</span>
-        </div>
-        <h4 class="font-semibold mb-2">Set Up Matches</h4>
-        <p class="text-sm text-gray-600">Create tournament structure and track matches.</p>
-      </div>
-      <div class="text-center">
-        <div class="bg-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 shadow-sm">
-          <span class="text-2xl">4</span>
-        </div>
-        <h4 class="font-semibold mb-2">Track Results</h4>
-        <p class="text-sm text-gray-600">Record scores and generate tournament analytics.</p>
-      </div>
-    </div>
-    <div class="text-center mt-10">
-      <a href="/how-it-works" class="text-blue-600 font-medium hover:underline">
-        Learn more about using Badminton MASTER →
-      </a>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- Call to Action -->
-<section class="py-12 bg-blue-50">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <h3 class="text-2xl font-bold text-blue-700 mb-4">Ready to manage your next tournament?</h3>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-      <a href="/signup" class="bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700 transition">
-        Create Account
-      </a>
-      <a href="/login" class="bg-white text-blue-600 border border-blue-600 px-6 py-3 rounded shadow hover:bg-blue-50 transition">
-        Login
-      </a>
+<!-- Enhanced Call to Action -->
+  <section class="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Ready to Transform Your Tournament Management?</h2>
+      <p class="text-xl text-blue-100 mb-10 max-w-3xl mx-auto">
+      Join thousands of organizers who are saving time, reducing errors, and delivering better experiences with Badminton MASTER.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-6 justify-center">
+        <a href="/signup" class="bg-white text-blue-700 hover:bg-blue-50 px-8 py-4 rounded-lg shadow-lg text-lg font-medium transition duration-300 transform hover:scale-105">
+        Create Free Account
+        </a>
+        <a href="/how-it-works" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-700 text-white px-8 py-4 rounded-lg shadow-lg text-lg font-medium transition duration-300">
+          Learn More
+        </a>
+      </div>
+      <p class="mt-8 text-blue-200">No credit card required. Free plan available for small tournaments.</p>
     </div>
-  </div>
-</section>
+  </section>
 {% endblock %}

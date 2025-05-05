@@ -1,22 +1,32 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
-import os
 import csv
 import io
 import json
 from models import db, User, Tournament, Player, Team, Match
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect, generate_csrf
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv("key.env")
 
 # Create the Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'JESUS SECRET KEY'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///badminton.db'
+
+# Get secret key from environment variable
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+if not app.config['SECRET_KEY']:
+    raise ValueError("No SECRET_KEY set for Flask application. Set the SECRET_KEY environment variable")
+
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', 'sqlite:///badminton.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'uploads')
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=int(os.environ.get('SESSION_LIFETIME_DAYS', 7)))
 
 # Configure CSRF protection
 csrf = CSRFProtect(app)

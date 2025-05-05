@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="Add limitations for limit players cannot against themselves.">
+    <list default="true" id="aef5b6eb-aed0-4727-93be-b34556e1d95e" name="Changes" comment="Bug fix for play analytics page. In the JavaScript section of the template, there are two places where the || operator of JavaScript is used:&#10;&#10;Data: [{{ player.points_scored || 0 }}, {{ player.points_conceded || 0 }}],&#10;&#10;The || here is the OR operator of JavaScript, but in the Jinja2 template, it may be parsed incorrectly. In Jinja2, the default filter or or keyword should be used.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/player_analytics.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/player_analytics.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/html/Signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/html/Signup.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,7 +174,8 @@
       <workItem from="1746148672399" duration="523000" />
       <workItem from="1746159053489" duration="255000" />
       <workItem from="1746247305167" duration="930000" />
-      <workItem from="1746248509643" duration="1027000" />
+      <workItem from="1746248509643" duration="1225000" />
+      <workItem from="1746433121993" duration="311000" />
     </task>
     <task id="LOCAL-00001" summary="Upload portal large upgrade">
       <option name="closed" value="true" />
@@ -431,7 +433,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746248725598</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Bug fix for play analytics page. In the JavaScript section of the template, there are two places where the || operator of JavaScript is used:&#10;&#10;Data: [{{ player.points_scored || 0 }}, {{ player.points_conceded || 0 }}],&#10;&#10;The || here is the OR operator of JavaScript, but in the Jinja2 template, it may be parsed incorrectly. In Jinja2, the default filter or or keyword should be used.">
+      <option name="closed" value="true" />
+      <created>1746249704948</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1746249704948</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -450,7 +460,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="dashboard html frontend upload" />
     <MESSAGE value="User settings html upload" />
     <MESSAGE value="Merge to a folder" />
     <MESSAGE value="before_game_data_template update" />
@@ -475,11 +484,12 @@
     <MESSAGE value="Bug fix: Data analytics page expands vertically despite not having any data in it #13" />
     <MESSAGE value="Submitting the &quot;tournament results&quot; form causes 400 #23 fixed and closed" />
     <MESSAGE value="Add limitations for limit players cannot against themselves." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add limitations for limit players cannot against themselves." />
+    <MESSAGE value="Bug fix for play analytics page. In the JavaScript section of the template, there are two places where the || operator of JavaScript is used:&#10;&#10;Data: [{{ player.points_scored || 0 }}, {{ player.points_conceded || 0 }}],&#10;&#10;The || here is the OR operator of JavaScript, but in the Jinja2 template, it may be parsed incorrectly. In Jinja2, the default filter or or keyword should be used." />
+    <option name="LAST_COMMIT_MESSAGE" value="Bug fix for play analytics page. In the JavaScript section of the template, there are two places where the || operator of JavaScript is used:&#10;&#10;Data: [{{ player.points_scored || 0 }}, {{ player.points_conceded || 0 }}],&#10;&#10;The || here is the OR operator of JavaScript, but in the Jinja2 template, it may be parsed incorrectly. In Jinja2, the default filter or or keyword should be used." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AgilWebDev2025$seeddatabase.coverage" NAME="seeddatabase Coverage Results" MODIFIED="1746148824020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1746249324037" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AgilWebDev2025$app.coverage" NAME="app Coverage Results" MODIFIED="1746433242361" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$Backend_Auth_Flask.coverage" NAME="app Coverage Results" MODIFIED="1744715012097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AgilWebDev2025$analytics.coverage" NAME="analytics Coverage Results" MODIFIED="1744856453390" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

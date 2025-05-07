@@ -10,7 +10,6 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
   <!-- Navbar -->
-  <!-- Update the navbar section in layout.html -->
   <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
     <a href="/" class="text-xl font-bold hover:text-blue-200 transition">🏸 {% block page_title %}Badminton Manager{% endblock %}</a>
     <div>
@@ -20,6 +19,8 @@
       <a href="/input_form" class="px-3 hover:underline {% if request.path == '/input_form' %}font-semibold{% endif %}">Add Match</a>
       <a href="/matches" class="px-3 hover:underline {% if request.path == '/matches' %}font-semibold{% endif %}">Manage Matches</a>
       <a href="/analytics" class="px-3 hover:underline {% if request.path == '/analytics' %}font-semibold{% endif %}">Analytics</a>
+      <a href="/share" class="px-3 hover:underline {% if request.path == '/share' %}font-semibold{% endif %}">Share</a>
+      <a href="/shared-with-me" class="px-3 hover:underline {% if request.path == '/shared-with-me' %}font-semibold{% endif %}">Shared With Me</a>
       <a href="/settings" class="px-3 hover:underline {% if request.path == '/settings' %}font-semibold{% endif %}">Settings</a>
       <a href="/logout" class="px-3 hover:underline text-red-300">Logout</a>
     {% else %}

@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}Tournaments Shared With Me - Badminton MASTER{% endblock %}
+{% block page_title %}Badminton MASTER{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex justify-between items-center">
+  <div>
+    <h2 class="text-2xl font-semibold">📥 Tournaments Shared With Me</h2>
+    <p class="text-gray-600 mt-1">View tournaments that other users have shared with you</p>
+  </div>
+  <div class="flex space-x-2">
+    <a href="/share" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
+      Share My Tournaments
+    </a>
+    <a href="/dashboard" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Back to Dashboard
+    </a>
+  </div>
+</div>
+
+<!-- Shared Tournaments List -->
+<div class="bg-white rounded-lg shadow p-6 mb-10">
+  <h3 class="text-xl font-bold mb-4">Shared With You</h3>
+
+  {% if shared_tournaments %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tournament Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shared By</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shared On</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for share in shared_tournaments %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ share.tournament.name }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ share.tournament.date.strftime('%Y-%m-%d') }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ share.tournament.location or 'N/A' }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ share.owner.username }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ share.shared_at.strftime('%Y-%m-%d') }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <a href="/shared-with-me/{{ share.tournament.id }}" class="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                  View
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="text-center py-8 text-gray-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+      </svg>
+      <p class="mt-2">No tournaments have been shared with you yet.</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Information about shared tournaments -->
+<div class="bg-blue-50 rounded-lg p-6 border border-blue-200 mb-10">
+  <h3 class="text-lg font-semibold text-blue-800 mb-2">About Shared Tournaments</h3>
+  <ul class="space-y-2 text-gray-700">
+    <li class="flex items-start">
+      <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>You can view all tournament details and match data for tournaments shared with you</span>
+    </li>
+    <li class="flex items-start">
+      <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>The tournament owner can stop sharing with you at any time</span>
+    </li>
+    <li class="flex items-start">
+      <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>Want to share your own tournaments? Use the "Share My Tournaments" button above</span>
+    </li>
+  </ul>
+</div>
+{% endblock %}

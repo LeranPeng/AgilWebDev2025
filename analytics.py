@@ -1,18 +1,6 @@
 """
 Data Analysis Module - Provides data analysis functionality for the badminton tournament management system
 """
-
-from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request, flash
-from sqlalchemy import func, desc, and_
-from datetime import datetime, timedelta
-import json
-from functools import wraps
-# Import database models from models.py
-from models import db, Tournament, Match, Team, Player
-"""
-Data Analysis Module - Provides data analysis functionality for the badminton tournament management system
-"""
-
 from flask import Blueprint, render_template, session, redirect, url_for, jsonify, request, flash
 from sqlalchemy import func, desc, and_
 from datetime import datetime, timedelta
@@ -616,12 +604,12 @@ def analytics_dashboard():
 @analytics.route('/analytics/player/<int:player_id>')
 @login_required
 def player_analytics(player_id):
-    """Individual player analysis view"""
+    """Individual player analysis view with improved error handling"""
     if "user_id" not in session:
         return redirect(url_for("login"))
 
     user_id = session.get("user_id")
-
+    
     # Get player statistics
     player_stats = get_player_stats(player_id, user_id)
 
@@ -664,16 +652,23 @@ def player_analytics(player_id):
         if 'win_rate' not in stats:
             stats['win_rate'] = 0 if stats['matches'] == 0 else (stats['wins'] / stats['matches'] * 100)
 
-    return render_template(
+    # Add cache control headers directly to response
+    response = render_template(
         "player_analytics.html",
         player=player_stats,
         players=players
     )
+    
+    # Flask will automatically convert the string response to a Response object
+    return response
 
 @analytics.route('/analytics/tournament/<int:tournament_id>')
 @login_required
 def tournament_analytics(tournament_id):
-    """Tournament analysis view"""
+    """Tournament analysis view with improved error handling"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+        
     user_id = session.get("user_id")
 
     # Get tournament statistics
@@ -681,12 +676,26 @@ def tournament_analytics(tournament_id):
 
     # If tournament not found or doesn't belong to current user
     if not tournament_stats:
+        flash("Tournament not found or you don't have permission to view it")
         return redirect(url_for('analytics.analytics_dashboard'))
+    
+    # Initialize empty containers for missing data
+    if 'match_types' not in tournament_stats or not tournament_stats['match_types']:
+        tournament_stats['match_types'] = {}
+    
+    if 'rounds' not in tournament_stats or not tournament_stats['rounds']:
+        tournament_stats['rounds'] = {}
+    
+    if 'players' not in tournament_stats or not tournament_stats['players']:
+        tournament_stats['players'] = []
 
-    return render_template(
-        "tournament_analytics.html",  # Changed from "html/tournament_analytics.html"
+    # Create response with cache control headers to prevent stale data
+    response = render_template(
+        "tournament_analytics.html",
         tournament=tournament_stats
     )
+    
+    return response
 
 @analytics.route('/analytics/head_to_head')
 @login_required

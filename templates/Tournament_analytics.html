@@ -5,14 +5,66 @@
 
 {% block extra_css %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<style>
+  .stat-card {
+    transition: all 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  .chart-container {
+    height: 250px;
+    position: relative;
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+  .empty-state svg {
+    color: #9CA3AF;
+    margin-bottom: 1rem;
+  }
+  .player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+  .player-item {
+    background-color: #F3F4F6;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  .player-item:hover {
+    background-color: #E5E7EB;
+    transform: translateY(-2px);
+  }
+  .match-info-card {
+    border-left: 4px solid #3B82F6;
+    background-color: #F3F4F6;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="mb-6 flex justify-between items-center">
   <div>
-    <h2 class="text-2xl font-semibold">🏆 {{ tournament.name }}</h2>
+    <h2 class="text-2xl font-semibold">🏆 {{ tournament.name | default('Tournament Analysis') }}</h2>
     <p class="text-gray-600 mt-1">
-      on {{ tournament.date }} at {{ tournament.location }}
+      {% if tournament.date and tournament.location %}
+        on {{ tournament.date }} at {{ tournament.location }}
+      {% elif tournament.date %}
+        on {{ tournament.date }}
+      {% elif tournament.location %}
+        at {{ tournament.location }}
+      {% endif %}
     </p>
   </div>
   <div>
@@ -22,44 +74,67 @@
   </div>
 </div>
 
-<!-- basic stats data -->
+<!-- Basic stats data -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-  <div class="bg-white p-5 rounded shadow text-center">
-    <p class="text-gray-500">Game count</p>
-    <p class="text-3xl font-bold text-blue-700 mt-2">{{ tournament.match_count }}</p>
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
+    <p class="text-gray-500">Match Count</p>
+    <p class="text-3xl font-bold text-blue-700 mt-2">{{ tournament.match_count | default(0) }}</p>
   </div>
-  <div class="bg-white p-5 rounded shadow text-center">
-    <p class="text-gray-500">Player</p>
-    <p class="text-3xl font-bold text-green-600 mt-2">{{ tournament.player_count }}</p>
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
+    <p class="text-gray-500">Players</p>
+    <p class="text-3xl font-bold text-green-600 mt-2">{{ tournament.player_count | default(0) }}</p>
   </div>
-  <div class="bg-white p-5 rounded shadow text-center">
-    <p class="text-gray-500">Game type</p>
-    <p class="text-3xl font-bold text-purple-600 mt-2">{{ tournament.match_types|length }}</p>
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
+    <p class="text-gray-500">Match Types</p>
+    <p class="text-3xl font-bold text-purple-600 mt-2">{{ tournament.match_types|default({})|length }}</p>
   </div>
-  <div class="bg-white p-5 rounded shadow text-center">
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Rounds</p>
-    <p class="text-3xl font-bold text-yellow-500 mt-2">{{ tournament.rounds|length }}</p>
+    <p class="text-3xl font-bold text-yellow-500 mt-2">{{ tournament.rounds|default({})|length }}</p>
   </div>
 </div>
 
-<!-- Graph -->
+<!-- Charts -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
   <div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold mb-4">📊 Game Type Distribution</h3>
-    <canvas id="matchTypeChart" height="250"></canvas>
+    <h3 class="text-lg font-semibold mb-4">📊 Match Type Distribution</h3>
+    {% if tournament.match_types and tournament.match_types|length > 0 %}
+      <div class="chart-container">
+        <canvas id="matchTypeChart"></canvas>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+        </svg>
+        <p>No match type data available for this tournament</p>
+      </div>
+    {% endif %}
   </div>
   <div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold mb-4">🔄 Match round distribution</h3>
-    <canvas id="roundsChart" height="250"></canvas>
+    <h3 class="text-lg font-semibold mb-4">🔄 Match Round Distribution</h3>
+    {% if tournament.rounds and tournament.rounds|length > 0 %}
+      <div class="chart-container">
+        <canvas id="roundsChart"></canvas>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <p>No round data available for this tournament</p>
+      </div>
+    {% endif %}
   </div>
 </div>
 
-<!-- High point -->
+<!-- Highlight Matches -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
   {% if tournament.longest_match %}
     <div class="bg-white p-6 rounded shadow">
       <h3 class="text-lg font-semibold mb-4">⏱ Longest Match</h3>
-      <div class="space-y-3">
+      <div class="match-info-card p-4 space-y-3">
         <div>
           <span class="font-medium text-gray-600">Teams:</span>
           <p class="mt-1">{{ tournament.longest_match.team1 }} vs {{ tournament.longest_match.team2 }}</p>
@@ -69,11 +144,11 @@
           <p class="mt-1">{{ tournament.longest_match.score1 }}</p>
         </div>
         <div>
-          <span class="font-medium text-gray-600">Game Type:</span>
+          <span class="font-medium text-gray-600">Match Type:</span>
           <p class="mt-1">{{ tournament.longest_match.match_type }}</p>
         </div>
         <div>
-          <span class="font-medium text-gray-600">Round count:</span>
+          <span class="font-medium text-gray-600">Sets:</span>
           <p class="mt-1">{{ tournament.longest_match.sets }}</p>
         </div>
       </div>
@@ -83,7 +158,7 @@
   {% if tournament.highest_score %}
     <div class="bg-white p-6 rounded shadow">
       <h3 class="text-lg font-semibold mb-4">🔥 Highest Scoring Match</h3>
-      <div class="space-y-3">
+      <div class="match-info-card p-4 space-y-3">
         <div>
           <span class="font-medium text-gray-600">Teams:</span>
           <p class="mt-1">{{ tournament.highest_score.team1 }} vs {{ tournament.highest_score.team2 }}</p>
@@ -103,20 +178,41 @@
       </div>
     </div>
   {% endif %}
+  
+  {% if not tournament.longest_match and not tournament.highest_score %}
+    <div class="bg-white p-6 rounded shadow md:col-span-2">
+      <h3 class="text-lg font-semibold mb-4">Match Highlights</h3>
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <p>No match highlights available for this tournament</p>
+      </div>
+    </div>
+  {% endif %}
 </div>
 
-<!-- Player -->
+<!-- Player List -->
 <div class="bg-white rounded shadow p-6 mb-10">
-  <h3 class="text-xl font-bold mb-4">👥 Tournament Players ({{ tournament.players|length }})</h3>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    {% for player in tournament.players %}
-      <div class="p-3 bg-gray-50 rounded">
-        <a href="/analytics/player/{{ player.id }}" class="text-blue-600 hover:underline">
-          {{ player.name }}
-        </a>
-      </div>
-    {% endfor %}
-  </div>
+  <h3 class="text-xl font-bold mb-4">👥 Tournament Players {% if tournament.players %} ({{ tournament.players|length }}) {% endif %}</h3>
+  {% if tournament.players and tournament.players|length > 0 %}
+    <div class="player-grid">
+      {% for player in tournament.players %}
+        <div class="player-item">
+          <a href="/analytics/player/{{ player.id }}" class="text-blue-600 hover:underline">
+            {{ player.name }}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+      <p>No player data available for this tournament</p>
+    </div>
+  {% endif %}
 </div>
 
 <!-- Quick Navigation Buttons -->
@@ -132,88 +228,101 @@
 
 {% block scripts %}
 <script>
-  // Init graph
   document.addEventListener('DOMContentLoaded', function() {
-    // Deal with match type
-    const matchTypes = {{ tournament.match_types|tojson }};
-    const matchTypeLabels = [];
-    const matchTypeValues = [];
+    // Match type distribution chart
+    const matchTypeChartElement = document.getElementById('matchTypeChart');
+    if (matchTypeChartElement) {
+      {% if tournament.match_types and tournament.match_types|length > 0 %}
+        // Process match types data from template
+        const matchTypeLabels = [];
+        const matchTypeValues = [];
 
-    for (const type in matchTypes) {
-      matchTypeLabels.push(type);
-      matchTypeValues.push(matchTypes[type]);
-    }
+        {% for type, count in tournament.match_types.items() %}
+          matchTypeLabels.push("{{ type }}");
+          matchTypeValues.push({{ count|default(0) }});
+        {% endfor %}
 
-    // Draw event type distribution
-    const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
-    const matchTypeChart = new Chart(matchTypeCtx, {
-      type: 'pie',
-      data: {
-        labels: matchTypeLabels,
-        datasets: [{
-          data: matchTypeValues,
-          backgroundColor: [
-            'rgba(59, 130, 246, 0.7)',
-            'rgba(16, 185, 129, 0.7)',
-            'rgba(245, 158, 11, 0.7)',
-            'rgba(239, 68, 68, 0.7)',
-            'rgba(139, 92, 246, 0.7)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
-
-    // Deal with the round data
-    const rounds = {{ tournament.rounds|tojson }};
-    const roundLabels = [];
-    const roundValues = [];
-
-    for (const round in rounds) {
-      roundLabels.push(round);
-      roundValues.push(rounds[round]);
-    }
-
-    // Draw the round distribution graph
-    const roundsCtx = document.getElementById('roundsChart').getContext('2d');
-    const roundsChart = new Chart(roundsCtx, {
-      type: 'bar',
-      data: {
-        labels: roundLabels,
-        datasets: [{
-          label: 'Game count',
-          data: roundValues,
-          backgroundColor: 'rgba(79, 70, 229, 0.7)',
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
+        // Create the chart
+        const matchTypeCtx = matchTypeChartElement.getContext('2d');
+        const matchTypeChart = new Chart(matchTypeCtx, {
+          type: 'pie',
+          data: {
+            labels: matchTypeLabels,
+            datasets: [{
+              data: matchTypeValues,
+              backgroundColor: [
+                'rgba(59, 130, 246, 0.7)', // Blue
+                'rgba(16, 185, 129, 0.7)', // Green
+                'rgba(245, 158, 11, 0.7)', // Yellow
+                'rgba(239, 68, 68, 0.7)',  // Red
+                'rgba(139, 92, 246, 0.7)'  // Purple
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 12,
+                  font: { size: 11 }
+                }
+              }
             }
           }
-        }
-      }
-    });
+        });
+      {% endif %}
+    }
+
+    // Round distribution chart
+    const roundsChartElement = document.getElementById('roundsChart');
+    if (roundsChartElement) {
+      {% if tournament.rounds and tournament.rounds|length > 0 %}
+        // Process rounds data from template
+        const roundLabels = [];
+        const roundValues = [];
+
+        {% for round, count in tournament.rounds.items() %}
+          roundLabels.push("{{ round }}");
+          roundValues.push({{ count|default(0) }});
+        {% endfor %}
+
+        // Create the chart
+        const roundsCtx = roundsChartElement.getContext('2d');
+        const roundsChart = new Chart(roundsCtx, {
+          type: 'bar',
+          data: {
+            labels: roundLabels,
+            datasets: [{
+              label: 'Match count',
+              data: roundValues,
+              backgroundColor: 'rgba(79, 70, 229, 0.7)', // Indigo
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  precision: 0
+                }
+              }
+            }
+          }
+        });
+      {% endif %}
+    }
   });
 </script>
 {% endblock %}

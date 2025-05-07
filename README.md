@@ -1,4 +1,4 @@
-# Badminton Tournament Manager - Badminton MASTER
+# 🏸Badminton Tournament Manager - Badminton MASTER
 
 A web application for analysing badminton tournaments, tracking player statistics, and viewing game results.
 
@@ -6,17 +6,23 @@ Users are able to upload a .csv file or complete a form with the results of thei
 
 ![](/static/homepage.png)
 
-## Features
-
+## ✨Product Features
 - **Player Management**: Register and manage players
 - **Tournament Organization**: Create tournaments and organize matches
 - **Match Recording**: Record match results and scores
 - **Statistics & Analytics**: View detailed player and tournament statistics
 - **Data Import/Export**: Upload and download tournament data via CSV
+- **Admin Accounts**: Use Admin accounts to control your installation
+
+## 🚀PROJECT Features
+- **Beautiful Frontend**: Using the Bootstrap framework 
+- **Serverside Rendering**: Using Flask and Jinja templates 
+- **Simple backend**: Written in Python with Flask
+- **Simple Database structure**: Using SQLite, interfaced using the SQAlchemy python package
 
 ![](/static/analysispage.png)
 
-## Installation
+## ⬇️Installation Instructions
 <details>
 <summary>View Installation instructions</summary>
 
@@ -50,7 +56,7 @@ python app.py
 6. Access the application in your browser at `http://localhost:5000`
 </details>
 
-## Project Structure
+## 🗂️Project Structure
 
 ```
 badminton-tournament-manager/
@@ -84,7 +90,7 @@ badminton-tournament-manager/
 ```
 
 
-## Security Implementation
+## 🔒Security Implementation
 
 The application includes security features:
 - Login required for all protected routes (everything other than "/" and "/home")
@@ -92,12 +98,12 @@ The application includes security features:
 - Session management
 - Password hashing
 
-## Database
+## 💾Database
 
 This project uses SQLite for simplicity. The database file is `badminton.db`.
 
 
-# Admin Account Guide
+# 👨🏻‍💻Admin Account Guide
 This project has "admin" account functionality, "admin" accounts are user accounts with additional privelidges and functionality over the data and accounts in your Badminton MASTER installation. 
 
 ## Main features of the admin accounts:

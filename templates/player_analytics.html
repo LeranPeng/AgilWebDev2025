@@ -5,12 +5,47 @@
 
 {% block extra_css %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<style>
+  .stat-card {
+    transition: all 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  .match-result-win {
+    color: #10B981;
+    font-weight: 500;
+  }
+  .match-result-loss {
+    color: #EF4444;
+    font-weight: 500;
+  }
+  .chart-container {
+    height: 250px;
+    position: relative;
+  }  
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+    text-align: center;
+  }
+  .empty-state svg {
+    color: #9CA3AF;
+    margin-bottom: 1rem;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="mb-6 flex justify-between items-center">
   <div>
-    <h2 class="text-2xl font-semibold">🏆 Analysis for {{ player.name | default('N/A') }}</h2>
+    <h2 class="text-2xl font-semibold">🏆 Analysis for {{ player.name | default('Player') }}</h2>
     <p class="text-gray-600 mt-1">View detailed player statistics and performance</p>
   </div>
   <div class="flex space-x-2">
@@ -28,35 +63,58 @@
   </div>
 </div>
 
-<!-- Basic stats data -->
+<!-- Basic stats data - with default values to handle null/undefined -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-  <div class="bg-white p-5 rounded shadow text-center">
-    <p class="text-gray-500">Total sessions</p>
-    <p class="text-3xl font-bold text-blue-700 mt-2">{{ player.matches }}</p>
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
+    <p class="text-gray-500">Total Matches</p>
+    <p class="text-3xl font-bold text-blue-700 mt-2">{{ player.matches|default(0) }}</p>
   </div>
-  <div class="bg-white p-5 rounded shadow text-center">
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Wins</p>
-    <p class="text-3xl font-bold text-green-600 mt-2">{{ player.wins }}</p>
+    <p class="text-3xl font-bold text-green-600 mt-2">{{ player.wins|default(0) }}</p>
   </div>
-  <div class="bg-white p-5 rounded shadow text-center">
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Losses</p>
-    <p class="text-3xl font-bold text-red-600 mt-2">{{ player.losses }}</p>
+    <p class="text-3xl font-bold text-red-600 mt-2">{{ player.losses|default(0) }}</p>
   </div>
-  <div class="bg-white p-5 rounded shadow text-center">
+  <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Win Rate</p>
-    <p class="text-3xl font-bold text-purple-600 mt-2">{{ player.win_rate }}%</p>
+    <p class="text-3xl font-bold text-purple-600 mt-2">{{ player.win_rate|default(0) }}%</p>
   </div>
 </div>
 
-<!-- Chart -->
+<!-- Charts - with empty state handling -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
   <div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold mb-4">⚔️ Performance in various games</h3>
-    <canvas id="matchTypeChart" class="h-64 w-full"></canvas>
+    <h3 class="text-lg font-semibold mb-4">⚔️ Performance by Match Type</h3>
+    {% if player.match_types and player.match_types|length > 0 %}
+      <div class="chart-container">
+        <canvas id="matchTypeChart"></canvas>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <p>No match type data available for this player</p>
+      </div>
+    {% endif %}
   </div>
   <div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold mb-4">📈 Score Statistics</h3>
-    <canvas id="scoreChart" class="h-64 w-full"></canvas>
+    <h3 class="text-lg font-semibold mb-4">📈 Points Statistics</h3>
+    {% if player.points_scored is defined or player.points_conceded is defined %}
+      <div class="chart-container">
+        <canvas id="scoreChart"></canvas>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+        </svg>
+        <p>No score statistics available for this player</p>
+      </div>
+    {% endif %}
   </div>
 </div>
 
@@ -83,9 +141,9 @@
               <td class="py-3 px-4">{{ match.opponent }}</td>
               <td class="py-3 px-4">
                 {% if match.result == 'Win' %}
-                  <span class="text-green-600 font-medium">Win</span>
+                  <span class="match-result-win">Win</span>
                 {% else %}
-                  <span class="text-red-600 font-medium">Loss</span>
+                  <span class="match-result-loss">Loss</span>
                 {% endif %}
               </td>
               <td class="py-3 px-4">{{ match.score }}</td>
@@ -95,13 +153,18 @@
       </table>
     </div>
   {% else %}
-    <p class="text-gray-600 text-center py-4">No recent matches found for this player.</p>
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <p>No recent matches found for this player</p>
+    </div>
   {% endif %}
 </div>
 
-<!-- Game Analysis -->
+<!-- Match-up Analysis -->
 <div class="bg-white rounded shadow p-6 mb-10">
-  <h3 class="text-xl font-bold mb-4">🥊 Match Analysis</h3>
+  <h3 class="text-xl font-bold mb-4">🥊 Head-to-Head Analysis</h3>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <label class="block text-gray-500 mb-2">Select an opponent to view the head-to-head record</label>
@@ -138,105 +201,125 @@
 
 {% block scripts %}
 <script>
-  // Init Charts
+  // Initialize charts only when data is available
   document.addEventListener('DOMContentLoaded', function() {
-    // Processing match type data
-    const matchTypes = {{ player.match_types|tojson }};
-    const matchTypeLabels = [];
-    const matchTypeWins = [];
-    const matchTypeLosses = [];
+    // Match type chart
+    const matchTypeChartElement = document.getElementById('matchTypeChart');
+    if (matchTypeChartElement) {
+      // Check if match_types data exists
+      {% if player.match_types %}
+        // Process match types safely
+        const matchTypeLabels = [];
+        const matchTypeWins = [];
+        const matchTypeLosses = [];
 
-    for (const type in matchTypes) {
-      matchTypeLabels.push(type);
-      const wins = matchTypes[type].wins || 0;
-      const total = matchTypes[type].matches || 0;
-      matchTypeWins.push(wins);
-      matchTypeLosses.push(total - wins);
+        {% for type, stats in player.match_types.items() %}
+          matchTypeLabels.push("{{ type }}");
+          matchTypeWins.push({{ stats.wins|default(0) }});
+          matchTypeLosses.push({{ stats.matches|default(0) - stats.wins|default(0) }});
+        {% endfor %}
+
+        // Only create chart if we have data
+        if (matchTypeLabels.length > 0) {
+          const matchTypeCtx = matchTypeChartElement.getContext('2d');
+          const matchTypeChart = new Chart(matchTypeCtx, {
+            type: 'bar',
+            data: {
+              labels: matchTypeLabels,
+              datasets: [
+                {
+                  label: 'Wins',
+                  data: matchTypeWins,
+                  backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                  borderWidth: 0
+                },
+                {
+                  label: 'Losses',
+                  data: matchTypeLosses,
+                  backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                  borderWidth: 0
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: { stacked: true },
+                y: {
+                  stacked: true,
+                  beginAtZero: true,
+                  ticks: { precision: 0 }
+                }
+              }
+            }
+          });
+        }
+      {% endif %}
     }
 
-    // Charting Match Type Performance
-    const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
-    const matchTypeChart = new Chart(matchTypeCtx, {
-      type: 'bar',
-      data: {
-        labels: matchTypeLabels,
-        datasets: [
-          {
-            label: 'Wins',
-            data: matchTypeWins,
-            backgroundColor: 'rgba(16, 185, 129, 0.7)',
-            borderWidth: 0
-          },
-          {
-            label: 'Losses',
-            data: matchTypeLosses,
-            backgroundColor: 'rgba(239, 68, 68, 0.7)',
-            borderWidth: 0
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { stacked: true },
-          y: {
-            stacked: true,
-            beginAtZero: true,
-            ticks: { precision: 0 }
-          }
-        }
-      }
-    });
-
     // Score chart
-    const scoreCtx = document.getElementById('scoreChart').getContext('2d');
-    const scoreChart = new Chart(scoreCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Points Scored', 'Points Conceded'],
-        datasets: [{
-          label: 'Total Points',
-          data: [{{ player.points_scored|default(0) }}, {{ player.points_conceded|default(0) }}],
-          backgroundColor: [
-            'rgba(79, 70, 229, 0.7)',
-            'rgba(245, 158, 11, 0.7)'
-          ],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true }
+    const scoreChartElement = document.getElementById('scoreChart');
+    if (scoreChartElement) {
+      // Only create chart if we have score data
+      {% if player.points_scored is defined or player.points_conceded is defined %}
+        const scoreCtx = scoreChartElement.getContext('2d');
+        const scoreChart = new Chart(scoreCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Points Scored', 'Points Conceded'],
+            datasets: [{
+              label: 'Total Points',
+              data: [
+                {{ player.points_scored|default(0) }}, 
+                {{ player.points_conceded|default(0) }}
+              ],
+              backgroundColor: [
+                'rgba(79, 70, 229, 0.7)',
+                'rgba(245, 158, 11, 0.7)'
+              ],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      {% endif %}
+    }
+
+    // Player switching functionality
+    const playerSwitch = document.getElementById('playerSwitch');
+    if (playerSwitch) {
+      playerSwitch.addEventListener('change', function() {
+        const playerId = this.value;
+        if (playerId) {
+          window.location.href = `/analytics/player/${playerId}`;
         }
-      }
-    });
+      });
+    }
 
-    // Player switch event
-    document.getElementById('playerSwitch').addEventListener('change', function() {
-      const playerId = this.value;
-      if (playerId) {
-        window.location.href = `/analytics/player/${playerId}`;
-      }
-    });
-
-    // Duel comparison logic
+    // Head-to-head comparison functionality
     const opponentSelect = document.getElementById('opponentSelect');
     const compareBtn = document.getElementById('compareBtn');
+    
+    if (opponentSelect && compareBtn) {
+      opponentSelect.addEventListener('change', function() {
+        compareBtn.disabled = !this.value;
+      });
 
-    opponentSelect.addEventListener('change', function() {
-      compareBtn.disabled = !this.value;
-    });
-
-    compareBtn.addEventListener('click', function() {
-      const opponentId = opponentSelect.value;
-      if (opponentId) {
-        window.location.href = `/analytics/head_to_head?player1={{ player.id }}&player2=${opponentId}`;
-      }
-    });
+      compareBtn.addEventListener('click', function() {
+        const opponentId = opponentSelect.value;
+        if (opponentId) {
+          window.location.href = `/analytics/head_to_head?player1={{ player.id }}&player2=${opponentId}`;
+        }
+      });
+    }
   });
 </script>
 {% endblock %}

@@ -2,6 +2,8 @@
 
 A web application for analysing badminton tournaments, tracking player statistics, and viewing game results.
 
+Users are able to upload a .csv file or complete a form with the results of their own self hosted Badminton tournament and use Badminton MASTER to view ther overall results and ranking of players, compare two players, and share the data with other user accounts. 
+
 ## Features
 
 - **Player Management**: Register and manage players
@@ -91,9 +93,9 @@ The application includes security features:
 This project uses SQLite for simplicity. The database file is `badminton.db`.
 
 
-# Badminton Tournament Management System - Admin Guide
+# Admin Account Guide
 
-This document provides instructions on setting up and using the admin functionality in the Badminton Tournament Management System.
+Instructions on setting up and using the admin functionality in the Badminton Tournament Management System.
 
 ## Table of Contents
 
@@ -106,7 +108,12 @@ This document provides instructions on setting up and using the admin functional
 7. [[Database Maintenance](https://github.com/LeranPeng/AgilWebDev2025/issues/49#database-maintenance)](#database-maintenance)
 8. [[Security Considerations](https://github.com/LeranPeng/AgilWebDev2025/issues/49#security-considerations)](#security-considerations)
 
-## Setup
+
+
+<details>
+<summary>## Setup</summary>
+
+Setup the admin account for your installation
 
 ### Database Schema Update
 
@@ -123,6 +130,7 @@ class User(db.Model):
     tournaments = db.relationship('Tournament', backref='organizer', lazy=True)
 ```
 
+
 ### Creating the Initial Admin User
 
 When upgrading an existing installation, you'll need to run the `admin_init.py` script to create the first admin user or grant admin privileges to an existing user:
@@ -132,6 +140,7 @@ When upgrading an existing installation, you'll need to run the `admin_init.py` 
 3. Follow the prompts to create a new admin user or update an existing one
 
 For new installations, an admin user will be created automatically when the application starts for the first time.
+</details>
 
 ## Admin Features
 
@@ -160,6 +169,7 @@ Users with admin status have access to:
 - The admin dashboard at `/admin`
 - All user, tournament, player, and system data regardless of ownership
 - Special maintenance and system management features
+
 
 ## Tournament Management
 

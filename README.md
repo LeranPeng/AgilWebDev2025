@@ -105,10 +105,10 @@ This project has "admin" account functionality, "admin" accounts are user accoun
 - **Database Maintenance**: Clean up orphaned records and optimize the database
 
 ## Admin Account Documentation
+<details>
+<summary>Setup</summary>
 
 ### Setup
-<details>
-<summary>Setup the admin account for your installation</summary>
 
 ### Database Schema Update
 
@@ -137,10 +137,11 @@ When upgrading an existing installation, you'll need to run the `admin_init.py` 
 For new installations, an admin user will be created automatically when the application starts for the first time.
 </details>
 
-### User Management
+
 <details>
 <summary>User management </summary>
 
+### User Management
 The user management interface allows administrators to:
 
 - View all registered users
@@ -158,8 +159,11 @@ Users with admin status have access to:
 - Special maintenance and system management features
 </details>
 
-### Tournament Management
+
 <details>
+<summary>Tournament management</summary>
+
+### Tournament Management
 The tournament management interface allows administrators to:
 
 - View all tournaments in the system
@@ -168,8 +172,11 @@ The tournament management interface allows administrators to:
 - Delete tournaments and their associated matches
 </details>
 
-### Player Management
+
 <details>
+<summary>Player management</summary>
+
+### Player Management
 The player management interface provides:
 
 - A list of all players in the system
@@ -193,8 +200,11 @@ This process will:
 - Delete the duplicate player record
 </details>
 
-### System Statistics
+
 <details>
+<summary>System management</summary>
+
+### System Statistics
 The statistics dashboard provides insights into system usage:
 
 - User, tournament, match, and player counts
@@ -204,8 +214,11 @@ The statistics dashboard provides insights into system usage:
 - System health metrics
 </details>
 
-### Database Maintenance
+
 <details>
+<summary>Database Maintenance</summary>
+
+### Database Maintenance
 The maintenance tools help keep the database clean and optimized:
 
 - Remove orphaned teams (teams with no associated matches)
@@ -214,8 +227,11 @@ The maintenance tools help keep the database clean and optimized:
 - Back up the database
 </details>
 
-### Security Considerations
+
 <details>
+<summary>Security Considerations</summary>
+
+### Security Considerations
 When implementing the admin functionality, consider the following security best practices:
 
 1. **Change the default admin password immediately** after installation
@@ -228,8 +244,11 @@ When implementing the admin functionality, consider the following security best 
 8. Regularly back up your database
 </details>
 
-### Accessing the Admin Interface
+
 <details>
+<summary>Accessing the Admin Interface</summary>
+
+### Accessing the Admin Interface
 Once logged in as an admin user, you can access the admin dashboard at:
 
 ```

@@ -42,6 +42,23 @@
     background-color: #d1fae5;
     color: #047857;
   }
+
+  #userSharePanel {
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .user-item {
+    transition: background-color 0.2s ease;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+
+  .user-item:hover {
+    background-color: #f3f4f6;
+  }
 </style>
 {% endblock %}
 
@@ -52,7 +69,7 @@
     <p class="text-gray-600 mt-1">Compare the head-to-head records between two players</p>
   </div>
   <div class="flex space-x-2">
-    <!-- Share Button -->
+    <!-- Share Dropdown -->
     <div class="share-dropdown">
       <button id="shareBtn" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -61,40 +78,45 @@
         Share
       </button>
       <div id="shareMenu" class="share-menu">
-        <button id="copyLinkBtn" class="share-option w-full text-left flex items-center">
+        <!-- Download option -->
+        <a id="downloadBtn" class="share-option flex items-center cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-            <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z" />
+            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
-          Copy Link
-        </button>
-        <a id="emailShare" class="share-option flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-          </svg>
-          Email
+          Download Results as CSV
         </a>
-        <a id="whatsappShare" class="share-option flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 448 512" fill="currentColor">
-            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
-          </svg>
-          WhatsApp
-        </a>
-        <a id="twitterShare" class="share-option flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-          X (Twitter)
-        </a>
-        <a id="facebookShare" class="share-option flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 320 512" fill="currentColor">
-            <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z" />
-          </svg>
-          Facebook
-        </a>
+
+        <!-- Internal sharing option -->
+        <div class="share-option" id="internalShareBtn">
+          <div class="flex items-center cursor-pointer" id="showShareOptionsBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+            </svg>
+            Share with Another User
+          </div>
+        </div>
+      </div>
+
+      <!-- User selection panel for internal sharing -->
+      <div id="userSharePanel" class="hidden absolute mt-2 w-64 bg-white rounded-md shadow-lg z-20 p-2 border border-gray-200">
+        <h3 class="text-sm font-medium text-gray-700 mb-2 p-2">Select User to Share With:</h3>
+        <div class="max-h-40 overflow-y-auto">
+          <form action="/share/head_to_head" method="POST" id="shareHeadToHeadForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="player1_id" value="{{ head_to_head.player1.id if head_to_head else '' }}">
+            <input type="hidden" name="player2_id" value="{{ head_to_head.player2.id if head_to_head else '' }}">
+            <input type="hidden" name="user_id" id="selectedUserId">
+
+            <div class="user-list px-2 pb-2">
+              <!-- User list will be populated by JavaScript -->
+              <div class="text-center text-gray-500 py-2">Loading users...</div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
+
+    <!-- Back to Analytics button -->
     <a href="/analytics" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
       Back to Analytics
     </a>
@@ -128,7 +150,7 @@
     </div>
     <div class="flex items-end">
       <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-        Analyse the Matchup
+        Analyze the Matchup
       </button>
     </div>
   </form>
@@ -172,7 +194,7 @@
     </div>
   </div>
 
-  <!-- Competition history -->
+  <!-- Match History -->
   <div class="bg-white rounded shadow p-6 mb-10">
     <h3 class="text-xl font-bold mb-4">📜 Match History</h3>
     {% if head_to_head.matches %}
@@ -236,6 +258,7 @@
 {% if head_to_head %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Win rate chart
       const winRateCtx = document.getElementById('winRateChart').getContext('2d');
       const player1Name = "{{ head_to_head.player1.name }}";
       const player2Name = "{{ head_to_head.player2.name }}";
@@ -282,68 +305,106 @@
           }
         }
       });
-      
+
       // Share functionality
       const shareBtn = document.getElementById('shareBtn');
       const shareMenu = document.getElementById('shareMenu');
-      const copyLinkBtn = document.getElementById('copyLinkBtn');
-      const twitterShare = document.getElementById('twitterShare');
-      const emailShare = document.getElementById('emailShare');
-      const whatsappShare = document.getElementById('whatsappShare');
-      const facebookShare = document.getElementById('facebookShare');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const showShareOptionsBtn = document.getElementById('showShareOptionsBtn');
+      const userSharePanel = document.getElementById('userSharePanel');
 
-      // Handle current URL for sharing
-      const currentUrl = window.location.href;
-      
-      // Create share text
-      const shareTitle = `Head-to-head: ${player1Name} vs ${player2Name}`;
-      const shareText = `${player1Name} (${player1Wins}) vs ${player2Name} (${player2Wins}) - Check out their head-to-head record!`;
-      
       // Toggle dropdown
       shareBtn.addEventListener('click', () => {
         shareMenu.classList.toggle('active');
       });
-      
+
       // Close dropdown when clicking outside
       document.addEventListener('click', (e) => {
-        if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target)) {
+        if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target) && !userSharePanel.contains(e.target)) {
           shareMenu.classList.remove('active');
+          userSharePanel.classList.add('hidden');
         }
       });
-      
-      // Copy link to clipboard
-      copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(currentUrl)
-          .then(() => {
-            copyLinkBtn.classList.add('copy-link-success');
-            copyLinkBtn.innerHTML = `
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-              Link Copied!
-            `;
-            
-            setTimeout(() => {
-              copyLinkBtn.classList.remove('copy-link-success');
-              copyLinkBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                  <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z" />
-                </svg>
-                Copy Link
+
+      // Download CSV functionality
+      downloadBtn.addEventListener('click', function() {
+        // Prepare data for download
+        let csvContent = "Head to Head Results\n";
+        csvContent += `${player1Name} vs ${player2Name}\n`;
+        csvContent += `${player1Name} Wins,${player1Wins}\n`;
+        csvContent += `${player2Name} Wins,${player2Wins}\n\n`;
+        csvContent += "Match History\n";
+        csvContent += "Date,Tournament,Type,Team 1,Team 2,Score,Winner\n";
+
+        {% for match in head_to_head.matches %}
+        let winner = "";
+        {% if match.winner_id == head_to_head.player1.id %}
+        winner = "{{ head_to_head.player1.name }}";
+        {% else %}
+        winner = "{{ head_to_head.player2.name }}";
+        {% endif %}
+
+        csvContent += "{{ match.date }}," +
+                      "{{ match.tournament }}," +
+                      "{{ match.match_type }}," +
+                      "{{ match.team1 }}," +
+                      "{{ match.team2 }}," +
+                      "{{ match.score1 }}," +
+                      winner + "\n";
+        {% endfor %}
+
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `${player1Name}_vs_${player2Name}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Show user share panel
+      showShareOptionsBtn.addEventListener('click', () => {
+        // Toggle user share panel
+        userSharePanel.classList.toggle('hidden');
+
+        // Fetch users from server
+        fetch('/api/users')
+          .then(response => response.json())
+          .then(users => {
+            const userListContainer = document.querySelector('.user-list');
+            if (users.length === 0) {
+              userListContainer.innerHTML = '<div class="text-center text-gray-500 py-2">No other users found</div>';
+              return;
+            }
+
+            let userListHTML = '';
+            users.forEach(user => {
+              userListHTML += `
+                <div class="user-item p-2 hover:bg-gray-100 rounded" data-user-id="${user.id}">
+                  ${user.username}
+                </div>
               `;
-            }, 2000);
+            });
+
+            userListContainer.innerHTML = userListHTML;
+
+            // Add user selection event
+            document.querySelectorAll('.user-item').forEach(item => {
+              item.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                document.getElementById('selectedUserId').value = userId;
+                document.getElementById('shareHeadToHeadForm').submit();
+              });
+            });
           })
-          .catch(err => {
-            console.error('Could not copy link: ', err);
+          .catch(error => {
+            console.error('Error fetching users:', error);
+            const userListContainer = document.querySelector('.user-list');
+            userListContainer.innerHTML = '<div class="text-center text-red-500 py-2">Error loading users</div>';
           });
       });
-      
-      // Set up social sharing links
-      twitterShare.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;
-      emailShare.href = `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(shareText + '\n\n' + currentUrl)}`;
-      whatsappShare.href = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + currentUrl)}`;
-      facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}&quote=${encodeURIComponent(shareText)}`;
     });
   </script>
 {% endif %}

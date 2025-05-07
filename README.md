@@ -4,6 +4,8 @@ A web application for analysing badminton tournaments, tracking player statistic
 
 Users are able to upload a .csv file or complete a form with the results of their own self hosted Badminton tournament and use Badminton MASTER to view ther overall results and ranking of players, compare two players, and share the data with other user accounts. 
 
+![](/static/homepage.png)
+
 ## Features
 
 - **Player Management**: Register and manage players
@@ -11,6 +13,8 @@ Users are able to upload a .csv file or complete a form with the results of thei
 - **Match Recording**: Record match results and scores
 - **Statistics & Analytics**: View detailed player and tournament statistics
 - **Data Import/Export**: Upload and download tournament data via CSV
+
+![](/static/analysispage.png)
 
 ## Installation
 <details>
@@ -256,7 +260,7 @@ http://your-domain/admin
 ```
 
 From there, you can navigate to all the admin features described in this guide.
-
+</details>
 
 ## License
 

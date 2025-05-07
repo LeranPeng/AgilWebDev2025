@@ -84,3 +84,21 @@ class Match(db.Model):
             return self.team1
         else:
             return self.team2
+
+class SharedTournament(db.Model):
+    """Model for tournament sharing between users"""
+    id = db.Column(db.Integer, primary_key=True)
+    tournament_id = db.Column(db.Integer, db.ForeignKey('tournament.id', ondelete='CASCADE'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    shared_with_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    shared_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Define relationships
+    tournament = db.relationship('Tournament', backref='shared_tournaments')
+    owner = db.relationship('User', foreign_keys=[owner_id], backref='tournaments_shared')
+    shared_with = db.relationship('User', foreign_keys=[shared_with_id], backref='tournaments_shared_with_me')
+
+    # Ensure a tournament is only shared once between same users
+    __table_args__ = (
+        db.UniqueConstraint('tournament_id', 'owner_id', 'shared_with_id', name='unique_tournament_sharing'),
+    )

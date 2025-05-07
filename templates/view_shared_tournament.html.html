@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ tournament.name }} - Shared Tournament - Badminton MASTER{% endblock %}
+{% block page_title %}Badminton MASTER{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex justify-between items-center">
+  <div>
+    <h2 class="text-2xl font-semibold">{{ tournament.name }}</h2>
+    <p class="text-gray-600 mt-1">
+      Shared by {{ shared_by.username }} · {{ tournament.date.strftime('%B %d, %Y') }}
+      {% if tournament.location %} · {{ tournament.location }}{% endif %}
+    </p>
+  </div>
+  <div>
+    <a href="/shared-with-me" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Back to Shared Tournaments
+    </a>
+  </div>
+</div>
+
+<!-- Tournament Information Card -->
+<div class="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-6">
+  <div class="flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+    </svg>
+    <span class="text-blue-800">
+      This tournament was shared with you by <strong>{{ shared_by.username }}</strong> and is owned by <strong>{{ owner.username }}</strong>.
+    </span>
+  </div>
+</div>
+
+<!-- Tournament Data -->
+<div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+  <div class="p-4 border-b">
+    <h3 class="text-lg font-semibold">Tournament Matches</h3>
+  </div>
+
+  {% if matches %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Round</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team 1</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team 2</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Match Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Winner</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for match in matches %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ match.round }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ match.group or '-' }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ match.team1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ match.team2 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ match.score1 }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ match.match_type }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">{{ match.winner }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="p-6 text-center text-gray-500">
+      <p>No matches found for this tournament.</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Tournament Statistics -->
+<div class="bg-white rounded-lg shadow p-6 mb-10">
+  <h3 class="text-xl font-bold mb-4">Tournament Statistics</h3>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="p-4 bg-gray-50 rounded-lg">
+      <p class="text-sm text-gray-500">Total Matches</p>
+      <p class="text-2xl font-semibold">{{ matches|length }}</p>
+    </div>
+
+    {% if matches %}
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-500">Match Types</p>
+        <p class="text-base font-medium">
+          {% set match_types = {} %}
+          {% for match in matches %}
+            {% if match.match_type in match_types %}
+              {% set _ = match_types.update({match.match_type: match_types[match.match_type] + 1}) %}
+            {% else %}
+              {% set _ = match_types.update({match.match_type: 1}) %}
+            {% endif %}
+          {% endfor %}
+
+          {% for type, count in match_types.items() %}
+            <span class="inline-block mr-2">{{ type }}: {{ count }}</span>
+          {% endfor %}
+        </p>
+      </div>
+
+      <div class="p-4 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-500">Players</p>
+        <p class="text-2xl font-semibold">
+          {% set players = [] %}
+          {% for match in matches %}
+            {% set team1_players = match.team1.split(', ') %}
+            {% set team2_players = match.team2.split(', ') %}
+            {% for player in team1_players %}
+              {% if player not in players %}
+                {% set _ = players.append(player) %}
+              {% endif %}
+            {% endfor %}
+            {% for player in team2_players %}
+              {% if player not in players %}
+                {% set _ = players.append(player) %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {{ players|length }}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Buttons for Analysis -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+  <a href="/shared-with-me" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
+    Back to Shared Tournaments
+  </a>
+  <a href="/analytics" class="bg-green-600 text-white p-4 rounded-lg shadow hover:bg-green-700 transition text-center">
+    Go to Analytics
+  </a>
+</div>
+{% endblock %}

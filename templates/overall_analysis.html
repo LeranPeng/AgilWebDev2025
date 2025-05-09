@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Overall Analysis</title>
+</head>
+<body>
+    <h2>Overall Analysis</h2>
+    <p>Total Players: {{ total_players }}</p>
+    <p>Total Tournaments: {{ total_tournaments }}</p>
+    <p>Average Matches per Tournament: {{ avg_matches_per_tournament }}</p>
+
+    {% if most_popular_player %}
+    <p>Most Popular Player: {{ most_popular_player.name }}</p>
+    {% else %}
+    <p>No players available.</p>
+    {% endif %}
+
+</body>
+</html>

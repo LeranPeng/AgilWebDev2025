@@ -9,7 +9,9 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 from models import db, User, Tournament, Player, Team, Match, SharedTournament
-
+import re
+from werkzeug.security import generate_password_hash
+from admin import admin
 
 app = Flask(__name__)
 
@@ -47,7 +49,6 @@ def login_required(f):
     return decorated_function
 
 
-from admin import admin
 
 
 app.register_blueprint(admin)
@@ -127,6 +128,12 @@ def signup():
 
         if password != confirm_password:
             flash("Passwords do not match")
+            return redirect(url_for("signup"))
+
+        # Password strength validation
+        is_valid, error_message = validate_password(password)
+        if not is_valid:
+            flash(error_message)
             return redirect(url_for("signup"))
 
         if User.query.filter_by(username=username).first():
@@ -1058,6 +1065,40 @@ def server_error(e):
 @app.errorhandler(400)
 def bad_request(e):
     return render_template('html/400.html'), 400
+
+
+# Add this function to validate passwords
+def validate_password(password):
+    """
+    Validate password strength
+    Returns a tuple (is_valid, error_message)
+    """
+    # Check length
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long"
+
+    # Check for uppercase letter
+    if not re.search(r'[A-Z]', password):
+        return False, "Password must contain at least one uppercase letter"
+
+    # Check for lowercase letter
+    if not re.search(r'[a-z]', password):
+        return False, "Password must contain at least one lowercase letter"
+
+    # Check for digit
+    if not re.search(r'\d', password):
+        return False, "Password must contain at least one number"
+
+    # Check for special character
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False, "Password must contain at least one special character"
+
+    # Common passwords check - in a real application, this would be a more extensive list
+    common_passwords = ['password', 'password123', '12345678', 'qwerty123']
+    if password.lower() in common_passwords:
+        return False, "This password is too common. Please choose a stronger password"
+
+    return True, "Password is strong"
 
 
 if __name__ == "__main__":

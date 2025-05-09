@@ -1,19 +1,78 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Overall Analysis</title>
-</head>
-<body>
-    <h2>Overall Analysis</h2>
-    <p>Total Players: {{ total_players }}</p>
-    <p>Total Tournaments: {{ total_tournaments }}</p>
-    <p>Average Matches per Tournament: {{ avg_matches_per_tournament }}</p>
+{% extends "layout.html" %}
 
-    {% if most_popular_player %}
-    <p>Most Popular Player: {{ most_popular_player.name }}</p>
-    {% else %}
-    <p>No players available.</p>
-    {% endif %}
+{% block title %}Overall Analysis - Badminton MASTER{% endblock %}
+{% block page_title %}Overall Analysis{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div class="mb-6 flex justify-between items-center">
+  <div>
+    <h2 class="text-2xl font-semibold">📊 Tournament Statistics</h2>
+    <p class="text-gray-600 mt-1">Overview of players, tournaments, and performance metrics</p>
+  </div>
+  <div>
+    <a href="/dashboard" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Back to Dashboard
+    </a>
+  </div>
+</div>
+
+<!-- Statistics Overview -->
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+  <h3 class="text-lg font-semibold mb-4">Tournament System Statistics</h3>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Total Players Card -->
+    <div class="bg-blue-50 p-4 rounded-lg">
+      <h4 class="text-gray-700 font-medium">Total Players</h4>
+      <p class="text-3xl font-bold mt-2 text-blue-700">{{ total_players }}</p>
+    </div>
+    
+    <!-- Total Tournaments Card -->
+    <div class="bg-green-50 p-4 rounded-lg">
+      <h4 class="text-gray-700 font-medium">Total Tournaments</h4>
+      <p class="text-3xl font-bold mt-2 text-green-700">{{ total_tournaments }}</p>
+    </div>
+    
+    <!-- Average Matches Card -->
+    <div class="bg-purple-50 p-4 rounded-lg">
+      <h4 class="text-gray-700 font-medium">Avg. Matches per Tournament</h4>
+      <p class="text-3xl font-bold mt-2 text-purple-700">{{ avg_matches_per_tournament }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Most Popular Player -->
+<div class="bg-white rounded-lg shadow p-6">
+  <h3 class="text-lg font-semibold mb-4">Player Spotlight</h3>
+  
+  {% if most_popular_player %}
+    <div class="bg-yellow-50 p-6 rounded-lg text-center">
+      <h4 class="text-xl font-medium text-gray-800">Most Popular Player</h4>
+      <p class="text-3xl font-bold mt-3 text-yellow-700">{{ most_popular_player.name }}</p>
+      {% if most_popular_player.matches_played %}
+        <p class="mt-2 text-gray-600">Matches Played: {{ most_popular_player.matches_played }}</p>
+      {% endif %}
+      {% if most_popular_player.win_percentage %}
+        <p class="mt-1 text-gray-600">Win Rate: {{ most_popular_player.win_percentage }}%</p>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="p-6 text-center text-gray-500">
+      <p>No players available in the system.</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Quick Access to Other Features -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+  <a href="/matches" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
+    View Match Results
+  </a>
+  <a href="/analytics" class="bg-green-600 text-white p-4 rounded-lg shadow hover:bg-green-700 transition text-center">
+    Detailed Analytics
+  </a>
+  <a href="/dashboard" class="bg-indigo-600 text-white p-4 rounded-lg shadow hover:bg-indigo-700 transition text-center">
+    Return to Dashboard
+  </a>
+</div>
+{% endblock %}

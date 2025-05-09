@@ -71,6 +71,7 @@ badminton-tournament-manager/
 ├── templates/          # HTML templates
 │   ├── layout.html     # Base template
 │   ├── analytics.html
+│   ├── overall_analysis.html
 │   ├── head_to_head.html
 │   ├── player_analytics.html
 │   ├── review_results.html

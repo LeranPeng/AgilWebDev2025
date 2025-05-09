@@ -6,6 +6,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    .password-strength-meter {
+      height: 10px;
+      width: 100%;
+      background-color: #e9e9e9;
+      border-radius: 3px;
+      margin-top: 8px;
+    }
+    .password-strength-meter-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+    }
+    .password-requirements {
+      margin-top: 8px;
+      font-size: 0.75rem;
+    }
+    .password-requirements li {
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .password-requirements li svg {
+      margin-right: 6px;
+      min-width: 16px;
+    }
+    .requirement-met {
+      color: #10B981;
+    }
+    .requirement-unmet {
+      color: #9CA3AF;
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 font-sans">
 
@@ -15,8 +48,8 @@
         <h2 class="text-3xl font-bold text-blue-600 mb-2">Create an Account</h2>
         <p class="text-gray-500 mb-6">Join the badminton community</p>
       </div>
-      
-      <form action="/signup" method="post" class="space-y-4">
+
+      <form action="/signup" method="post" class="space-y-4" id="signupForm">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <div>
@@ -25,55 +58,106 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-user text-gray-400"></i>
             </div>
-            <input type="text" id="username" name="username" placeholder="Choose a username" required 
+            <input type="text" id="username" name="username" placeholder="Choose a username" required
                    class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
           </div>
         </div>
-        
+
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-envelope text-gray-400"></i>
             </div>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required 
+            <input type="email" id="email" name="email" placeholder="Enter your email" required
                    class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
           </div>
         </div>
-        
+
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-lock text-gray-400"></i>
             </div>
-            <input type="password" id="password" name="password" placeholder="Create a password" required 
+            <input type="password" id="password" name="password" placeholder="Create a password" required
                    class="w-full pl-10 pr-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
             <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
               <i class="fas fa-eye"></i>
             </button>
           </div>
+
+          <!-- Password strength meter -->
+          <div class="password-strength-meter">
+            <div id="password-strength-meter-fill" class="password-strength-meter-fill" style="width: 0%; background-color: #EF4444;"></div>
+          </div>
+          <p id="password-strength-text" class="text-xs mt-1 text-gray-500">Password strength: Too weak</p>
+
+          <!-- Password requirements list -->
+          <ul class="password-requirements text-gray-600">
+            <li id="length-requirement" class="requirement-unmet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              At least 8 characters long
+            </li>
+            <li id="uppercase-requirement" class="requirement-unmet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Contains uppercase letter
+            </li>
+            <li id="lowercase-requirement" class="requirement-unmet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Contains lowercase letter
+            </li>
+            <li id="number-requirement" class="requirement-unmet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Contains at least one number
+            </li>
+            <li id="special-requirement" class="requirement-unmet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Contains special character (!@#$%^&*...)
+            </li>
+          </ul>
         </div>
-        
+
         <div>
           <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-lock text-gray-400"></i>
             </div>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required 
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required
                    class="w-full pl-10 pr-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
             <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
               <i class="fas fa-eye"></i>
             </button>
           </div>
+          <p id="password-match-text" class="text-xs mt-1 hidden text-red-500">Passwords do not match</p>
         </div>
-        
+
         <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
           <span>Create Account</span>
         </button>
       </form>
-      
+
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Already have an account?
@@ -88,7 +172,7 @@
     document.getElementById('togglePassword').addEventListener('click', function() {
       const passwordInput = document.getElementById('password');
       const icon = this.querySelector('i');
-      
+
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         icon.classList.remove('fa-eye');
@@ -99,12 +183,12 @@
         icon.classList.add('fa-eye');
       }
     });
-    
-    // Password visibility for confirm password 
+
+    // Password visibility for confirm password
     document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
       const confirmPasswordInput = document.getElementById('confirm_password');
       const icon = this.querySelector('i');
-      
+
       if (confirmPasswordInput.type === 'password') {
         confirmPasswordInput.type = 'text';
         icon.classList.remove('fa-eye');
@@ -116,10 +200,137 @@
       }
     });
 
-    // Ensure form submission follows redirects properly
-    document.querySelector('form').addEventListener('submit', function(e) {
-      // Regular form submission should handle redirects properly
-      // No preventDefault() call that might interfere with normal form submission
+    // Password strength checker
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const strengthMeter = document.getElementById('password-strength-meter-fill');
+    const strengthText = document.getElementById('password-strength-text');
+    const lengthRequirement = document.getElementById('length-requirement');
+    const uppercaseRequirement = document.getElementById('uppercase-requirement');
+    const lowercaseRequirement = document.getElementById('lowercase-requirement');
+    const numberRequirement = document.getElementById('number-requirement');
+    const specialRequirement = document.getElementById('special-requirement');
+    const passwordMatchText = document.getElementById('password-match-text');
+
+    // Function to calculate password strength
+    function checkPasswordStrength(password) {
+      let strength = 0;
+      const feedback = {
+        length: password.length >= 8,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        number: /\d/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+      };
+
+      // Update requirement elements
+      updateRequirement(lengthRequirement, feedback.length);
+      updateRequirement(lowercaseRequirement, feedback.lowercase);
+      updateRequirement(uppercaseRequirement, feedback.uppercase);
+      updateRequirement(numberRequirement, feedback.number);
+      updateRequirement(specialRequirement, feedback.special);
+
+      // Calculate strength
+      if (feedback.length) strength += 20;
+      if (feedback.lowercase) strength += 20;
+      if (feedback.uppercase) strength += 20;
+      if (feedback.number) strength += 20;
+      if (feedback.special) strength += 20;
+
+      // Return strength value and feedback object
+      return {
+        score: strength,
+        feedback: feedback,
+        allMet: Object.values(feedback).every(Boolean)
+      };
+    }
+
+    // Update visual indicator for each requirement
+    function updateRequirement(element, isMet) {
+      if (isMet) {
+        element.classList.remove('requirement-unmet');
+        element.classList.add('requirement-met');
+        // Change the icon to a check mark
+        element.querySelector('svg').innerHTML = '<circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path>';
+      } else {
+        element.classList.remove('requirement-met');
+        element.classList.add('requirement-unmet');
+        // Reset the icon to info
+        element.querySelector('svg').innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+      }
+    }
+
+    // Update password strength meter
+    function updateStrengthMeter(strength) {
+      strengthMeter.style.width = strength.score + '%';
+
+      // Update color
+      if (strength.score < 40) {
+        strengthMeter.style.backgroundColor = '#EF4444'; // Red - Weak
+        strengthText.textContent = 'Password strength: Weak';
+        strengthText.className = 'text-xs mt-1 text-red-500';
+      } else if (strength.score < 80) {
+        strengthMeter.style.backgroundColor = '#F59E0B'; // Yellow - Medium
+        strengthText.textContent = 'Password strength: Medium';
+        strengthText.className = 'text-xs mt-1 text-yellow-500';
+      } else {
+        strengthMeter.style.backgroundColor = '#10B981'; // Green - Strong
+        strengthText.textContent = 'Password strength: Strong';
+        strengthText.className = 'text-xs mt-1 text-green-500';
+      }
+    }
+
+    // Check password match
+    function checkPasswordMatch() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (confirmPassword) {
+        if (password === confirmPassword) {
+          passwordMatchText.classList.add('hidden');
+          confirmPasswordInput.classList.remove('border-red-500');
+          return true;
+        } else {
+          passwordMatchText.classList.remove('hidden');
+          confirmPasswordInput.classList.add('border-red-500');
+          return false;
+        }
+      }
+      return false;
+    }
+
+    // Password input event listener
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      const strength = checkPasswordStrength(password);
+      updateStrengthMeter(strength);
+
+      if (confirmPasswordInput.value) {
+        checkPasswordMatch();
+      }
+    });
+
+    // Confirm password input event listener
+    confirmPasswordInput.addEventListener('input', function() {
+      checkPasswordMatch();
+    });
+
+    // Form submission validation
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      const password = passwordInput.value;
+      const strength = checkPasswordStrength(password);
+      const passwordsMatch = checkPasswordMatch();
+
+      // If password doesn't meet all requirements or passwords don't match, prevent submission
+      if (!strength.allMet || !passwordsMatch) {
+        e.preventDefault();
+
+        if (!strength.allMet) {
+          alert('Please ensure your password meets all the requirements.');
+        } else if (!passwordsMatch) {
+          alert('Please ensure your passwords match.');
+        }
+      }
     });
   </script>
 </body>

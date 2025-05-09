@@ -37,9 +37,7 @@
 
 <!-- Analysis navigation -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-  <a href="/analytics" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
-    Overall Analysis
-  </a>
+  <a href="{{ url_for('analytics.overall_analysis') }}" class="bg-red-600 text-white p-4 rounded-lg shadow hover:bg-green-700 transition text-center">Overall Analysis</a>
   <a href="/analytics/head_to_head" class="bg-green-600 text-white p-4 rounded-lg shadow hover:bg-green-700 transition text-center">
     Matchup Analysis
   </a>

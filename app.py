@@ -10,9 +10,12 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 from models import db, User, Tournament, Player, Team, Match, SharedTournament
 
+
 app = Flask(__name__)
 
 load_dotenv("key.env")
+from analytics import analytics
+app.register_blueprint(analytics)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 if not app.config['SECRET_KEY']:
@@ -43,11 +46,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-from analytics import analytics
+
 from admin import admin
 
-app.register_blueprint(analytics)
+
 app.register_blueprint(admin)
+
 
 def admin_required(f):
     @wraps(f)

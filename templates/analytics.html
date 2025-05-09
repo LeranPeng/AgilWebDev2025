@@ -53,24 +53,6 @@
   </div>
 </div>
 
-<!-- Share Button -->
-<div class="relative inline-block text-left mb-6">
-  <button id="shareBtn" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700">
-    📤 Share My Dashboard
-  </button>
-
-  <!-- Dropdown menu -->
-  <div id="shareMenu" class="origin-top-right absolute left-0 mt-2 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden z-50">
-    <div class="py-1 text-sm">
-      <button id="copyLinkBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100">📋 Copy Link</button>
-      <a id="emailShare" target="_blank" class="block px-4 py-2 hover:bg-gray-100 text-red-600">✉️ Share via Email</a>
-      <a id="twitterShare" target="_blank" class="block px-4 py-2 hover:bg-gray-100 text-blue-500">🐦 Share on Twitter</a>
-      <a id="whatsappShare" target="_blank" class="block px-4 py-2 hover:bg-gray-100 text-green-600">📱 Share on WhatsApp</a>
-      <a id="facebookShare" target="_blank" class="block px-4 py-2 hover:bg-gray-100 text-blue-700">📘 Share on Facebook</a>
-    </div>
-  </div>
-</div>
-
 <!-- Statistics Cards -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
   <div class="bg-white p-6 rounded shadow text-center">
@@ -361,49 +343,6 @@
     compareBtn.addEventListener('click', function() {
       if (player1Select.value && player2Select.value) {
         window.location.href = `/analytics/head_to_head?player1=${player1Select.value}&player2=${player2Select.value}`;
-      }
-    });
-
-    // Share functionality
-    const shareBtn = document.getElementById('shareBtn');
-    const shareMenu = document.getElementById('shareMenu');
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
-    const twitterShare = document.getElementById('twitterShare');
-    const emailShare = document.getElementById('emailShare');
-    const whatsappShare = document.getElementById('whatsappShare');
-    const facebookShare = document.getElementById('facebookShare');
-
-    const currentUrl = window.location.href;
-
-    // Toggle dropdown
-    shareBtn.addEventListener('click', () => {
-      shareMenu.classList.toggle('hidden');
-    });
-
-    // Handle share links
-    twitterShare.href = `https://twitter.com/intent/tweet?text=Check%20out%20my%20badminton%20stats&url=${encodeURIComponent(currentUrl)}`;
-    emailShare.href = `mailto:?subject=My%20Badminton%20Dashboard&body=Check%20this%20out:%20${encodeURIComponent(currentUrl)}`;
-    whatsappShare.href = `https://wa.me/?text=Check%20out%20my%20badminton%20stats:%20${encodeURIComponent(currentUrl)}`;
-    facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
-
-    // Copy link to clipboard
-    copyLinkBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(currentUrl)
-        .then(() => {
-          copyLinkBtn.textContent = "✅ Link Copied!";
-          setTimeout(() => {
-            copyLinkBtn.textContent = "📋 Copy Link";
-          }, 2000);
-        })
-        .catch(() => {
-          alert('Failed to copy link to clipboard');
-        });
-    });
-
-    // Close dropdown if clicked outside
-    document.addEventListener('click', (e) => {
-      if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target)) {
-        shareMenu.classList.add('hidden');
       }
     });
   });

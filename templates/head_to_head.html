@@ -5,61 +5,6 @@
 
 {% block extra_css %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-<style>
-  /* Share button dropdown styling */
-  .share-dropdown {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .share-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    min-width: 200px;
-    background-color: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-radius: 0.5rem;
-    z-index: 10;
-  }
-  
-  .share-menu.active {
-    display: block;
-  }
-  
-  .share-option {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: #374151;
-    transition: background-color 0.2s;
-  }
-  
-  .share-option:hover {
-    background-color: #f3f4f6;
-  }
-  
-  .copy-link-success {
-    background-color: #d1fae5;
-    color: #047857;
-  }
-
-  #userSharePanel {
-    border: 1px solid #e5e7eb;
-    background-color: white;
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-
-  .user-item {
-    transition: background-color 0.2s ease;
-    border-radius: 0.25rem;
-    cursor: pointer;
-  }
-
-  .user-item:hover {
-    background-color: #f3f4f6;
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -68,55 +13,7 @@
     <h2 class="text-2xl font-semibold">⚔️ Matchup Analysis</h2>
     <p class="text-gray-600 mt-1">Compare the head-to-head records between two players</p>
   </div>
-  <div class="flex space-x-2">
-    <!-- Share Dropdown -->
-    <div class="share-dropdown">
-      <button id="shareBtn" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-        </svg>
-        Share
-      </button>
-      <div id="shareMenu" class="share-menu">
-        <!-- Download option -->
-        <a id="downloadBtn" class="share-option flex items-center cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-          </svg>
-          Download Results as CSV
-        </a>
-
-        <!-- Internal sharing option -->
-        <div class="share-option" id="internalShareBtn">
-          <div class="flex items-center cursor-pointer" id="showShareOptionsBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-            </svg>
-            Share with Another User
-          </div>
-        </div>
-      </div>
-
-      <!-- User selection panel for internal sharing -->
-      <div id="userSharePanel" class="hidden absolute mt-2 w-64 bg-white rounded-md shadow-lg z-20 p-2 border border-gray-200">
-        <h3 class="text-sm font-medium text-gray-700 mb-2 p-2">Select User to Share With:</h3>
-        <div class="max-h-40 overflow-y-auto">
-          <form action="/share/head_to_head" method="POST" id="shareHeadToHeadForm">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="player1_id" value="{{ head_to_head.player1.id if head_to_head else '' }}">
-            <input type="hidden" name="player2_id" value="{{ head_to_head.player2.id if head_to_head else '' }}">
-            <input type="hidden" name="user_id" id="selectedUserId">
-
-            <div class="user-list px-2 pb-2">
-              <!-- User list will be populated by JavaScript -->
-              <div class="text-center text-gray-500 py-2">Loading users...</div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Back to Analytics button -->
+  <div>
     <a href="/analytics" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
       Back to Analytics
     </a>
@@ -150,7 +47,7 @@
     </div>
     <div class="flex items-end">
       <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-        Analyze the Matchup
+        Analyse the Matchup
       </button>
     </div>
   </form>
@@ -194,7 +91,7 @@
     </div>
   </div>
 
-  <!-- Match History -->
+  <!-- Competition history -->
   <div class="bg-white rounded shadow p-6 mb-10">
     <h3 class="text-xl font-bold mb-4">📜 Match History</h3>
     {% if head_to_head.matches %}
@@ -258,7 +155,6 @@
 {% if head_to_head %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Win rate chart
       const winRateCtx = document.getElementById('winRateChart').getContext('2d');
       const player1Name = "{{ head_to_head.player1.name }}";
       const player2Name = "{{ head_to_head.player2.name }}";
@@ -304,106 +200,6 @@
             }
           }
         }
-      });
-
-      // Share functionality
-      const shareBtn = document.getElementById('shareBtn');
-      const shareMenu = document.getElementById('shareMenu');
-      const downloadBtn = document.getElementById('downloadBtn');
-      const showShareOptionsBtn = document.getElementById('showShareOptionsBtn');
-      const userSharePanel = document.getElementById('userSharePanel');
-
-      // Toggle dropdown
-      shareBtn.addEventListener('click', () => {
-        shareMenu.classList.toggle('active');
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target) && !userSharePanel.contains(e.target)) {
-          shareMenu.classList.remove('active');
-          userSharePanel.classList.add('hidden');
-        }
-      });
-
-      // Download CSV functionality
-      downloadBtn.addEventListener('click', function() {
-        // Prepare data for download
-        let csvContent = "Head to Head Results\n";
-        csvContent += `${player1Name} vs ${player2Name}\n`;
-        csvContent += `${player1Name} Wins,${player1Wins}\n`;
-        csvContent += `${player2Name} Wins,${player2Wins}\n\n`;
-        csvContent += "Match History\n";
-        csvContent += "Date,Tournament,Type,Team 1,Team 2,Score,Winner\n";
-
-        {% for match in head_to_head.matches %}
-        let winner = "";
-        {% if match.winner_id == head_to_head.player1.id %}
-        winner = "{{ head_to_head.player1.name }}";
-        {% else %}
-        winner = "{{ head_to_head.player2.name }}";
-        {% endif %}
-
-        csvContent += "{{ match.date }}," +
-                      "{{ match.tournament }}," +
-                      "{{ match.match_type }}," +
-                      "{{ match.team1 }}," +
-                      "{{ match.team2 }}," +
-                      "{{ match.score1 }}," +
-                      winner + "\n";
-        {% endfor %}
-
-        // Create download link
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", `${player1Name}_vs_${player2Name}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-
-      // Show user share panel
-      showShareOptionsBtn.addEventListener('click', () => {
-        // Toggle user share panel
-        userSharePanel.classList.toggle('hidden');
-
-        // Fetch users from server
-        fetch('/api/users')
-          .then(response => response.json())
-          .then(users => {
-            const userListContainer = document.querySelector('.user-list');
-            if (users.length === 0) {
-              userListContainer.innerHTML = '<div class="text-center text-gray-500 py-2">No other users found</div>';
-              return;
-            }
-
-            let userListHTML = '';
-            users.forEach(user => {
-              userListHTML += `
-                <div class="user-item p-2 hover:bg-gray-100 rounded" data-user-id="${user.id}">
-                  ${user.username}
-                </div>
-              `;
-            });
-
-            userListContainer.innerHTML = userListHTML;
-
-            // Add user selection event
-            document.querySelectorAll('.user-item').forEach(item => {
-              item.addEventListener('click', function() {
-                const userId = this.getAttribute('data-user-id');
-                document.getElementById('selectedUserId').value = userId;
-                document.getElementById('shareHeadToHeadForm').submit();
-              });
-            });
-          })
-          .catch(error => {
-            console.error('Error fetching users:', error);
-            const userListContainer = document.querySelector('.user-list');
-            userListContainer.innerHTML = '<div class="text-center text-red-500 py-2">Error loading users</div>';
-          });
       });
     });
   </script>

@@ -807,3 +807,35 @@ def api_head_to_head(player1_id, player2_id):
     stats = get_head_to_head(player1_id, player2_id)
 
     return jsonify(stats)
+
+@analytics.route('/analytics/overall')
+@login_required
+def overall_analysis():
+    """Generalized analysis of all inputted tournaments"""
+    # Get total number of players
+    total_players = Player.query.count()
+
+    # Get total number of tournaments
+    total_tournaments = Tournament.query.count()
+
+    # Calculate average matches per tournament
+    total_matches = Match.query.count()
+    avg_matches_per_tournament = round(total_matches / total_tournaments, 2) if total_tournaments else 0
+
+    # Most popular player based on matches played
+    players = Player.query.all()
+
+    def matches_played(player):
+        teams = player.teams_as_player1 + player.teams_as_player2
+        match_count = sum(len(team.matches_as_team1) + len(team.matches_as_team2) for team in teams)
+        return match_count
+
+    most_popular_player = max(players, key=matches_played, default=None)
+
+    return render_template(
+        'overall_analysis.html',
+        total_players=total_players,
+        total_tournaments=total_tournaments,
+        avg_matches_per_tournament=avg_matches_per_tournament,
+        most_popular_player=most_popular_player
+    )

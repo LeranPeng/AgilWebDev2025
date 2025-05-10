@@ -253,3 +253,4 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 ## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+AI has been used in this project.

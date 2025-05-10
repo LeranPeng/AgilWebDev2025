@@ -10,13 +10,13 @@
     <p class="text-gray-600 mt-1">Update match details and scores</p>
   </div>
   <div>
-    <a href="/matches" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+    <a href="{{ url_for('match.view_matches') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
       Back to Match List
     </a>
   </div>
 </div>
 
-<form action="/matches/{{ match.id }}/update" method="POST" class="bg-white rounded-lg shadow p-6">
+<form action="{{ url_for('match.update_match', match_id=match.id) }}" method="POST" class="bg-white rounded-lg shadow p-6">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -91,14 +91,14 @@
 
   <!-- Buttons -->
   <div class="flex justify-between mt-8">
-    <a href="/matches" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+    <a href="{{ url_for('match.view_matches') }}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
       Cancel
     </a>
     <div>
       <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
         Update Match
       </button>
-      <a href="/matches" class="ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+      <a href="{{ url_for('match.view_matches') }}" class="ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
         Discard Changes
       </a>
     </div>

@@ -10,14 +10,14 @@
     <p class="text-gray-600 mt-1">Please review the uploaded match data before confirming. This will create a new tournament with all matches shown below.</p>
   </div>
   <div>
-    <a href="/upload" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+    <a href="{{ url_for('tournament.upload_page') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
       Back to Upload
     </a>
   </div>
 </div>
 
 <!-- Tournament Name Form -->
-<form action="/confirm_results/{{ filename }}" method="POST" class="bg-white p-6 rounded-lg shadow-md mb-8">
+<form action="{{ url_for('tournament.confirm_results', filename=filename) }}" method="POST" class="bg-white p-6 rounded-lg shadow-md mb-8">
   <h3 class="text-lg font-semibold mb-4">Tournament Details</h3>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
     <div>
@@ -78,7 +78,7 @@
 
   <!-- Buttons -->
   <div class="mt-6 flex justify-between">
-    <a href="/upload" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+    <a href="{{ url_for('tournament.upload_page') }}" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
       Cancel
     </a>
     <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
@@ -89,13 +89,13 @@
 
 <!-- Quick Access to Other Features -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-  <a href="/upload" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
+  <a href="{{ url_for('tournament.upload_page') }}" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
     Back to Upload
   </a>
-  <a href="/input_form" class="bg-indigo-600 text-white p-4 rounded-lg shadow hover:bg-indigo-700 transition text-center">
+  <a href="{{ url_for('tournament.input_form') }}" class="bg-indigo-600 text-white p-4 rounded-lg shadow hover:bg-indigo-700 transition text-center">
     Manual Data Entry
   </a>
-  <a href="/dashboard" class="bg-teal-600 text-white p-4 rounded-lg shadow hover:bg-teal-700 transition text-center">
+  <a href="{{ url_for('user.dashboard') }}" class="bg-teal-600 text-white p-4 rounded-lg shadow hover:bg-teal-700 transition text-center">
     Return to Dashboard
   </a>
 </div>

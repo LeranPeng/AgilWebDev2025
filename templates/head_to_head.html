@@ -14,7 +14,7 @@
     <p class="text-gray-600 mt-1">Compare the head-to-head records between two players</p>
   </div>
   <div>
-    <a href="/analytics" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+    <a href="{{ url_for('analytics.analytics_dashboard') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
       Back to Analytics
     </a>
   </div>
@@ -22,7 +22,7 @@
 
 <!-- Player Select -->
 <div class="bg-white rounded shadow p-6 mb-6">
-  <form action="/analytics/head_to_head" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <form action="{{ url_for('analytics.head_to_head_view') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div>
       <label class="block font-medium mb-1">Player 1</label>
       <select name="player1" class="w-full border px-4 py-2 rounded" required>
@@ -63,7 +63,7 @@
         <h4 class="font-bold text-lg text-blue-800">{{ head_to_head.player1.name }}</h4>
         <p class="text-3xl font-bold mt-2 text-blue-700">{{ head_to_head.player1.wins }}</p>
         <p class="text-sm text-gray-600 mt-1">Wins</p>
-        <a href="/analytics/player/{{ head_to_head.player1.id }}" class="text-blue-600 hover:underline mt-2 inline-block">
+        <a href="{{ url_for('analytics.player_analytics', player_id=head_to_head.player1.id) }}" class="text-blue-600 hover:underline mt-2 inline-block">
           View Player Stats
         </a>
       </div>
@@ -80,7 +80,7 @@
         <h4 class="font-bold text-lg text-red-800">{{ head_to_head.player2.name }}</h4>
         <p class="text-3xl font-bold mt-2 text-red-700">{{ head_to_head.player2.wins }}</p>
         <p class="text-sm text-gray-600 mt-1">Wins</p>
-        <a href="/analytics/player/{{ head_to_head.player2.id }}" class="text-red-600 hover:underline mt-2 inline-block">
+        <a href="{{ url_for('analytics.player_analytics', player_id=head_to_head.player2.id) }}" class="text-red-600 hover:underline mt-2 inline-block">
           View Player Stats
         </a>
       </div>
@@ -138,13 +138,13 @@
 
   <!-- Quick Navigation Buttons -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <a href="/analytics" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
+    <a href="{{ url_for('analytics.analytics_dashboard') }}" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
       Back to Analytics
     </a>
-    <a href="/analytics/player/{{ head_to_head.player1.id }}" class="bg-indigo-600 text-white p-4 rounded-lg shadow hover:bg-indigo-700 transition text-center">
+    <a href="{{ url_for('analytics.player_analytics', player_id=head_to_head.player1.id) }}" class="bg-indigo-600 text-white p-4 rounded-lg shadow hover:bg-indigo-700 transition text-center">
       View {{ head_to_head.player1.name }}'s Stats
     </a>
-    <a href="/analytics/player/{{ head_to_head.player2.id }}" class="bg-purple-600 text-white p-4 rounded-lg shadow hover:bg-purple-700 transition text-center">
+    <a href="{{ url_for('analytics.player_analytics', player_id=head_to_head.player2.id) }}" class="bg-purple-600 text-white p-4 rounded-lg shadow hover:bg-purple-700 transition text-center">
       View {{ head_to_head.player2.name }}'s Stats
     </a>
   </div>

@@ -2,32 +2,13 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from sqlalchemy import func, desc
 from datetime import datetime
 from models import db, User, Tournament, Player, Team, Match
-from functools import wraps
+from utils import admin_required
 
-# Create blueprint
-admin = Blueprint('admin', __name__)
-
-
-# Admin authorization middleware
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('Please log in to access this page')
-            return redirect(url_for('login'))
-
-        user = User.query.get(session['user_id'])
-        if not user or not user.is_admin:
-            flash('You do not have permission to access this page')
-            return redirect(url_for('dashboard'))
-
-        return f(*args, **kwargs)
-
-    return decorated_function
-
+# Create blueprint with proper URL prefix
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 # Admin Dashboard
-@admin.route('/admin')
+@admin_bp.route('/')
 @admin_required
 def admin_dashboard():
     # Get summary statistics
@@ -52,14 +33,14 @@ def admin_dashboard():
 
 
 # User Management
-@admin.route('/admin/users')
+@admin_bp.route('/users')
 @admin_required
 def manage_users():
     users = User.query.all()
     return render_template("admin/users.html", users=users)
 
 
-@admin.route('/admin/users/<int:user_id>', methods=["GET", "POST"])
+@admin_bp.route('/users/<int:user_id>', methods=["GET", "POST"])
 @admin_required
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -98,7 +79,7 @@ def edit_user(user_id):
     return render_template("admin/edit_user.html", user=user)
 
 
-@admin.route('/admin/users/create', methods=["GET", "POST"])
+@admin_bp.route('/users/create', methods=["GET", "POST"])
 @admin_required
 def create_user():
     if request.method == "POST":
@@ -132,7 +113,7 @@ def create_user():
     return render_template("admin/create_user.html")
 
 
-@admin.route('/admin/users/<int:user_id>/delete', methods=["POST"])
+@admin_bp.route('/users/<int:user_id>/delete', methods=["POST"])
 @admin_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -155,14 +136,14 @@ def delete_user(user_id):
 
 
 # Tournament Management
-@admin.route('/admin/tournaments')
+@admin_bp.route('/tournaments')
 @admin_required
 def manage_tournaments():
     tournaments = Tournament.query.all()
     return render_template("admin/tournaments.html", tournaments=tournaments)
 
 
-@admin.route('/admin/tournaments/<int:tournament_id>')
+@admin_bp.route('/tournaments/<int:tournament_id>')
 @admin_required
 def view_tournament(tournament_id):
     tournament = Tournament.query.get_or_404(tournament_id)
@@ -197,14 +178,14 @@ def view_tournament(tournament_id):
         })
 
     return render_template(
-        "admin/view_tournament.html",
+        "admin/view.html",
         tournament=tournament,
         matches=match_data,
         organizer=User.query.get(tournament.user_id)
     )
 
 
-@admin.route('/admin/tournaments/<int:tournament_id>/delete', methods=["POST"])
+@admin_bp.route('/tournaments/<int:tournament_id>/delete', methods=["POST"])
 @admin_required
 def delete_tournament(tournament_id):
     tournament = Tournament.query.get_or_404(tournament_id)
@@ -221,14 +202,14 @@ def delete_tournament(tournament_id):
 
 
 # Player Management
-@admin.route('/admin/players')
+@admin_bp.route('/players')
 @admin_required
 def manage_players():
     players = Player.query.all()
     return render_template("admin/players.html", players=players)
 
 
-@admin.route('/admin/players/<int:player_id>')
+@admin_bp.route('/players/<int:player_id>')
 @admin_required
 def view_player(player_id):
     player = Player.query.get_or_404(player_id)
@@ -293,7 +274,7 @@ def view_player(player_id):
     )
 
 
-@admin.route('/admin/players/<int:player_id>/merge', methods=["GET", "POST"])
+@admin_bp.route('/players/<int:player_id>/merge', methods=["GET", "POST"])
 @admin_required
 def merge_player(player_id):
     player = Player.query.get_or_404(player_id)
@@ -338,7 +319,7 @@ def merge_player(player_id):
 
 
 # System Stats & Maintenance
-@admin.route('/admin/stats')
+@admin_bp.route('/stats')
 @admin_required
 def system_stats():
     # Get overall statistics
@@ -388,7 +369,7 @@ def system_stats():
 
 
 # Database Maintenance
-@admin.route('/admin/maintenance')
+@admin_bp.route('/maintenance')
 @admin_required
 def database_maintenance():
     # Identify orphaned records
@@ -420,7 +401,7 @@ def database_maintenance():
     )
 
 
-@admin.route('/admin/maintenance/cleanup', methods=["POST"])
+@admin_bp.route('/maintenance/cleanup', methods=["POST"])
 @admin_required
 def perform_cleanup():
     action = request.form.get("action")

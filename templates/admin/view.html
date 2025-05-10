@@ -134,48 +134,8 @@
 {% block admin_scripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Calculate match type distribution
-    const matches = {{ matches|tojson }};
-    const matchTypeData = {};
-
-    matches.forEach(match => {
-      if (matchTypeData[match.match_type]) {
-        matchTypeData[match.match_type]++;
-      } else {
-        matchTypeData[match.match_type] = 1;
-      }
-    });
-
-    // Create match type chart
-    const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
-    new Chart(matchTypeCtx, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(matchTypeData),
-        datasets: [{
-          data: Object.values(matchTypeData),
-          backgroundColor: [
-            'rgba(59, 130, 246, 0.7)', // Blue
-            'rgba(16, 185, 129, 0.7)', // Green
-            'rgba(245, 158, 11, 0.7)', // Yellow
-            'rgba(239, 68, 68, 0.7)',  // Red
-            'rgba(139, 92, 246, 0.7)'  // Purple
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
-
     // Calculate rounds distribution
+    const matches = {{ matches|tojson }};
     const roundsData = {};
 
     matches.forEach(match => {

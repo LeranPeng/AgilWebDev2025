@@ -5,21 +5,12 @@ from flask import Blueprint, render_template, session, redirect, url_for, jsonif
 from sqlalchemy import func, desc, and_
 from datetime import datetime, timedelta
 import json
-from functools import wraps
+from utils import login_required
 # Import database models from models.py
 from models import db, Tournament, Match, Team, Player
 
 # Create blueprint
-analytics = Blueprint('analytics', __name__)
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('Please log in to access this page')
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+analytics_bp = Blueprint('analytics', __name__)
 
 def parse_badminton_score(score_str):
     """Parse badminton score format and return total points for each side"""
@@ -614,7 +605,7 @@ def get_monthly_match_counts(user_id=None, months=12):
 
     return result
 
-@analytics.route('/analytics')
+@analytics_bp.route('/analytics')
 @login_required
 def analytics_dashboard():
     """Analytics dashboard view"""
@@ -640,12 +631,12 @@ def analytics_dashboard():
         tournaments=tournaments
     )
 
-@analytics.route('/analytics/player/<int:player_id>')
+@analytics_bp.route('/analytics/player/<int:player_id>')
 @login_required
 def player_analytics(player_id):
     """Individual player analysis view with improved error handling"""
     if "user_id" not in session:
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
 
     user_id = session.get("user_id")
 
@@ -701,12 +692,12 @@ def player_analytics(player_id):
     # Flask will automatically convert the string response to a Response object
     return response
 
-@analytics.route('/analytics/tournament/<int:tournament_id>')
+@analytics_bp.route('/analytics/tournament/<int:tournament_id>')
 @login_required
 def tournament_analytics(tournament_id):
     """Tournament analysis view with improved error handling"""
     if "user_id" not in session:
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
 
     user_id = session.get("user_id")
 
@@ -736,12 +727,12 @@ def tournament_analytics(tournament_id):
 
     return response
 
-@analytics.route('/analytics/head_to_head')
+@analytics_bp.route('/analytics/head_to_head')
 @login_required
 def head_to_head_view():
     """Head-to-head analysis view with pagination support"""
     if "user_id" not in session:
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
 
     player1_id = request.args.get('player1', type=int)
     player2_id = request.args.get('player2', type=int)
@@ -779,7 +770,7 @@ def head_to_head_view():
         player2_id=player2_id
     )
 
-@analytics.route('/api/player/<int:player_id>/stats')
+@analytics_bp.route('/api/player/<int:player_id>/stats')
 @login_required
 def api_player_stats(player_id):
     """Player statistics API"""
@@ -789,7 +780,7 @@ def api_player_stats(player_id):
 
     return jsonify(stats)
 
-@analytics.route('/api/tournament/<int:tournament_id>/stats')
+@analytics_bp.route('/api/tournament/<int:tournament_id>/stats')
 @login_required
 def api_tournament_stats(tournament_id):
     """Tournament statistics API"""
@@ -799,7 +790,7 @@ def api_tournament_stats(tournament_id):
 
     return jsonify(stats)
 
-@analytics.route('/api/head_to_head/<int:player1_id>/<int:player2_id>')
+@analytics_bp.route('/api/head_to_head/<int:player1_id>/<int:player2_id>')
 @login_required
 def api_head_to_head(player1_id, player2_id):
     """Head-to-head statistics API"""
@@ -808,7 +799,7 @@ def api_head_to_head(player1_id, player2_id):
 
     return jsonify(stats)
 
-@analytics.route('/analytics/overall')
+@analytics_bp.route('/analytics/overall')
 @login_required
 def overall_analysis():
     """Generalized analysis of all inputted tournaments"""

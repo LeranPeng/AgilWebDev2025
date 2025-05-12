@@ -6,3 +6,30 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+badminton.db
+instance/
+
+# Test files and directories
+tests/test_uploads/
+.coverage
+htmlcov/
+
+# Environment
+venv/
+.env
+key.env
+*.env
+
+# IDE files
+.idea/
+.vscode/
+*.swp

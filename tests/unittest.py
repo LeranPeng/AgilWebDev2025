@@ -686,10 +686,18 @@ def test_import_duplicate_data(self):
 #  Analytics and Statistics
 def test_player_statistics(self):
     """Test calculation and display of player statistics."""
+    # William Craig
+    # Step 1: Add a player with known statistics to the database manually via the python backend, 
+    # Step2: Then ask the analyse.py "get_player_stats" function to get the information about that player from the database 
+    # Step3: Assess if the data matches and throw error if appropriate 
     pass
 
 def test_tournament_statistics(self):
     """Test calculation of statistics for a specific tournament."""
+    # William Craig
+    # Step 1: Add a tournament with known statistics to the database manually via the python backend, 
+    # Step2: Then ask the analyse.py "get_tournament_stats" function to get the information about that tournament from the database 
+    # Step3: Assess if the data matches and throw error if appropriate 
     pass
 
 def test_head_to_head_comparison(self):

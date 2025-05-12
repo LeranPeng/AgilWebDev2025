@@ -6,4 +6,7 @@
 **/._.DS_Store
 /instance/badminton.db
 /env
+/venv
 /__pycache__
+.pyc
+routes/__pycache__

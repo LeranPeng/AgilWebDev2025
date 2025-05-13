@@ -770,7 +770,10 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         # William Craig
 
         with self.app.app_context(): 
-            self.login()
+            
+            login = self.login()
+            self.assertEqual(login.status_code, 200, "Login unsuccessful for test user")
+            
             # Step 1: Make some manual testing data 
             #   Players
             test_player1 = Player(name="William Craig")
@@ -796,14 +799,39 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
                 match_type = "Men's Singles"
             )
             db.session.add(match)
-
-            #test that the get player stats is the same as expected
-            response = self.client.get('/analytics/player/' + str(test_player1.id), follow_redirects=True)
-            #   ensure that we didnt get a 404 or 500 error code 
-            self.assertEqual(response.status_code, 200)
+            
             
 
-            self.assertIn("William Craig", response.data, "Name of Player is not in Player analytics Page")
+            #Step 2: Request the player stats for Player 1 (William Craig)
+            response = self.client.get('/analytics/player/' + str(test_player1.id), follow_redirects=True)
+            
+            #   Ensure that the page responded is Good (200)
+            self.assertEqual(response.status_code, 200, "Player Statistics Page does not exist - 404")
+            
+            #Step 3: Test to see if the correct information is in the page
+    
+            #   check for the name of the player 
+            self.assertIn("name:William Craig:", response.get_data(as_text=True), 
+                          "Name of Player is not in Player analytics Page")
+            
+            #   check for the matches of the player
+            self.assertIn("matches:1:", response.get_data(as_text=True), 
+                          "Number of Matches is not in Player analytics Page")
+            
+            #   check for the wins of the player
+            self.assertIn("wins:1:", response.get_data(as_text=True), 
+                          "Number of Wins is not in Player analytics Page")
+            
+            #   check for the losses of the player
+            self.assertIn("losses:1:", response.get_data(as_text=True), 
+                          "Number of Losses is not in Player analytics Page")
+            
+                
+
+            
+            
+           
+
             
 
         

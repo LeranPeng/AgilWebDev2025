@@ -762,43 +762,8 @@ if __name__ == '__main__':
     unittest.main()
 
 
-#  Match Recording and Results
-def test_record_single_match(self):
-    """Test recording a single match result."""
-    pass
 
-def test_record_double_match(self):
-    """Test recording a doubles match result."""
-    pass
 
-def test_invalid_score_format(self):
-    """Test that invalid score formats are rejected."""
-    pass
-
-def test_match_results_view(self):
-    """Test that match results are displayed correctly."""
-    pass
-
-def test_edit_match_result(self):
-    """Test updating an existing match result."""
-    pass
-
-#  Data Import/Export
-def test_csv_upload(self):
-    """Test uploading player or match data via CSV."""
-    pass
-
-def test_csv_format_validation(self):
-    """Test handling of incorrectly formatted CSV files."""
-    pass
-
-def test_export_tournament_data(self):
-    """Test exporting tournament data to CSV."""
-    pass
-
-def test_import_duplicate_data(self):
-    """Test handling of duplicate entries during CSV upload."""
-    pass
 
 #  Analytics and Statistics
 def test_player_statistics(self):

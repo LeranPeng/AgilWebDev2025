@@ -575,75 +575,192 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             self.assertIsNotNone(match2)
             self.assertNotEqual(match1.id, match2.id)
 
+
+    # --- 1. User Authentication and Authorization ---
+
+    def test_user_registration(self):
+        """Test that user registration works with valid data."""
+        response = self.client.post('/signup', data={
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password': 'newpassword',
+            'confirm': 'newpassword'
+        }, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Registration successful', response.data)
+
+    def test_user_login(self):
+        """Test that login works with correct credentials."""
+        response = self.login()
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Welcome', response.data)
+
+    def test_user_logout(self):
+        """Test that users can log out successfully."""
+        self.login()
+        response = self.client.get('/logout', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'You have been logged out', response.data)
+
+    def test_invalid_login(self):
+        """Test that login fails with incorrect credentials."""
+        response = self.client.post('/login', data={
+            'username': 'testuser',
+            'password': 'wrongpassword'
+        }, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Invalid username or password', response.data)
+
+    def test_access_protected_route_without_login(self):
+        """Test that protected routes require login."""
+        response = self.client.get('/dashboard', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Please log in to access this page', response.data)
+
+    def test_admin_privileges(self):
+        """Test that only admins can access the admin dashboard."""
+        # First try as normal user
+        self.login()
+        response = self.client.get('/admin', follow_redirects=True)
+        self.assertNotIn(b'Admin Dashboard', response.data)
+
+        # Promote to admin
+        with self.app.app_context():
+            user = User.query.filter_by(username='testuser').first()
+            user.is_admin = True
+            db.session.commit()
+
+        # Try again as admin
+        self.login()
+        response = self.client.get('/admin', follow_redirects=True)
+        self.assertIn(b'Admin Dashboard', response.data)
+
+
+    # --- 2. Player and Team Management ---
+
+    def test_create_player(self):
+        """Test that a new player can be added."""
+        self.login()
+        response = self.client.post('/players/create', data={
+            'name': 'New Player'
+        }, follow_redirects=True)
+        self.assertIn(b'Player created successfully', response.data)
+
+    def test_edit_player(self):
+        """Test updating player information."""
+        self.login()
+        with self.app.app_context():
+            player = Player(name='Editable Player')
+            db.session.add(player)
+            db.session.commit()
+            player_id = player.id
+
+        response = self.client.post(f'/players/{player_id}/edit', data={
+            'name': 'Updated Player'
+        }, follow_redirects=True)
+        self.assertIn(b'Player updated successfully', response.data)
+
+    def test_delete_player(self):
+        """Test removing a player from the database."""
+        self.login()
+        with self.app.app_context():
+            player = Player(name='Deletable Player')
+            db.session.add(player)
+            db.session.commit()
+            player_id = player.id
+
+        response = self.client.post(f'/players/{player_id}/delete', follow_redirects=True)
+        self.assertIn(b'Player deleted successfully', response.data)
+
+    def test_player_duplicate_check(self):
+        """Test that duplicate player names are not allowed."""
+        self.login()
+        self.client.post('/players/create', data={'name': 'Duplicate Player'}, follow_redirects=True)
+        response = self.client.post('/players/create', data={'name': 'Duplicate Player'}, follow_redirects=True)
+        self.assertIn(b'Player with this name already exists', response.data)
+
+    def test_team_creation(self):
+        """Test that singles and doubles teams are created correctly."""
+        self.login()
+        with self.app.app_context():
+            p1 = Player.query.filter_by(name="Player One").first()
+            p2 = Player.query.filter_by(name="Player Two").first()
+            team = Team(player1_id=p1.id, player2_id=p2.id)
+            db.session.add(team)
+            db.session.commit()
+
+            self.assertEqual(team.player1.name, 'Player One')
+            self.assertEqual(team.player2.name, 'Player Two')
+
+
+    # --- 3. Tournament Management ---
+
+    def test_create_tournament(self):
+        """Test that a new tournament is created successfully."""
+        self.login()
+        response = self.client.post('/tournaments/create', data={
+            'name': 'New Tournament',
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'location': 'Test Venue'
+        }, follow_redirects=True)
+        self.assertIn(b'Tournament created successfully', response.data)
+
+    def test_edit_tournament(self):
+        """Test updating tournament details."""
+        self.login()
+        with self.app.app_context():
+            tournament = Tournament(name='Editable Tournament', date=datetime.now(), location='Old Location', user_id=1)
+            db.session.add(tournament)
+            db.session.commit()
+            tid = tournament.id
+
+        response = self.client.post(f'/tournaments/{tid}/edit', data={
+            'name': 'Updated Tournament',
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'location': 'New Location'
+        }, follow_redirects=True)
+        self.assertIn(b'Tournament updated successfully', response.data)
+
+    def test_delete_tournament(self):
+        """Test deleting a tournament."""
+        self.login()
+        with self.app.app_context():
+            tournament = Tournament(name='Deletable Tournament', date=datetime.now(), location='Somewhere', user_id=1)
+            db.session.add(tournament)
+            db.session.commit()
+            tid = tournament.id
+
+        response = self.client.post(f'/tournaments/{tid}/delete', follow_redirects=True)
+        self.assertIn(b'Tournament deleted successfully', response.data)
+
+    def test_view_tournament_list(self):
+        """Test that the tournament list is displayed correctly."""
+        self.login()
+        response = self.client.get('/tournaments', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Tournaments', response.data)
+
+    def test_tournament_sharing(self):
+        """Test sharing a tournament with another user."""
+        self.login()
+        with self.app.app_context():
+            new_user = User(username='recipient', email='recipient@example.com')
+            new_user.set_password('abc123')
+            db.session.add(new_user)
+
+            tournament = Tournament(name='Sharable Tournament', date=datetime.now(), location='Court 1', user_id=1)
+            db.session.add(tournament)
+            db.session.commit()
+            tid = tournament.id
+
+        response = self.client.post(f'/tournaments/{tid}/share', data={
+            'recipient_username': 'recipient'
+        }, follow_redirects=True)
+        self.assertIn(b'Tournament shared successfully', response.data)
+
 if __name__ == '__main__':
     unittest.main()
 
-#  User Authentication and Authorization
-def test_user_registration(self):
-    """Test that user registration works with valid data."""
-    pass
-
-def test_user_login(self):
-    """Test that login works with correct credentials."""
-    pass
-
-def test_user_logout(self):
-    """Test that users can log out successfully."""
-    pass
-
-def test_invalid_login(self):
-    """Test that login fails with incorrect credentials."""
-    pass
-
-def test_access_protected_route_without_login(self):
-    """Test that protected routes require login."""
-    pass
-
-def test_admin_privileges(self):
-    """Test that only admins can access the admin dashboard."""
-    pass
-
-#  Player and Team Management
-def test_create_player(self):
-    """Test that a new player can be added."""
-    pass
-
-def test_edit_player(self):
-    """Test updating player information."""
-    pass
-
-def test_delete_player(self):
-    """Test removing a player from the database."""
-    pass
-
-def test_player_duplicate_check(self):
-    """Test that duplicate player names are not allowed."""
-    pass
-
-def test_team_creation(self):
-    """Test that singles and doubles teams are created correctly."""
-    pass
-
-#  Tournament Management
-def test_create_tournament(self):
-    """Test that a new tournament is created successfully."""
-    pass
-
-def test_edit_tournament(self):
-    """Test updating tournament details."""
-    pass
-
-def test_delete_tournament(self):
-    """Test deleting a tournament."""
-    pass
-
-def test_view_tournament_list(self):
-    """Test that the tournament list is displayed correctly."""
-    pass
-
-def test_tournament_sharing(self):
-    """Test sharing a tournament with another user."""
-    pass
 
 #  Match Recording and Results
 def test_record_single_match(self):

@@ -33,3 +33,13 @@ key.env
 .idea/
 .vscode/
 *.swp
+
+#ignore DS Store files
+*.DS_Store
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+/instance/badminton.db
+/env
+/__pycache__

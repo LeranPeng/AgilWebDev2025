@@ -764,8 +764,14 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
 
     #  Analytics and Statistics
     def test_player_statistics(self):
-        """Test calculation and display of player statistics."""
+        """Test calculation and display of player statistics.
+        This test ensures that :
+        1: The individual player statistics pages are created on demand
+        2: the player statistics pages have correctly calculated statistics
+        """
         # William Craig
+
+        
 
         with self.app.app_context(): 
             
@@ -776,8 +782,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             #   Players
             test_player1 = Player(name="William Craig")
             test_player2 = Player(name="Andrew Mekhail")
-            test_player3 = Player(name="Dennis Chuo")
-            db.session.add_all([test_player1,test_player2,test_player3])
+            db.session.add_all([test_player1,test_player2])
             #   Tournament
             test_tournament = Tournament(
                     name="Analytics Test Tournament",
@@ -832,10 +837,78 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
     def test_tournament_statistics(self):
         """Test calculation of statistics for a specific tournament."""
         # William Craig
-        # Step 1: Add a tournament with known statistics to the database manually via the python backend, 
-        # Step2: Then ask the analyse.py "get_tournament_stats" function to get the information about that tournament from the database 
-        # Step3: Assess if the data matches and throw error if appropriate 
-        pass
+        
+        
+        with self.app.app_context(): 
+            login = self.login()
+            self.assertEqual(login.status_code, 200, "Login unsuccessful for test user")
+
+            # Step 1: Make some manual testing data 
+
+            '''
+            #   Players
+            test_player1 = Player(name="William Craig")
+            test_player2 = Player(name="Andrew Mekhail")
+            db.session.add_all([test_player1,test_player2])
+            #   Tournament
+            test_tournament = Tournament(
+                    name="Analytics Test Tournament",
+                    date="1/1/25",
+                    location="Python unittest",
+                    user_id=10
+                )
+            db.session.add(test_tournament)
+            # Matches
+            match = Match(
+                tournament_id = test_tournament.id,
+                round_name = "Round 1",
+                team1_id = Team(player1_id = test_player1.id, player2_id=None), #Will
+                team2_id = Team(player1_id = test_player2.id, player2_id=None), #Andrew
+                score1 = "21-19, 19-21, 21-18", #Will score demo data
+                score2 = "21-19, 19-21, 21-18", #andrew score demo data
+                match_type = "Men's Singles"
+            )
+            db.session.add(match)
+            '''
+
+            response = self.client.post('/tournaments/create', data={
+            'name': 'New Tournament',
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'location': 'Test Venue'
+             }, follow_redirects=True)
+            
+
+
+            #Step 2: Request the tournament stats for test_tournament
+            response = self.client.get('/analytics/tournament/' + str(test_tournament.id) + "/stats", follow_redirects=True)
+            
+            #   Ensure that the page responded is Good (200)
+            self.assertEqual(response.status_code, 200, "Tournament Statistics Page does not exist - 404")
+            
+
+            #Step 3: Test to see if the correct information is in the page
+            #WC Note: I have added a comment to the tournament_analytics.html which will be populated with the tournament_stats by flask
+            #   this was done in order to make the calculated values of tournament_stats more searchable in the response
+            #   TODO: Rewrite this implementaion in selenium-webdriver instead
+
+            #   check for the name of the tournament 
+            self.assertIn("name:Analytics Test Tournament:", response.get_data(as_text=True), 
+                          "Name of Tournament is not correct in Tournament analytics Page")
+            
+            #   check for the date of the player
+            self.assertIn("date:1/1/25:", response.get_data(as_text=True), 
+                          "Date of Tournament is not correct in Tournament analytics Page")
+            
+            #   check for the wins of the player
+            self.assertIn("location:Python unittest:", response.get_data(as_text=True), 
+                          "Location of Tournament is not correct in Tournament analytics Page")
+            
+            
+        
+        
+        
+         
+        
             
                 
 

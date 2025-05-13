@@ -762,8 +762,6 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
 
     
 
-
-
     #  Analytics and Statistics
     def test_player_statistics(self):
         """Test calculation and display of player statistics."""
@@ -808,8 +806,13 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             #   Ensure that the page responded is Good (200)
             self.assertEqual(response.status_code, 200, "Player Statistics Page does not exist - 404")
             
+
+
             #Step 3: Test to see if the correct information is in the page
-    
+            #WC Note: I have added a comment to the player_analytics.html which will be populated with the player_stats by flask
+            #   this was done in order to make the calculated values of player_stats more searchable in the response
+            #   TODO: Rewrite this implementaion in selenium-webdriver instead
+
             #   check for the name of the player 
             self.assertIn("name:William Craig:", response.get_data(as_text=True), 
                           "Name of Player is not in Player analytics Page")
@@ -825,6 +828,14 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             #   check for the losses of the player
             self.assertIn("losses:1:", response.get_data(as_text=True), 
                           "Number of Losses is not in Player analytics Page")
+    
+    def test_tournament_statistics(self):
+        """Test calculation of statistics for a specific tournament."""
+        # William Craig
+        # Step 1: Add a tournament with known statistics to the database manually via the python backend, 
+        # Step2: Then ask the analyse.py "get_tournament_stats" function to get the information about that tournament from the database 
+        # Step3: Assess if the data matches and throw error if appropriate 
+        pass
             
                 
 

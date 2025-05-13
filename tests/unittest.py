@@ -5,6 +5,8 @@ import csv
 from datetime import datetime
 import sys
 
+
+
 # Ensure proper import paths regardless of execution context
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -758,21 +760,54 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         }, follow_redirects=True)
         self.assertIn(b'Tournament shared successfully', response.data)
 
-if __name__ == '__main__':
-    unittest.main()
+    
 
 
 
+    #  Analytics and Statistics
+    def test_player_statistics(self):
+        """Test calculation and display of player statistics."""
+        # William Craig
 
+        with self.app.app_context(): 
+            self.login()
+            # Step 1: Make some manual testing data 
+            #   Players
+            test_player1 = Player(name="William Craig")
+            test_player2 = Player(name="Andrew Mekhail")
+            test_player3 = Player(name="Dennis Chuo")
+            db.session.add_all([test_player1,test_player2,test_player3])
+            #   Tournament
+            test_tournament = Tournament(
+                    name="Analytics Test Tournament",
+                    date=datetime.now().date(),
+                    location="Python unittest",
+                    user_id=10
+                )
+            db.session.add(test_tournament)
+            # Matches
+            match = Match(
+                tournament_id = test_tournament.id,
+                round_name = "Round 1",
+                team1_id = Team(player1_id = test_player1.id, player2_id=None), #Will
+                team2_id = Team(player1_id = test_player2.id, player2_id=None), #Andrew
+                score1 = "21-19, 19-21, 21-18", #Will score demo data
+                score2 = "21-19, 19-21, 21-18", #andrew score demo data
+                match_type = "Men's Singles"
+            )
+            db.session.add(match)
 
-#  Analytics and Statistics
-def test_player_statistics(self):
-    """Test calculation and display of player statistics."""
-    # William Craig
-    # Step 1: Add a player with known statistics to the database manually via the python backend, 
-    # Step2: Then ask the analyse.py "get_player_stats" function to get the information about that player from the database 
-    # Step3: Assess if the data matches and throw error if appropriate 
-    pass
+            #test that the get player stats is the same as expected
+            response = self.client.get('/analytics/player/' + str(test_player1.id), follow_redirects=True)
+            #   ensure that we didnt get a 404 or 500 error code 
+            self.assertEqual(response.status_code, 200)
+            
+
+            self.assertIn("William Craig", response.data, "Name of Player is not in Player analytics Page")
+            
+
+        
+
 
 def test_tournament_statistics(self):
     """Test calculation of statistics for a specific tournament."""
@@ -814,3 +849,7 @@ def test_invalid_player_id(self):
 def test_csrf_protection(self):
     """Test that CSRF protection works on forms."""
     pass
+
+
+if __name__ == '__main__':
+    unittest.main()

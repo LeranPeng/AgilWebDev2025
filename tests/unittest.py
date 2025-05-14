@@ -5,6 +5,8 @@ import csv
 from datetime import datetime
 import sys
 
+
+
 # Ensure proper import paths regardless of execution context
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -758,55 +760,173 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         }, follow_redirects=True)
         self.assertIn(b'Tournament shared successfully', response.data)
 
-if __name__ == '__main__':
-    unittest.main()
+    
+
+    #  Analytics and Statistics
+    def test_player_statistics(self):
+        """Test calculation and display of player statistics.
+        This test ensures that :
+        1: The individual player statistics pages are created on demand
+        2: the player statistics pages have correctly calculated statistics
+        """
+        # William Craig
+
+        
+
+        with self.app.app_context(): 
+            
+            login = self.login()
+            self.assertEqual(login.status_code, 200, "Login unsuccessful for test user")
+            
+            # Step 1: Make some manual testing data 
+            #   Players
+            test_player1 = Player(name="William Craig")
+            test_player2 = Player(name="Andrew Mekhail")
+            db.session.add_all([test_player1,test_player2])
+            #   Tournament
+            test_tournament = Tournament(
+                    name="Analytics Test Tournament",
+                    date=datetime.now().date(),
+                    location="Python unittest",
+                    user_id=10
+                )
+            db.session.add(test_tournament)
+            # Matches
+            match = Match(
+                tournament_id = test_tournament.id,
+                round_name = "Round 1",
+                team1_id = Team(player1_id = test_player1.id, player2_id=None), #Will
+                team2_id = Team(player1_id = test_player2.id, player2_id=None), #Andrew
+                score1 = "21-19, 19-21, 21-18", #Will score demo data
+                score2 = "21-19, 19-21, 21-18", #andrew score demo data
+                match_type = "Men's Singles"
+            )
+            db.session.add(match)
+            
+            
+
+            #Step 2: Request the player stats for Player 1 (William Craig)
+            response = self.client.get('/analytics/player/' + str(test_player1.id), follow_redirects=True)
+            
+            #   Ensure that the page responded is Good (200)
+            self.assertEqual(response.status_code, 200, "Player Statistics Page does not exist - 404")
+            
 
 
-#  Match Recording and Results
-def test_record_single_match(self):
-    """Test recording a single match result."""
-    pass
+            #Step 3: Test to see if the correct information is in the page
+            #WC Note: I have added a comment to the player_analytics.html which will be populated with the player_stats by flask
+            #   this was done in order to make the calculated values of player_stats more searchable in the response
+            #   TODO: Rewrite this implementaion in selenium-webdriver instead
 
-def test_record_double_match(self):
-    """Test recording a doubles match result."""
-    pass
+            #   check for the name of the player 
+            self.assertIn("name:William Craig:", response.get_data(as_text=True), 
+                          "Name of Player is not in Player analytics Page")
+            
+            #   check for the matches of the player
+            self.assertIn("matches:1:", response.get_data(as_text=True), 
+                          "Number of Matches is not in Player analytics Page")
+            
+            #   check for the wins of the player
+            self.assertIn("wins:1:", response.get_data(as_text=True), 
+                          "Number of Wins is not in Player analytics Page")
+            
+            #   check for the losses of the player
+            self.assertIn("losses:1:", response.get_data(as_text=True), 
+                          "Number of Losses is not in Player analytics Page")
+    
+    def test_tournament_statistics(self):
+        """Test calculation of statistics for a specific tournament."""
+        # William Craig
+        
+        
+        with self.app.app_context(): 
+            login = self.login()
+            self.assertEqual(login.status_code, 200, "Login unsuccessful for test user")
 
-def test_invalid_score_format(self):
-    """Test that invalid score formats are rejected."""
-    pass
+            # Step 1: Make some manual testing data 
 
-def test_match_results_view(self):
-    """Test that match results are displayed correctly."""
-    pass
+            '''
+            #   Players
+            test_player1 = Player(name="William Craig")
+            test_player2 = Player(name="Andrew Mekhail")
+            db.session.add_all([test_player1,test_player2])
+            #   Tournament
+            test_tournament = Tournament(
+                    name="Analytics Test Tournament",
+                    date="1/1/25",
+                    location="Python unittest",
+                    user_id=10
+                )
+            db.session.add(test_tournament)
+            # Matches
+            match = Match(
+                tournament_id = test_tournament.id,
+                round_name = "Round 1",
+                team1_id = Team(player1_id = test_player1.id, player2_id=None), #Will
+                team2_id = Team(player1_id = test_player2.id, player2_id=None), #Andrew
+                score1 = "21-19, 19-21, 21-18", #Will score demo data
+                score2 = "21-19, 19-21, 21-18", #andrew score demo data
+                match_type = "Men's Singles"
+            )
+            db.session.add(match)
+            '''
 
-def test_edit_match_result(self):
-    """Test updating an existing match result."""
-    pass
+            response = self.client.post('/tournaments/create', data={
+            'name': 'New Tournament',
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'location': 'Test Venue'
+             }, follow_redirects=True)
+            
 
-#  Data Import/Export
-def test_csv_upload(self):
-    """Test uploading player or match data via CSV."""
-    pass
 
-def test_csv_format_validation(self):
-    """Test handling of incorrectly formatted CSV files."""
-    pass
+            #Step 2: Request the tournament stats for test_tournament
+            response = self.client.get('/analytics/tournament/' + str(test_tournament.id) + "/stats", follow_redirects=True)
+            
+            #   Ensure that the page responded is Good (200)
+            self.assertEqual(response.status_code, 200, "Tournament Statistics Page does not exist - 404")
+            
 
-def test_export_tournament_data(self):
-    """Test exporting tournament data to CSV."""
-    pass
+            #Step 3: Test to see if the correct information is in the page
+            #WC Note: I have added a comment to the tournament_analytics.html which will be populated with the tournament_stats by flask
+            #   this was done in order to make the calculated values of tournament_stats more searchable in the response
+            #   TODO: Rewrite this implementaion in selenium-webdriver instead
 
-def test_import_duplicate_data(self):
-    """Test handling of duplicate entries during CSV upload."""
-    pass
+            #   check for the name of the tournament 
+            self.assertIn("name:Analytics Test Tournament:", response.get_data(as_text=True), 
+                          "Name of Tournament is not correct in Tournament analytics Page")
+            
+            #   check for the date of the player
+            self.assertIn("date:1/1/25:", response.get_data(as_text=True), 
+                          "Date of Tournament is not correct in Tournament analytics Page")
+            
+            #   check for the wins of the player
+            self.assertIn("location:Python unittest:", response.get_data(as_text=True), 
+                          "Location of Tournament is not correct in Tournament analytics Page")
+            
+            
+        
+        
+        
+         
+        
+            
+                
 
-#  Analytics and Statistics
-def test_player_statistics(self):
-    """Test calculation and display of player statistics."""
-    pass
+            
+            
+           
+
+            
+
+        
+
 
 def test_tournament_statistics(self):
     """Test calculation of statistics for a specific tournament."""
+    # William Craig
+    # Step 1: Add a tournament with known statistics to the database manually via the python backend, 
+    # Step2: Then ask the analyse.py "get_tournament_stats" function to get the information about that tournament from the database 
+    # Step3: Assess if the data matches and throw error if appropriate 
     pass
 
 def test_head_to_head_comparison(self):
@@ -841,3 +961,7 @@ def test_invalid_player_id(self):
 def test_csrf_protection(self):
     """Test that CSRF protection works on forms."""
     pass
+
+
+if __name__ == '__main__':
+    unittest.main()

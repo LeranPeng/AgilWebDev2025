@@ -859,7 +859,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By        
 from multiprocessing import Process, set_start_method
 import multiprocessing
-import threading
 import time
 
     
@@ -867,22 +866,67 @@ import time
 localHost = "http://127.0.0.1:5000"  
 
 def run_flask():
-        app = create_app()
-        app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory DB
-        app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
-        app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'test_uploads')
-        
-        app_context = app.app_context()
-        app_context.push()
-        with app_context:
-            db.drop_all()   # this might need to be in "with appcontext"
-            db.create_all() # this might need to be in "with appcontext"
+    #William Craig
+    app = create_app()
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory DB
+    app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'test_uploads')
+    
+    app_context = app.app_context()
+    app_context.push()
+    with app_context:
+        db.drop_all()   # this might need to be in "with appcontext"
+        db.create_all() # this might need to be in "with appcontext"
 
-        app.run(host='127.0.0.1', port=5000, use_reloader=False)
+    app.run(host='127.0.0.1', port=5000, use_reloader=False)
+
+def sign_up_log_in_as_test_user(driver):
+    #William Craig
+    ##############################
+    #Sign up 
+    #navigate to the signup page
+    driver.get(localHost + "/signup")
+    #username 
+    username_feild = driver.find_element(By.ID, "username")
+    username_feild.send_keys("testinguser")
+    #email 
+    email_feild = driver.find_element(By.ID, "email")
+    email_feild.send_keys("testinguser@mail.com")
+    #password1 
+    password1_feild = driver.find_element(By.ID, "password")
+    password1_feild.send_keys("Testing123!")
+    #password1 
+    password2_feild = driver.find_element(By.ID, "confirm_password")
+    password2_feild.send_keys("Testing123!")
+    #click the submit button
+    submit_button_feild = driver.find_element(By.ID, "submit_button")
+    submit_button_feild.click()
+    ##############################
+    
+    #wait to be navigated to login page
+    time.sleep(1)
+
+    ##############################
+    #Login
+    #username 
+    username_feild = driver.find_element(By.ID, "username")
+    username_feild.send_keys("testinguser")
+    #password1 
+    password_feild = driver.find_element(By.ID, "password")
+    password_feild.send_keys("Testing123!")
+    #click the submit button
+    submit_button_feild = driver.find_element(By.ID, "submit_button")
+    submit_button_feild.click()
+    ##############################
+
+    #wait to be navigated to dashboard page
+    time.sleep(2)
 
 class SeleniumTests(unittest.TestCase):
     #William Craig
+    #This class contains all of the selenium-webdriver tests
+    #These tests run much slower as it requires the web browser, i could make it run headless, but its harder to troubleshoot the tests 
 
     def setUp(self):
         #William Craig
@@ -891,7 +935,7 @@ class SeleniumTests(unittest.TestCase):
         multiprocessing.set_start_method("fork")
         self.server_thread = Process(target=run_flask)
         self.server_thread.start()
-        time.sleep(1) # give some time for flask to boot
+        #time.sleep(1) # give some time for flask to boot
         ##########################################
 
         ##########################################
@@ -901,7 +945,7 @@ class SeleniumTests(unittest.TestCase):
         self.driver.delete_all_cookies()
         #Get the home page of the website
         self.driver.get(localHost)
-        time.sleep(1)
+        #time.sleep(1)
         ##########################################
 
     def tearDown(self):
@@ -909,46 +953,65 @@ class SeleniumTests(unittest.TestCase):
         self.driver.close()
         
     def test_tournament_statistics_selenium(self):
+        #William Craig
         
-        self.driver.get(localHost) 
-        
-        time.sleep(1)
-        
-        testing = self.driver.find_element(By.ID, "testing").text
+        # Step 1: Sign up as test user 
+        sign_up_log_in_as_test_user(self.driver)
 
+        #######################
+        #  Step 2: Add a test tournament
+        self.driver.get(localHost+"/input_form")
+        time.sleep(2)
+            
+        #Tournament Name 
+        submit_button_feild = self.driver.find_element(By.ID, "tournament_name")
+        submit_button_feild.send_keys("Test Tournament")
+        #Tournament date 
+        submit_button_feild = self.driver.find_element(By.ID, "tournament_date")
+        submit_button_feild.send_keys("01012025")
+        #Tournament location 
+        submit_button_feild = self.driver.find_element(By.ID, "location")
+        submit_button_feild.send_keys("Test location")
+        # Round
+        submit_button_feild = self.driver.find_element(By.ID, "round")
+        submit_button_feild.send_keys("Final")
+        # Group
+        submit_button_feild = self.driver.find_element(By.ID, "group")
+        submit_button_feild.send_keys("Test Group")
+        # Team 1
+        submit_button_feild = self.driver.find_element(By.ID, "team1")
+        submit_button_feild.send_keys("William Craig")
+        # Team 2
+        submit_button_feild = self.driver.find_element(By.ID, "team2")
+        submit_button_feild.send_keys("Craig William")
+        # Score
+        submit_button_feild = self.driver.find_element(By.ID, "score")
+        submit_button_feild.send_keys("21-19, 19-21, 21-18")
+        #click the submit button
+        time.sleep(3)
+        submit_button_feild = self.driver.find_element(By.ID, "submit_button")
+        submit_button_feild.click()
+        time.sleep(3)
+        
+
+
+        #######################
+
+        #######################
+        #  Step 2: Go to tournament analysis page and see if the information is correct
+        
+
+
+
+        #######################
+
+        self.driver.get(localHost) 
+        time.sleep(1)
+        testing = self.driver.find_element(By.ID, "testing").text
         self.assertEqual(testing, "Badminton Tournament Management Simplified")
 
         
-
-
-
-
-        
-
-
-
-        
-
-
-
-            
-            
-            
-        
-        
-        
-         
-        
-            
-                
-
-            
-            
-           
-
-            
-
-        
+     
 
 
 def test_tournament_statistics(self):

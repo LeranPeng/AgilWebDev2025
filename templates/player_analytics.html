@@ -57,7 +57,7 @@ losses:{{player.losses}}:
 {% block content %}
 <div class="mb-6 flex justify-between items-center">
   <div>
-    <h2 class="text-2xl font-semibold">🏆 Analysis for {{ player.name | default('Player') }}</h2>
+    <h2 class="text-2xl font-semibold" id="player-name">🏆 Analysis for {{ player.name | default('Player') }}</h2>
     <p class="text-gray-600 mt-1">View detailed player statistics and performance</p>
   </div>
   <div class="flex space-x-2">
@@ -79,19 +79,19 @@ losses:{{player.losses}}:
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
   <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Total Matches</p>
-    <p class="text-3xl font-bold text-blue-700 mt-2">{{ player.matches|default(0) }}</p>
+    <p class="text-3xl font-bold text-blue-700 mt-2" id="player-matches">{{ player.matches|default(0) }}</p>
   </div>
   <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Wins</p>
-    <p class="text-3xl font-bold text-green-600 mt-2">{{ player.wins|default(0) }}</p>
+    <p class="text-3xl font-bold text-green-600 mt-2" id="player-wins">{{ player.wins|default(0) }}</p>
   </div>
   <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Losses</p>
-    <p class="text-3xl font-bold text-red-600 mt-2">{{ player.losses|default(0) }}</p>
+    <p class="text-3xl font-bold text-red-600 mt-2" id="player-losses">{{ player.losses|default(0) }}</p>
   </div>
   <div class="bg-white p-5 rounded shadow text-center stat-card">
     <p class="text-gray-500">Win Rate</p>
-    <p class="text-3xl font-bold text-purple-600 mt-2">{{ player.win_rate|default(0) }}%</p>
+    <p class="text-3xl font-bold text-purple-600 mt-2" id="player-win-rate">{{ player.win_rate|default(0) }}%</p>
   </div>
 </div>
 

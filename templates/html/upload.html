@@ -13,6 +13,7 @@
   <p class="text-sm text-gray-600 mb-4">Upload players, teams, or event setup data. This will be used for grouping, scheduling, and seeding.</p>
 
   <form action="/upload/pre" method="POST" enctype="multipart/form-data" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="file" name="pre_file" accept=".csv" required class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100">
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Upload Pre-Tournament Data</button>
   </form>
@@ -24,6 +25,7 @@
   <p class="text-sm text-gray-600 mb-4">Upload match results for analysis, ranking, or bracket generation. Include scores and winner info.</p>
 
   <form action="/upload/post" method="POST" enctype="multipart/form-data" class="space-y-4">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="file" name="post_file" accept=".csv" required class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-600 hover:file:bg-green-100">
     <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Upload Match Results</button>
   </form>

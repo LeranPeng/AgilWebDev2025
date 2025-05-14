@@ -7,7 +7,7 @@
 <div class="mb-6 flex justify-between items-center">
   <div>
     <h2 class="text-2xl font-semibold">📋 Review Uploaded Results</h2>
-    <p class="text-gray-600 mt-1">Please review the uploaded match data before confirming. This will create a new tournament with all matches shown below.</p>
+    <p class="text-gray-600 mt-1">Please review the uploaded match data before confirming. The system will automatically organize matches by their respective tournaments.</p>
   </div>
   <div>
     <a href="{{ url_for('tournament.upload_page') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
@@ -19,20 +19,6 @@
 <!-- Tournament Name Form -->
 <form action="{{ url_for('tournament.confirm_results', filename=filename) }}" method="POST" class="bg-white p-6 rounded-lg shadow-md mb-8">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <h3 class="text-lg font-semibold mb-4">Tournament Details</h3>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-    <div>
-      <label for="tournament_name" class="block text-gray-700 mb-1">Tournament Name</label>
-      <input type="text" id="tournament_name" name="tournament_name"
-             value="Tournament from {{ filename }}"
-             class="w-full border rounded px-3 py-2" required>
-    </div>
-    <div>
-      <label for="location" class="block text-gray-700 mb-1">Location (Optional)</label>
-      <input type="text" id="location" name="location"
-             class="w-full border rounded px-3 py-2">
-    </div>
-  </div>
 
   <!-- Data Preview Table -->
   <h3 class="text-lg font-semibold mb-4">Match Data Preview</h3>
@@ -74,7 +60,12 @@
       <li>Score Team 2 (format: 19-21, 21-19, 18-21)</li>
       <li>Round (e.g., "Quarterfinal")</li>
       <li>Match Type (e.g., "Men's Singles")</li>
+      <li>Tournament (tournament name)</li>
+      <li>Year (tournament year)</li>
     </ul>
+    <p class="text-sm text-blue-600 mt-2 font-medium">
+      Matches will be automatically organized by their respective tournaments as specified in the CSV.
+    </p>
   </div>
 
   <!-- Buttons -->

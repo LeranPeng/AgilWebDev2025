@@ -136,6 +136,7 @@ def upload_pre_tournament():
 
         return redirect(url_for('tournament.upload_page'))
 
+
 @tournament_bp.route("/upload/post", methods=["POST"])
 @login_required
 def upload_post_tournament():
@@ -161,17 +162,43 @@ def upload_post_tournament():
             file.save(filepath)
 
             # Read the CSV data
+            tournament_name = None
             with open(filepath, 'r') as f:
                 csv_reader = csv.reader(f)
                 headers = next(csv_reader)
+
+                tournament_col_index = -1
+                year_col_index = -1
+
+                for i, header in enumerate(headers):
+                    if header.lower() == 'tournament':
+                        tournament_col_index = i
+                    elif header.lower() == 'year':
+                        year_col_index = i
+
                 matches = list(csv_reader)
 
+                if tournament_col_index >= 0 and matches:
+                    tournament_name = matches[0][tournament_col_index]
+
+                    if year_col_index >= 0:
+                        year = matches[0][year_col_index]
+                        tournament_name = f"{tournament_name} {year}"
+
+            if not tournament_name:
+                tournament_name = f"Tournament from {filename}"
+
             # Fixed template path - without the html/ prefix since it's in the templates/ directory
-            return render_template('review_results.html', headers=headers, matches=matches, filename=filename)
+            return render_template('review_results.html',
+                                   headers=headers,
+                                   matches=matches,
+                                   filename=filename,
+                                   tournament_name=tournament_name)  # 传递比赛名称
 
         except Exception as e:
             flash(f'Error processing file: {str(e)}')
             return redirect(url_for('tournament.upload_page'))
+
 
 @tournament_bp.route("/confirm_results/<filename>", methods=["POST"])
 @login_required
@@ -180,64 +207,94 @@ def confirm_results(filename):
         return redirect(url_for("auth.login"))
 
     try:
-        tournament_name = request.form.get("tournament_name", f"Tournament from {filename}")
-        tournament_date = datetime.now().date()
-
-        # Create tournament
-        tournament = Tournament(
-            name=tournament_name,
-            date=tournament_date,
-            location=request.form.get("location", ""),
-            user_id=session["user_id"]
-        )
-        db.session.add(tournament)
-        db.session.flush()
-
-        # Process the CSV file
         from flask import current_app
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], secure_filename(filename))
+
         with open(filepath, 'r') as f:
             csv_reader = csv.reader(f)
             headers = next(csv_reader)
 
-            # Process each row in the CSV
+            team1_idx = headers.index('Team 1') if 'Team 1' in headers else 0
+            team2_idx = headers.index('Team 2') if 'Team 2' in headers else 1
+            score1_idx = headers.index('Score 1') if 'Score 1' in headers else 2
+            score2_idx = headers.index('Score 2') if 'Score 2' in headers else 3
+            round_idx = headers.index('Round') if 'Round' in headers else 4
+            match_type_idx = headers.index('Match Type') if 'Match Type' in headers else 5
+            tournament_idx = headers.index('Tournament') if 'Tournament' in headers else 6
+            year_idx = headers.index('Year') if 'Year' in headers else 7
+
+            tournaments_cache = {}
             match_count = 0
+
             for row in csv_reader:
-                if len(row) >= 4:  # Ensure row has enough data
+                if len(row) >= 6:
                     try:
-                        team1 = process_team(row[0])
-                        team2 = process_team(row[1])
+                        tournament_name = row[tournament_idx] if tournament_idx < len(row) else "Unknown"
+                        year = row[year_idx] if year_idx < len(row) and year_idx < len(row) else ""
 
-                        # Check if players appear on both sides
-                        match_type = row[5] if len(row) > 5 else "Unknown"
+                        tournament_key = f"{tournament_name}_{year}"
+
+                        if tournament_key not in tournaments_cache:
+                            existing_tournament = Tournament.query.filter_by(
+                                name=tournament_name,
+                                user_id=session["user_id"]
+                            ).first()
+
+                            if existing_tournament and str(existing_tournament.date.year) == year:
+
+                                tournaments_cache[tournament_key] = existing_tournament
+                            else:
+                                try:
+
+                                    tournament_date = datetime(int(year), 1,
+                                                               1).date() if year.isdigit() else datetime.now().date()
+                                except:
+                                    tournament_date = datetime.now().date()
+
+                                new_tournament = Tournament(
+                                    name=tournament_name,
+                                    date=tournament_date,
+                                    location="",  # Read from csv if there is
+                                    user_id=session["user_id"]
+                                )
+                                db.session.add(new_tournament)
+                                db.session.flush() # Get id
+                                tournaments_cache[tournament_key] = new_tournament
+
+                        current_tournament = tournaments_cache[tournament_key]
+
+                        team1 = process_team(row[team1_idx])
+                        team2 = process_team(row[team2_idx])
+
+                        match_type = row[match_type_idx] if match_type_idx < len(row) else "Unknown"
                         if match_type.endswith('Doubles') and not validate_match_players(team1, team2):
-                            flash(
-                                f"Error: In doubles matches, players cannot appear on both sides (in {row[0]} vs {row[1]})")
-                            return redirect(url_for('tournament.upload_page'))
+                            flash(f"Warning: In doubles，the player cannnot against itself ({row[team1_idx]} vs {row[team2_idx]})")
+                            continue
 
+                        # Create matches
                         match = Match(
-                            tournament_id=tournament.id,
-                            round_name=row[4] if len(row) > 4 else "Unknown",
+                            tournament_id=current_tournament.id,
+                            round_name=row[round_idx] if round_idx < len(row) else "Unknown",
                             team1_id=team1.id,
                             team2_id=team2.id,
-                            score1=row[2] if len(row) > 2 else "0-0",
-                            score2=row[3] if len(row) > 3 else "0-0",
-                            match_type=row[5] if len(row) > 5 else "Unknown"
+                            score1=row[score1_idx] if score1_idx < len(row) else "0-0",
+                            score2=row[score2_idx] if score2_idx < len(row) else "0-0",
+                            match_type=match_type
                         )
                         db.session.add(match)
                         match_count += 1
                     except Exception as e:
-                        flash(f"Error processing match row: {str(e)}")
+                        flash(f"Error when dealing with rows: {str(e)}")
                         continue
 
-        db.session.commit()
-        os.remove(filepath)  # Clean up the temporary file
+            db.session.commit()
+            os.remove(filepath)
 
-        flash(f'Successfully imported tournament with {match_count} matches!')
-        return redirect(url_for('user.dashboard'))
+            flash(f'Successfully imported {match_count} matches，in {len(tournaments_cache)} Tournaments!')
+            return redirect(url_for('user.dashboard'))
     except Exception as e:
         db.session.rollback()
-        flash(f'Error processing results: {str(e)}')
+        flash(f'Error with results: {str(e)}')
         return redirect(url_for('tournament.upload_page'))
 
 @tournament_bp.route("/api/matches/<int:tournament_id>")

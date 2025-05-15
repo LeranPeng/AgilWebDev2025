@@ -759,11 +759,14 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             db.session.add(tournament)
             db.session.commit()
             tid = tournament.id
+            new_user_id = new_user.id
 
-        response = self.client.post(f'/tournaments/{tid}/share', data={
-            'recipient_username': 'recipient'
+        response = self.client.post('/share/create', data={
+            'tournament_id': tid,
+            'user_id': new_user_id
         }, follow_redirects=True)
-        self.assertIn(b'Tournament shared successfully', response.data)
+
+        self.assertIn(b'Tournament shared with recipient successfully!', response.data)
 
             
             

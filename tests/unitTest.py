@@ -937,24 +937,25 @@ class SeleniumTests(unittest.TestCase):
         # TODO: Use selenium to find the statistics and compare to expected values 
 
     def test_player_statistics_selenium(self):
-        #William Craig
-        
+        # William Craig
+
         # Step 1: Sign up as test user 
         sign_up_log_in_as_test_user(self.driver)
- 
-        #Step 2: Add a test tournament
+
+        # Step 2: Add a test tournament
         add_test_tournament(self.driver)
 
-        #Step 3: Go to the player analysis page for  "Craig William"
-        self.driver.get(localHost+"/analytics")
+        # Step 3: Go to the player analysis page
+        self.driver.get(localHost + "/analytics")
         time.sleep(sleep_time)
-        tournament_select_feild = Select(self.driver.find_element(By.ID, "playerSelect"))
-        tournament_select_feild.select_by_index(1)  
 
+        # Use select_by_visible_text instead of index
+        player_select_field = Select(self.driver.find_element(By.ID, "playerSelect"))
+        player_select_field.select_by_visible_text("Craig William")
+
+        # Assert player name is correct
         self.assertIn("Craig William", self.driver.find_element(By.ID, "player-name").text,
-                      "Player Analysis page title is not the same as player name provided in form")
-        # TODO: Use selenium to find the statistics and compare to expected values 
-        
+                    "Player Analysis page title is not the same as player name provided in form")
         
 
         

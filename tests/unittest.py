@@ -856,7 +856,8 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
 #################
 
 from selenium import webdriver
-from selenium.webdriver.common.by import By        
+from selenium.webdriver.common.by import By  
+from selenium.webdriver.support.ui import Select      
 from multiprocessing import Process, set_start_method
 import multiprocessing
 import time
@@ -964,42 +965,43 @@ class SeleniumTests(unittest.TestCase):
         time.sleep(2)
             
         #Tournament Name 
-        submit_button_feild = self.driver.find_element(By.ID, "tournament_name")
-        submit_button_feild.send_keys("Test Tournament")
+        tournament_name_feild = self.driver.find_element(By.ID, "tournament_name")
+        tournament_name_feild.send_keys("Test Tournament")
         #Tournament date 
-        submit_button_feild = self.driver.find_element(By.ID, "tournament_date")
-        submit_button_feild.send_keys("01012025")
+        tournament_date_feild = self.driver.find_element(By.ID, "tournament_date")
+        tournament_date_feild.send_keys("01012025")
         #Tournament location 
-        submit_button_feild = self.driver.find_element(By.ID, "location")
-        submit_button_feild.send_keys("Test location")
+        location_feild = self.driver.find_element(By.ID, "location")
+        location_feild.send_keys("Test location")
         # Round
-        submit_button_feild = self.driver.find_element(By.ID, "round")
-        submit_button_feild.send_keys("Final")
+        round_feild = self.driver.find_element(By.ID, "round")
+        round_feild.send_keys("Final")
         # Group
-        submit_button_feild = self.driver.find_element(By.ID, "group")
-        submit_button_feild.send_keys("Test Group")
+        group_feild = self.driver.find_element(By.ID, "group")
+        group_feild.send_keys("Test Group")
         # Team 1
-        submit_button_feild = self.driver.find_element(By.ID, "team1")
-        submit_button_feild.send_keys("William Craig")
+        team1_feild = self.driver.find_element(By.ID, "team1")
+        team1_feild.send_keys("William Craig")
         # Team 2
-        submit_button_feild = self.driver.find_element(By.ID, "team2")
-        submit_button_feild.send_keys("Craig William")
+        team2_feild = self.driver.find_element(By.ID, "team2")
+        team2_feild.send_keys("Craig William")
         # Score
-        submit_button_feild = self.driver.find_element(By.ID, "score")
-        submit_button_feild.send_keys("21-19, 19-21, 21-18")
+        score_feild = self.driver.find_element(By.ID, "score")
+        score_feild.send_keys("21-19, 19-21, 21-18")
         #click the submit button
-        time.sleep(3)
+        time.sleep(2)
         submit_button_feild = self.driver.find_element(By.ID, "submit_button")
         submit_button_feild.click()
-        time.sleep(3)
-        
-
-
+        time.sleep(2)
         #######################
 
         #######################
-        #  Step 2: Go to tournament analysis page and see if the information is correct
-        
+        #  Step 3: Go to tournament analysis page and see if the information is correct
+        self.driver.get(localHost+"/analytics")
+        time.sleep(2)
+        tournament_select_feild = Select(self.driver.find_element(By.ID, "tournamentSelect"))
+        tournament_select_feild.select_by_index(1)
+        time.sleep(4)
 
 
 

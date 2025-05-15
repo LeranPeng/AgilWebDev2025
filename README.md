@@ -115,6 +115,18 @@ badminton-tournament-manager/
 ├── seeddatabase.py     # Database initialization script
 ├── requirements.txt    # Project dependencies
 ├── static/             # Static files (CSS, JS, images)
+├── routes/             # Python Flask backend logic for the sub pages
+|   ├── admin.py        # functions for admin panel
+│   ├── analytics.py    # functions for data analysis
+│   ├── auth.py         # functions for login and signup
+│   ├── match.py        # functions for matches 
+│   ├── sharing.py      # functions for information sharing
+│   ├── tournament.py   # functions for tournament logic
+│   ├── user.py         # functionality for user settings
+├── tests/
+│   ├── test_uploads/   # directory for unittests testing uploads
+│   ├── systemtests.py  # System Tests
+│   ├── unittest.py     # Unittests 
 ├── templates/          # HTML templates
 │   ├── layout.html     # Base template
 │   ├── analytics.html

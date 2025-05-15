@@ -1,4 +1,5 @@
-import unittest
+import unittest # this should still be lower case
+
 import os
 import io
 import csv
@@ -782,7 +783,9 @@ from selenium.webdriver.support.ui import Select
 from multiprocessing import Process, set_start_method
 import multiprocessing
 import time
-multiprocessing.set_start_method("fork")
+
+# Below line is needed for this to work on mac
+multiprocessing.set_start_method("fork") #THIS LINE MUST BE COMMENTED WHEN RUNNING ON WINDOWS
     
 
 localHost = "http://127.0.0.1:5000"  

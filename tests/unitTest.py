@@ -607,8 +607,8 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         self.login()
         response = self.client.get('/logout', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'You have been logged out', response.data)
-
+        self.assertIn(b'Logged out successfully.', response.data)
+        
     def test_invalid_login(self):
         """Test that login fails with incorrect credentials."""
         response = self.client.post('/login', data={

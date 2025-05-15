@@ -40,183 +40,97 @@ def parse_badminton_score(score_str):
     return total_a, total_b
 
 def get_player_stats(player_id=None, user_id=None):
-    """Get player statistics"""
+    """Get player statistics (filtered by tournaments owned by user)"""
 
-    # Base query - all matches
-    query = db.session.query(
-        Match, Tournament
-    ).join(
-        Tournament, Match.tournament_id == Tournament.id
-    )
+    # Base query - all matches in tournaments owned by the user
+    query = db.session.query(Match, Tournament).join(Tournament, Match.tournament_id == Tournament.id)
 
-    # If user ID is specified, only query that user's matches
     if user_id:
         query = query.filter(Tournament.user_id == user_id)
 
-    # Get all relevant matches
     matches = query.all()
 
-    # Player statistics
     player_stats = {}
 
     for match, tournament in matches:
-        # Process team 1
         team1 = match.team1
-        team1_players = [team1.player1]
-        if team1.player2:
-            team1_players.append(team1.player2)
-
-        # Process team 2
         team2 = match.team2
-        team2_players = [team2.player1]
-        if team2.player2:
-            team2_players.append(team2.player2)
-
-        # Determine match winner
+        team1_players = [team1.player1] + ([team1.player2] if team1.player2 else [])
+        team2_players = [team2.player1] + ([team2.player2] if team2.player2 else [])
         winner = match.get_winner()
         is_team1_winner = (winner.id == team1.id)
 
-        # Update statistics for each player
-        for player in team1_players:
-            if player.id not in player_stats:
-                player_stats[player.id] = {
-                    'id': player.id,
-                    'name': player.name,
-                    'matches': 0,
-                    'wins': 0,
-                    'losses': 0,
-                    'win_rate': 0,
-                    'points_scored': 0,
-                    'points_conceded': 0,
-                    'match_types': {},
-                    'recent_matches': []
-                }
+        for team_players, is_winner, score_for, score_against, opponents in [
+            (team1_players, is_team1_winner, match.score1, match.score2, team2_players),
+            (team2_players, not is_team1_winner, match.score2, match.score1, team1_players),
+        ]:
+            for player in team_players:
+                if player.id not in player_stats:
+                    player_stats[player.id] = {
+                        'id': player.id,
+                        'name': player.name,
+                        'matches': 0,
+                        'wins': 0,
+                        'losses': 0,
+                        'win_rate': 0,
+                        'points_scored': 0,
+                        'points_conceded': 0,
+                        'match_types': {},
+                        'recent_matches': []
+                    }
 
-            player_stats[player.id]['matches'] += 1
-            if is_team1_winner:
-                player_stats[player.id]['wins'] += 1
-            else:
-                player_stats[player.id]['losses'] += 1
+                stats = player_stats[player.id]
+                stats['matches'] += 1
+                if is_winner:
+                    stats['wins'] += 1
+                else:
+                    stats['losses'] += 1
 
-            # Update match type statistics
-            match_type = match.match_type
-            if match_type not in player_stats[player.id]['match_types']:
-                player_stats[player.id]['match_types'][match_type] = {'matches': 0, 'wins': 0}
+                # Match type breakdown
+                mt = match.match_type
+                if mt not in stats['match_types']:
+                    stats['match_types'][mt] = {'matches': 0, 'wins': 0}
+                stats['match_types'][mt]['matches'] += 1
+                if is_winner:
+                    stats['match_types'][mt]['wins'] += 1
 
-            player_stats[player.id]['match_types'][match_type]['matches'] += 1
-            if is_team1_winner:
-                player_stats[player.id]['match_types'][match_type]['wins'] += 1
-
-            # Calculate points scored and conceded
-            score1_sets = match.score1.split(', ')
-            score2_sets = match.score2.split(', ')
-
-            points_scored = 0
-            points_conceded = 0
-
-            for i in range(min(len(score1_sets), len(score2_sets))):
+                # Score processing
+                score_for_sets = score_for.split(', ')
+                score_against_sets = score_against.split(', ')
                 try:
-                    score1_points = int(score1_sets[i].split('-')[0])
-                    score2_points = int(score2_sets[i].split('-')[1])
-                    points_scored += score1_points
-                    points_conceded += score2_points
+                    for i in range(min(len(score_for_sets), len(score_against_sets))):
+                        pts_for = int(score_for_sets[i].split('-')[0])
+                        pts_against = int(score_against_sets[i].split('-')[1])
+                        stats['points_scored'] += pts_for
+                        stats['points_conceded'] += pts_against
                 except (ValueError, IndexError):
-                    # Handle malformed scores
-                    pass
+                    pass  # Malformed scores
 
-            player_stats[player.id]['points_scored'] += points_scored
-            player_stats[player.id]['points_conceded'] += points_conceded
+                stats['recent_matches'].append({
+                    'id': match.id,
+                    'tournament': tournament.name,
+                    'date': match.timestamp.strftime('%Y-%m-%d'),
+                    'opponent': ', '.join([p.name for p in opponents]),
+                    'result': 'Win' if is_winner else 'Loss',
+                    'score': score_for
+                })
 
-            # Add to recent matches
-            match_info = {
-                'id': match.id,
-                'tournament': tournament.name,
-                'date': match.timestamp.strftime('%Y-%m-%d'),
-                'opponent': ', '.join([p.name for p in team2_players]),
-                'result': 'Win' if is_team1_winner else 'Loss',
-                'score': match.score1
-            }
-            player_stats[player.id]['recent_matches'].append(match_info)
-
-        # Do the same for team 2 players
-        for player in team2_players:
-            if player.id not in player_stats:
-                player_stats[player.id] = {
-                    'id': player.id,
-                    'name': player.name,
-                    'matches': 0,
-                    'wins': 0,
-                    'losses': 0,
-                    'win_rate': 0,
-                    'points_scored': 0,
-                    'points_conceded': 0,
-                    'match_types': {},
-                    'recent_matches': []
-                }
-
-            player_stats[player.id]['matches'] += 1
-            if not is_team1_winner:
-                player_stats[player.id]['wins'] += 1
-            else:
-                player_stats[player.id]['losses'] += 1
-
-            # Update match type statistics
-            match_type = match.match_type
-            if match_type not in player_stats[player.id]['match_types']:
-                player_stats[player.id]['match_types'][match_type] = {'matches': 0, 'wins': 0}
-
-            player_stats[player.id]['match_types'][match_type]['matches'] += 1
-            if not is_team1_winner:
-                player_stats[player.id]['match_types'][match_type]['wins'] += 1
-
-            # Calculate points scored and conceded
-            score1_sets = match.score1.split(', ')
-            score2_sets = match.score2.split(', ')
-
-            points_scored = 0
-            points_conceded = 0
-
-            for i in range(min(len(score1_sets), len(score2_sets))):
-                try:
-                    score1_points = int(score1_sets[i].split('-')[0])
-                    score2_points = int(score2_sets[i].split('-')[1])
-                    points_scored += score2_points
-                    points_conceded += score1_points
-                except (ValueError, IndexError):
-                    # Handle malformed scores
-                    pass
-
-            player_stats[player.id]['points_scored'] += points_scored
-            player_stats[player.id]['points_conceded'] += points_conceded
-
-            # Add to recent matches
-            match_info = {
-                'id': match.id,
-                'tournament': tournament.name,
-                'date': match.timestamp.strftime('%Y-%m-%d'),
-                'opponent': ', '.join([p.name for p in team1_players]),
-                'result': 'Win' if not is_team1_winner else 'Loss',
-                'score': match.score2
-            }
-            player_stats[player.id]['recent_matches'].append(match_info)
-
-    # Calculate win rates and keep only the most recent 5 matches
-    for player_id, stats in player_stats.items():
+    # Finalize win rates, trim recent matches
+    for stats in player_stats.values():
         if stats['matches'] > 0:
             stats['win_rate'] = round((stats['wins'] / stats['matches']) * 100, 1)
             stats['recent_matches'] = sorted(stats['recent_matches'], key=lambda x: x['date'], reverse=True)[:5]
+            for mt_stats in stats['match_types'].values():
+                if mt_stats['matches'] > 0:
+                    mt_stats['win_rate'] = round((mt_stats['wins'] / mt_stats['matches']) * 100, 1)
 
-            # Calculate win rate for each match type
-            for match_type, type_stats in stats['match_types'].items():
-                if type_stats['matches'] > 0:
-                    type_stats['win_rate'] = round((type_stats['wins'] / type_stats['matches']) * 100, 1)
-
-    # If a player ID is specified, only return that player's stats
+    # If a specific player ID is requested, return just that player's stats
     if player_id and player_id in player_stats:
         return player_stats[player_id]
 
-    # Otherwise return all player stats, sorted by win rate
-    return sorted(list(player_stats.values()), key=lambda x: x['win_rate'], reverse=True)
+    # Return all players the user can see
+    return list(player_stats.values())
+
 
 def get_tournament_stats(tournament_id=None, user_id=None):
     """Get tournament statistics"""

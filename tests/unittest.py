@@ -764,89 +764,10 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         }, follow_redirects=True)
         self.assertIn(b'Tournament shared successfully', response.data)
 
-    
-
-    #  Analytics and Statistics
-    def test_player_statistics(self):
-        """Test calculation and display of player statistics.
-        This test ensures that :
-        1: The individual player statistics pages are created on demand
-        2: the player statistics pages have correctly calculated statistics
-        """
-        # William Craig
-        # 14/5/25 the functionality of this page is broken so this test is expected to fail
-
-        
-
-        with self.app.app_context(): 
-            
-            login = self.login()
-            self.assertEqual(login.status_code, 200, "Login unsuccessful for test user")
-            
-            # Step 1: Make some manual testing data 
-            #   Players
-            test_player1 = Player(name="William Craig")
-            test_player2 = Player(name="Andrew Mekhail")
-            db.session.add_all([test_player1,test_player2])
-            db.session.commit()
-            #   Tournament
-            test_tournament = Tournament(
-                    name="Analytics Test Tournament",
-                    date=datetime.now().date(),
-                    location="Python unittest",
-                    user_id=10
-                )
-            db.session.add(test_tournament)
-            team1 = Team(player1_id = test_player1.id, player2_id=None)
-            team2 = Team(player1_id = test_player2.id, player2_id=None)
-            db.session.add_all([team1,team2])
-            db.session.commit()
-            # Matches
-            match = Match(
-                tournament_id = test_tournament.id,
-                round_name = "Round 1",
-                team1_id = team1.id, #Will
-                team2_id = team2.id, #Andrew
-                score1 = "21-19, 19-21, 21-18", #Will score demo data
-                score2 = "21-19, 19-21, 21-18", #andrew score demo data
-                match_type = "Men's Singles"
-            )
-            db.session.add(match)
-            db.session.commit()
-            
-
-            #Step 2: Request the player stats for Player 1 (William Craig)
-            response = self.client.get('/analytics/player/' + str(test_player1.id))
-            
-            #   Ensure that the page responded is Good (200)
-            self.assertEqual(response.status_code, 200, "Player Statistics Page does not exist - 404")
-            
-
-
-            #Step 3: Test to see if the correct information is in the page
-            #WC Note: I have added a comment to the player_analytics.html which will be populated with the player_stats by flask
-            #   this was done in order to make the calculated values of player_stats more searchable in the response
-            #   TODO: Rewrite this implementaion in selenium-webdriver instead
-            
-            #from analytics import get_player_stats
-
-            #test = get_player_stats(player_id=test_player1.id)
-
-            #TODO Finish this test
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
-
-            player_name = soup.find_all(id="player-name")
-
-            #   check for the name of the player 
-            self.assertEqual("William Craig", player_name, 
-                          "Name of Player is not in Player analytics Page")
             
             
     
-    def test_tournament_statistics(self):
-        """Test calculation of statistics for a specific tournament."""
-        # William Craig
+    
         
         
         
@@ -861,10 +782,11 @@ from selenium.webdriver.support.ui import Select
 from multiprocessing import Process, set_start_method
 import multiprocessing
 import time
-
+multiprocessing.set_start_method("fork")
     
 
 localHost = "http://127.0.0.1:5000"  
+sleep_time = 1
 
 def run_flask():
     #William Craig
@@ -906,7 +828,7 @@ def sign_up_log_in_as_test_user(driver):
     ##############################
     
     #wait to be navigated to login page
-    time.sleep(1)
+    time.sleep(sleep_time)
 
     ##############################
     #Login
@@ -922,7 +844,41 @@ def sign_up_log_in_as_test_user(driver):
     ##############################
 
     #wait to be navigated to dashboard page
-    time.sleep(2)
+    time.sleep(sleep_time)
+
+def add_test_tournament(driver):
+    driver.get(localHost+"/input_form")
+    time.sleep(sleep_time)
+        
+    #Tournament Name 
+    tournament_name_feild = driver.find_element(By.ID, "tournament_name")
+    tournament_name_feild.send_keys("Test Tournament")
+    #Tournament date 
+    tournament_date_feild = driver.find_element(By.ID, "tournament_date")
+    tournament_date_feild.send_keys("01012025")
+    #Tournament location 
+    location_feild = driver.find_element(By.ID, "location")
+    location_feild.send_keys("Test location")
+    # Round
+    round_feild = driver.find_element(By.ID, "round")
+    round_feild.send_keys("Final")
+    # Group
+    group_feild = driver.find_element(By.ID, "group")
+    group_feild.send_keys("Test Group")
+    # Team 1
+    team1_feild = driver.find_element(By.ID, "team1")
+    team1_feild.send_keys("William Craig")
+    # Team 2
+    team2_feild = driver.find_element(By.ID, "team2")
+    team2_feild.send_keys("Craig William")
+    # Score
+    score_feild = driver.find_element(By.ID, "score")
+    score_feild.send_keys("21-19, 19-21, 21-18")
+    #click the submit button
+    time.sleep(sleep_time)
+    submit_button_feild = driver.find_element(By.ID, "submit_button")
+    submit_button_feild.click()
+    time.sleep(sleep_time)
 
 class SeleniumTests(unittest.TestCase):
     #William Craig
@@ -933,7 +889,6 @@ class SeleniumTests(unittest.TestCase):
         #William Craig
         ##########################################
         # Start the flask server on a different thread
-        multiprocessing.set_start_method("fork")
         self.server_thread = Process(target=run_flask)
         self.server_thread.start()
         #time.sleep(1) # give some time for flask to boot
@@ -958,140 +913,50 @@ class SeleniumTests(unittest.TestCase):
         
         # Step 1: Sign up as test user 
         sign_up_log_in_as_test_user(self.driver)
-
-        #######################
+ 
         #  Step 2: Add a test tournament
-        self.driver.get(localHost+"/input_form")
-        time.sleep(2)
-            
-        #Tournament Name 
-        tournament_name_feild = self.driver.find_element(By.ID, "tournament_name")
-        tournament_name_feild.send_keys("Test Tournament")
-        #Tournament date 
-        tournament_date_feild = self.driver.find_element(By.ID, "tournament_date")
-        tournament_date_feild.send_keys("01012025")
-        #Tournament location 
-        location_feild = self.driver.find_element(By.ID, "location")
-        location_feild.send_keys("Test location")
-        # Round
-        round_feild = self.driver.find_element(By.ID, "round")
-        round_feild.send_keys("Final")
-        # Group
-        group_feild = self.driver.find_element(By.ID, "group")
-        group_feild.send_keys("Test Group")
-        # Team 1
-        team1_feild = self.driver.find_element(By.ID, "team1")
-        team1_feild.send_keys("William Craig")
-        # Team 2
-        team2_feild = self.driver.find_element(By.ID, "team2")
-        team2_feild.send_keys("Craig William")
-        # Score
-        score_feild = self.driver.find_element(By.ID, "score")
-        score_feild.send_keys("21-19, 19-21, 21-18")
-        #click the submit button
-        time.sleep(2)
-        submit_button_feild = self.driver.find_element(By.ID, "submit_button")
-        submit_button_feild.click()
-        time.sleep(2)
-        #######################
-
+        add_test_tournament(self.driver)
+        
         #######################
         #  Step 3: Go to tournament analysis page and see if the information is correct
         self.driver.get(localHost+"/analytics")
-        time.sleep(2)
+        time.sleep(sleep_time)
         tournament_select_feild = Select(self.driver.find_element(By.ID, "tournamentSelect"))
-        tournament_select_feild.select_by_index(1)
-        time.sleep(4)
-
-
+        tournament_select_feild.select_by_index(1) # select the second thing in the drop down
+                                                    # TODO: Replace this with "Select from visible text" 
 
         #######################
 
-        self.driver.get(localHost) 
-        time.sleep(1)
-        testing = self.driver.find_element(By.ID, "testing").text
-        self.assertEqual(testing, "Badminton Tournament Management Simplified")
+        #Step 4: Ensure that the information is the same as what was given
+        #   Tournament Name 
+        self.assertIn("Test Tournament", self.driver.find_element(By.ID, "tournament-name").text,
+                      "Tournament Analysis page title is not the same as tournament name provided in form")
+        # TODO: Use selenium to find the statistics and compare to expected values 
+
+    def test_player_statistics_selenium(self):
+        #William Craig
+        
+        # Step 1: Sign up as test user 
+        sign_up_log_in_as_test_user(self.driver)
+ 
+        #Step 2: Add a test tournament
+        add_test_tournament(self.driver)
+
+        #Step 3: Go to the player analysis page for  "Craig William"
+        self.driver.get(localHost+"/analytics")
+        time.sleep(sleep_time)
+        tournament_select_feild = Select(self.driver.find_element(By.ID, "playerSelect"))
+        tournament_select_feild.select_by_index(1)  
+
+        self.assertIn("Craig William", self.driver.find_element(By.ID, "player-name").text,
+                      "Player Analysis page title is not the same as player name provided in form")
+        # TODO: Use selenium to find the statistics and compare to expected values 
+        
+        
 
         
      
 
-
-def test_tournament_statistics(self):
-    """Test calculation of statistics for a specific tournament."""
-    # William Craig
-    # Step 1: Add a tournament with known statistics to the database manually via the python backend, 
-    # Step2: Then ask the analyse.py "get_tournament_stats" function to get the information about that tournament from the database 
-    # Step3: Assess if the data matches and throw error if appropriate 
-
-    with self.app.app_context(): 
-            login = self.login()
-            self.assertEqual(login.status_code, 200, "Login unsuccessful for test user")
-
-            
-            # directly adding the tournament and statistics to the database seems to cause issues, 
-            # instead i will try mock-using the form 
-            
-            '''
-            # Step 1: Make some manual testing data 
-            #   Players
-            test_player1 = Player(name="William Craig")
-            test_player2 = Player(name="Andrew Mekhail")
-            db.session.add_all([test_player1,test_player2])
-            db.session.commit()
-            #   Tournament
-            test_tournament = Tournament(
-                    name="Analytics Test Tournament",
-                    date=datetime.now().date(),
-                    location="Python unittest",
-                    user_id=10
-                )
-            db.session.add(test_tournament)
-            team1 = Team(player1_id = test_player1.id, player2_id=None)
-            team2 = Team(player1_id = test_player2.id, player2_id=None)
-            db.session.add_all([team1,team2])
-            db.session.commit()
-            # Matches
-            match = Match(
-                tournament_id = test_tournament.id,
-                round_name = "Round 1",
-                team1_id = team1.id, #Will
-                team2_id = team2.id, #Andrew
-                score1 = "21-19, 19-21, 21-18", #Will score demo data
-                score2 = "21-19, 19-21, 21-18", #andrew score demo data
-                match_type = "Men's Singles"
-            )
-            db.session.add(match)
-            db.session.commit()
-            '''
-
-
-            #Step 2: Request the player stats for Player 1 (William Craig)
-            response = self.client.get('/analytics/tournament/' + str(test_tournament.id), follow_redirects=True)
-            
-            #   Ensure that the page responded is Good (200)
-            self.assertEqual(response.status_code, 200, "Tournament Statistics Page does not exist - 404")
-
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(response.get_data(as_text=True), 'html.parser')
-
-            tournament_name = soup.find_all(id="tournament-name")
-
-            
-            print("##########################")
-            print("##########################")
-            print("##########################")
-            print(tournament_name)
-            print(response.get_data(as_text=True))
-            print("##########################")
-            print("##########################")
-            print("##########################\n\n\n\n")
-
-
-            #   check for the name of the player 
-            self.assertEqual("a", "b")
-
-
-    pass
 
 
 def test_head_to_head_comparison(self):

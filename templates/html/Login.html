@@ -14,6 +14,17 @@
       <div class="text-center">
         <h2 class="text-3xl font-bold text-blue-600 mb-2">Welcome Back</h2>
         <p class="text-gray-500 mb-6">Sign in to your account</p>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="mb-4">
+              {% for message in messages %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                  <span class="block sm:inline">{{ message }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
       </div>
       
       <form action="/login" method="post" class="space-y-5">

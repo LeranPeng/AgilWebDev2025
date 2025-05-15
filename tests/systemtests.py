@@ -50,18 +50,15 @@ class SimpleBadmintonTests(unittest.TestCase):
         multiprocessing.set_start_method('spawn', force=True)
 
     def setUp(self):
-        # 启动 Flask
         self.server_process = Process(target=run_flask, daemon=True)
         self.server_process.start()
 
-        # 等待服务就绪
         self.base_url = "http://127.0.0.1:5000"
         if not is_server_running(self.base_url):
             self.fail("Flask server did not start properly")
 
-        # 启动无头 Chrome
         chrome_options = Options()
-        chrome_options.add_argument("--headless=new")  # Chrome 120+ 建议写法
+        chrome_options.add_argument("--headless=new")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         self.driver = webdriver.Chrome(options=chrome_options)
@@ -78,7 +75,7 @@ class SimpleBadmintonTests(unittest.TestCase):
                 self.server_process.kill()
 
     # --------------------------------------------------------------
-    # 以下测试用例原样保留
+    # TEST case
     # --------------------------------------------------------------
     def test_1_homepage_loads(self):
         self.driver.get(self.base_url + "/")

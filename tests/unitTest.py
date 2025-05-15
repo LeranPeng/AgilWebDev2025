@@ -4,7 +4,7 @@ import io
 import csv
 from datetime import datetime
 import sys
-
+from dotenv import load_dotenv
 
 
 # Ensure proper import paths regardless of execution context
@@ -22,8 +22,13 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Class-level setup that runs once before all tests"""
+        # Load environment variables from 'key.env' explicitly
+        dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'key.env')
+        load_dotenv(dotenv_path)
+
         # Set environment variable to indicate testing mode
         os.environ['FLASK_ENV'] = 'testing'
+
         
     def setUp(self):
         """Set up test environment before each test"""

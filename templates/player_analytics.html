@@ -226,7 +226,7 @@ losses:{{player.losses}}:
         const matchTypeLosses = [];
 
         {% for type, stats in player.match_types.items() %}
-          matchTypeLabels.push("{{ type }}");
+          matchTypeLabels.push("{{ type|safe }}");
           matchTypeWins.push({{ stats.wins|default(0) }});
           matchTypeLosses.push({{ stats.matches|default(0) - stats.wins|default(0) }});
         {% endfor %}

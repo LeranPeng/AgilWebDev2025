@@ -24,15 +24,20 @@ class SimpleBadmintonTests(unittest.TestCase):
 
     def test_1_homepage_loads(self):
         """Test that the homepage loads correctly."""
-        
+        self.driver.get(self.base_url + "/")
+        self.assertIn("Badminton", self.driver.title)
 
     def test_2_login_page_loads(self):
         """Test that the login page loads correctly."""
-        
+        self.driver.get(self.base_url + "/login")
+        header = self.driver.find_element(By.TAG_NAME, "h1").text.lower()
+        self.assertIn("login", header)
 
     def test_3_signup_page_loads(self):
         """Test that the signup page loads correctly."""
-        
+        self.driver.get(self.base_url + "/signup")
+        header = self.driver.find_element(By.TAG_NAME, "h1").text.lower()
+        self.assertIn("sign up", header)
 
     def test_4_login_with_invalid_credentials(self):
         """Test login validation with invalid credentials."""

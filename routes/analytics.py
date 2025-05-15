@@ -100,7 +100,7 @@ def get_player_stats(player_id=None, user_id=None):
                 try:
                     for i in range(min(len(score_for_sets), len(score_against_sets))):
                         pts_for = int(score_for_sets[i].split('-')[0])
-                        pts_against = int(score_against_sets[i].split('-')[1])
+                        pts_against = int(score_against_sets[i].split('-')[0])
                         stats['points_scored'] += pts_for
                         stats['points_conceded'] += pts_against
                 except (ValueError, IndexError):

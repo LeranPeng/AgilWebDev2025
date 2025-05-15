@@ -38,7 +38,7 @@
       </div>
 
       <form action="{{ url_for('auth.login') }}" method="post" class="space-y-5">
-        {# 如果用 Flask-WTF，可改成： {{ form.hidden_tag() }} #}
+        {# If Flask-WTF，Can be： {{ form.hidden_tag() }} #}
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
         <div>

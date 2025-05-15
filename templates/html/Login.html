@@ -5,20 +5,30 @@
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 font-sans">
 
   <div class="min-h-screen flex items-center justify-center px-4">
-    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-lg transform transition-all">
+    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-lg transition-all">
       <div class="text-center">
         <h2 class="text-3xl font-bold text-blue-600 mb-2">Welcome Back</h2>
         <p class="text-gray-500 mb-6">Sign in to your account</p>
-        {% with messages = get_flashed_messages() %}
+
+        {# ───────── Flash messages ───────── #}
+        {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
-            <div class="mb-4">
-              {% for message in messages %}
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <div class="mb-4 space-y-2">
+              {% for category, message in messages %}
+                {% set cat = category or 'info' %}
+                <div
+                  class="px-4 py-3 rounded border
+                         {% if cat in ['danger','error'] %}bg-red-100 border-red-400 text-red-700
+                         {% elif cat in ['warning'] %}bg-yellow-100 border-yellow-400 text-yellow-700
+                         {% elif cat in ['success'] %}bg-green-100 border-green-400 text-green-700
+                         {% else %}bg-blue-100 border-blue-400 text-blue-700{% endif %}"
+                  role="alert">
                   <span class="block sm:inline">{{ message }}</span>
                 </div>
               {% endfor %}
@@ -26,9 +36,10 @@
           {% endif %}
         {% endwith %}
       </div>
-      
-      <form action="/login" method="post" class="space-y-5">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <form action="{{ url_for('auth.login') }}" method="post" class="space-y-5">
+        {# If Flask-WTF，Can be： {{ form.hidden_tag() }} #}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
         <div>
           <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
@@ -36,53 +47,62 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-user text-gray-400"></i>
             </div>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required 
-                   class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <input
+              id="username" name="username" type="text" required
+              placeholder="Enter your username"
+              class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
-        
+
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-lock text-gray-400"></i>
             </div>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required 
-                   class="w-full pl-10 pr-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
+            <input
+              id="password" name="password" type="password" required
+              placeholder="Enter your password"
+              class="w-full pl-10 pr-10 px-4 py-2 border border-gray-300 rounded-lg
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <button
+              type="button" id="togglePassword"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 cursor-pointer">
               <i class="fas fa-eye"></i>
             </button>
           </div>
         </div>
-        
-        <button id="submit_button" type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
-          <span>Sign in</span>
+
+        <button
+          id="submit_button" type="submit"
+          class="w-full flex justify-center py-3 px-4 rounded-lg shadow-sm text-sm font-medium text-white
+                 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2
+                 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
+          Sign in
         </button>
       </form>
-      
+
       <div class="text-center mt-6">
         <p class="text-sm text-gray-600">
           Don't have an account?
-          <a href="/signup" class="font-medium text-blue-600 hover:text-blue-500 hover:underline transition duration-150">Sign up</a>
+          <a href="{{ url_for('auth.signup') }}"
+             class="font-medium text-blue-600 hover:text-blue-500 hover:underline transition duration-150">
+            Sign up
+          </a>
         </p>
       </div>
     </div>
   </div>
 
   <script>
-    document.getElementById('togglePassword').addEventListener('click', function() {
-      const passwordInput = document.getElementById('password');
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const pwd = document.getElementById('password');
       const icon = this.querySelector('i');
-      
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      }
+      const show = pwd.type === 'password';
+      pwd.type = show ? 'text' : 'password';
+      icon.classList.toggle('fa-eye', !show);
+      icon.classList.toggle('fa-eye-slash', show);
     });
   </script>
 </body>

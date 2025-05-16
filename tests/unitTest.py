@@ -787,8 +787,12 @@ from multiprocessing import Process, set_start_method
 import multiprocessing
 import time
 
-# Below line is needed for this to work on mac
-multiprocessing.set_start_method("fork") #THIS LINE MUST BE COMMENTED WHEN RUNNING ON WINDOWS
+import platform
+
+# multiprocessing on Mac requires this line in order to work 
+# test to see what platform this script is running on, only run of on Mac
+if platform.system() == "Darwin":
+    multiprocessing.set_start_method("fork") 
     
 
 localHost = "http://127.0.0.1:5000"  

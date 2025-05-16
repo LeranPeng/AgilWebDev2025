@@ -711,20 +711,20 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             'group[]': 'A'
         }
 
-    # First submission
-    response1 = self.client.post('/submit_results', data=data, follow_redirects=True)
-    self.assertEqual(response1.status_code, 200)
-    self.assertIn(b'Tournament results submitted successfully!', response1.data)
+        # First submission
+        response1 = self.client.post('/submit_results', data=data, follow_redirects=True)
+        self.assertEqual(response1.status_code, 200)
+        self.assertIn(b'Tournament results submitted successfully!', response1.data)
 
-    # Second submission (same player)
-    response2 = self.client.post('/submit_results', data=data, follow_redirects=True)
-    self.assertEqual(response2.status_code, 200)
-    self.assertIn(b'Tournament results submitted successfully!', response2.data)
+        # Second submission (same player)
+        response2 = self.client.post('/submit_results', data=data, follow_redirects=True)
+        self.assertEqual(response2.status_code, 200)
+        self.assertIn(b'Tournament results submitted successfully!', response2.data)
 
-    # Verify only one player record exists for 'Duplicate Player'
-    with self.app.app_context():
-        players = Player.query.filter_by(name='Duplicate Player').all()
-        self.assertEqual(len(players), 1)
+        # Verify only one player record exists for 'Duplicate Player'
+        with self.app.app_context():
+            players = Player.query.filter_by(name='Duplicate Player').all()
+            self.assertEqual(len(players), 1)
 
 
     def test_team_creation(self):

@@ -222,7 +222,7 @@
   <a href="/analytics" class="bg-blue-600 text-white p-4 rounded-lg shadow hover:bg-blue-700 transition text-center">
     Back to Analytics
   </a>
-  <a href="/dashboard" class="bg-teal-600 text-white p-4 rounded-lg shadow hover:bg-teal-700 transition text-center">
+  <a href="/dashboard" class="bg-purple-600 text-white p-4 rounded-lg shadow hover:bg-purple-700 transition text-center">
     Return to Dashboard
   </a>
 </div>
@@ -240,7 +240,7 @@
         const matchTypeValues = [];
 
         {% for type, count in tournament.match_types.items() %}
-          matchTypeLabels.push("{{ type }}");
+          matchTypeLabels.push("{{ type|safe }}");
           matchTypeValues.push({{ count|default(0) }});
         {% endfor %}
 

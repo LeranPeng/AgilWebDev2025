@@ -46,7 +46,17 @@ def get_player_stats(player_id=None, user_id=None):
     query = db.session.query(Match, Tournament).join(Tournament, Match.tournament_id == Tournament.id)
 
     if user_id:
-        query = query.filter(Tournament.user_id == user_id)
+        from models import SharedTournament
+        shared_tournaments_subquery = db.session.query(SharedTournament.tournament_id).filter(
+            SharedTournament.shared_with_id == user_id
+        ).subquery()
+        
+        query = query.filter(
+            # Either the user owns the tournament
+            (Tournament.user_id == user_id) | 
+            # Or the tournament is shared with the user
+            (Tournament.id.in_(shared_tournaments_subquery))
+        )
 
     matches = query.all()
 
@@ -182,7 +192,17 @@ def get_tournament_stats(tournament_id=None, user_id=None):
 
     # If user ID is specified
     if user_id:
-        query = query.filter_by(user_id=user_id)
+        from models import SharedTournament
+        shared_tournaments_subquery = db.session.query(SharedTournament.tournament_id).filter(
+            SharedTournament.shared_with_id == user_id
+        ).subquery()
+        
+        query = query.filter(
+            # Either the user owns the tournament
+            (Tournament.user_id == user_id) | 
+            # Or the tournament is shared with the user
+            (Tournament.id.in_(shared_tournaments_subquery))
+        )
 
     # If tournament ID is specified
     if tournament_id:

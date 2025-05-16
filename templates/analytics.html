@@ -390,11 +390,11 @@
 
     // Calculate the total number of matches
     let totalMatches = 0;
-    {% if match_distribution and match_distribution.data %}
-      const matchDataArray = {{ match_distribution.data|safe }};
-      if (Array.isArray(matchDataArray)) {
-        matchDataArray.forEach(count => {
-          totalMatches += count;
+    {% if match_distribution %}
+      const matchDistribution = {{ match_distribution|safe }};
+      if (matchDistribution && matchDistribution.data && Array.isArray(matchDistribution.data)) {
+        matchDistribution.data.forEach(count => {
+          totalMatches += parseInt(count);
         });
       }
     {% endif %}

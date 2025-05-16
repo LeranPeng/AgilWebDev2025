@@ -630,9 +630,9 @@ def analytics_dashboard():
 
     return render_template(
         "analytics.html",
-        match_distribution=json.dumps(match_distribution),
-        player_win_rates=json.dumps(player_win_rates),
-        monthly_matches=json.dumps(monthly_matches),
+        match_distribution=match_distribution,  
+        player_win_rates=player_win_rates,  
+        monthly_matches=monthly_matches,  
         players=players,
         tournaments=tournaments
     )

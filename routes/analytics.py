@@ -61,7 +61,27 @@ def get_player_stats(player_id=None, user_id=None):
     matches = query.all()
 
     player_stats = {}
-
+    
+    # If a specific player is requested, get player info regardless of matches
+    if player_id:
+        # Get player info from database
+        from models import Player
+        player = Player.query.get(player_id)
+        if player:
+            # Initialize stats with default values even if no matches exist
+            player_stats[player.id] = {
+                'id': player.id,
+                'name': player.name,
+                'matches': 0,
+                'wins': 0,
+                'losses': 0,
+                'win_rate': 0,
+                'points_scored': 0,
+                'points_conceded': 0,
+                'match_types': {},
+                'recent_matches': []
+            }
+            
     for match, tournament in matches:
         team1 = match.team1
         team2 = match.team2

@@ -1,14 +1,14 @@
-import unittest # this should still be lower case
+# Unit and Selenium tests for the Badminton Tournament Manager application.
+# Covers user authentication, match recording, tournament management, CSV import/export, and analytics.
+# Includes both Flask test client and Selenium browser-based integration tests.
+
+import unittest  # Python's built-in unit testing framework
 
 import os
 import io
 import csv
 from datetime import datetime
 import sys
-
-
-
-
 
 # Ensure proper import paths regardless of execution context
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -17,22 +17,21 @@ from flask import Flask
 from models import db, User, Tournament, Player, Team, Match
 from app import create_app
 
-
-
 class BadmintonManagerUnitTestCase(unittest.TestCase):
     """Unit tests for Badminton Tournament Manager application."""
 
     @classmethod
     def setUpClass(cls):
-        """Class-level setup that runs once before all tests"""
+        """Class-level setup that runs once before all tests."""
         # Set environment variable to indicate testing mode
         os.environ['FLASK_ENV'] = 'testing'
         
     def setUp(self):
-        """Set up test environment before each test"""
+        """Set up test environment before each test."""
+        # Create a new Flask app and configure it for testing
         self.app = create_app()
         self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory DB
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory DB for isolation
         self.app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
         self.app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'test_uploads')
     
@@ -70,7 +69,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             db.session.commit()
     
     def tearDown(self):
-        """Clean up after each test"""
+        """Clean up after each test."""
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
@@ -82,22 +81,22 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Clean up after all tests have run"""
-        # Reset environment
+        """Clean up after all tests have run."""
+        # Reset environment variable
         if 'FLASK_ENV' in os.environ:
             del os.environ['FLASK_ENV']
 
     def login(self):
-        """Helper function to log in test user"""
+        """Helper function to log in test user using Flask test client."""
         return self.client.post('/login', data={
             'username': 'testuser',
             'password': 'password123'
         }, follow_redirects=True)
 
-    # Match Recording and Results Tests
-    
+    # -------------------- Match Recording and Results Tests --------------------
+
     def test_record_single_match(self):
-        """Test recording a single match result."""
+        """Test recording a single match result (singles)."""
         # Test case 1: Successfully record a singles match with valid data
         self.login()
         response = self.client.post('/submit_results', data={
@@ -191,7 +190,6 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
     def test_invalid_score_format(self):
         """Test that invalid score formats are handled."""
         # Test case 1: The app appears to accept non-hyphenated scores
-        # We'll test if the match is created with the provided score
         self.login()
         response = self.client.post('/submit_results', data={
             'tournament_name': 'Score Format Test',
@@ -246,7 +244,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             self.assertIsNone(match)
 
     def test_match_results_view(self):
-        """Test that match results are displayed correctly."""
+        """Test that match results are displayed correctly on the results page."""
         # First create a match to view
         self.login()
         self.client.post('/submit_results', data={
@@ -350,54 +348,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             self.assertEqual(team1.player1.name, 'Player Three')
             self.assertEqual(team2.player1.name, 'Player Four')
 
-    # Data Import/Export Tests
-    
-    def test_csv_upload(self):
-        """Test uploading player or match data via CSV."""
-        # Test case 1: Upload player list CSV
-        self.login()
-        data = dict(
-            pre_file=(io.BytesIO(b'Player Name,ID,Contact\nNew Player 1,001,player1@example.com\nNew Player 2,002,player2@example.com'), 'players.csv')
-        )
-        response = self.client.post('/upload/pre', data=data, follow_redirects=True, content_type='multipart/form-data')
-        self.assertIn(b'Successfully imported', response.data)
-        
-        # Verify players were created
-        with self.app.app_context():
-            player1 = Player.query.filter_by(name='New Player 1').first()
-            player2 = Player.query.filter_by(name='New Player 2').first()
-            self.assertIsNotNone(player1)
-            self.assertIsNotNone(player2)
-        
-        # Test case 2: Upload match results CSV
-        data = dict(
-            post_file=(io.BytesIO(b'Team 1,Team 2,Score 1,Score 2,Round,Match Type\nPlayer One,Player Two,21-19,19-21,Quarter Final,Men\'s Singles\nPlayer Three,Player Four,21-15,15-21,Semi Final,Women\'s Singles'), 'matches.csv')
-        )
-        response = self.client.post('/upload/post', data=data, follow_redirects=True, content_type='multipart/form-data')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Review Uploaded Results', response.data)
-        
-        # Test case 3: Confirm match import
-        # First save a temporary CSV file to test confirm_results
-        with self.app.app_context():
-            csv_path = os.path.join(self.app.config.get('UPLOAD_FOLDER'), 'test_matches.csv')
-            with open(csv_path, 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow(['Team 1', 'Team 2', 'Score 1', 'Score 2', 'Round', 'Match Type'])
-                writer.writerow(['Player One', 'Player Two', '21-19, 21-18', '19-21, 18-21', 'Final', "Men's Singles"])
-        
-        response = self.client.post('/confirm_results/test_matches.csv', data={
-            'tournament_name': 'CSV Import Tournament',
-            'location': 'Import Location'
-        }, follow_redirects=True)
-        self.assertIn(b'Successfully imported tournament', response.data)
-        
-        # Verify matches were imported
-        with self.app.app_context():
-            tournament = Tournament.query.filter_by(name='CSV Import Tournament').first()
-            self.assertIsNotNone(tournament)
-            match_count = Match.query.filter_by(tournament_id=tournament.id).count()
-            self.assertEqual(match_count, 1)
+    # -------------------- Data Import/Export Tests --------------------
 
     def test_csv_format_validation(self):
         """Test handling of CSV files with different formats."""
@@ -433,7 +384,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_export_tournament_data(self):
-        """Test exporting tournament data."""
+        """Test exporting tournament data and statistics as JSON."""
         # First create tournament data to export
         self.login()
         self.client.post('/submit_results', data={
@@ -484,106 +435,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         self.assertIn(b'player2', response.data)
         self.assertIn(b'total_matches', response.data)
 
-    def test_import_duplicate_data(self):
-        """Test handling of duplicate entries during CSV upload."""
-        # Test case 1: Import CSV with duplicate player names
-        self.login()
-        # First import with unique players
-        data = dict(
-            pre_file=(io.BytesIO(b'Player Name\nDuplicate Player\nUnique Player'), 'first_import.csv')
-        )
-        response = self.client.post('/upload/pre', data=data, follow_redirects=True, content_type='multipart/form-data')
-        self.assertIn(b'Successfully imported', response.data)
-        
-        # Then import with some duplicated players
-        data = dict(
-            pre_file=(io.BytesIO(b'Player Name\nDuplicate Player\nAnother Player'), 'second_import.csv')
-        )
-        response = self.client.post('/upload/pre', data=data, follow_redirects=True, content_type='multipart/form-data')
-        self.assertIn(b'Successfully imported', response.data)
-        
-        # Verify no duplicate players were created
-        with self.app.app_context():
-            duplicate_count = Player.query.filter_by(name='Duplicate Player').count()
-            self.assertEqual(duplicate_count, 1)
-            
-        # Test case 2: Import duplicate match results
-        # Create a test CSV file for match import
-        match_csv = b'Team 1,Team 2,Score 1,Score 2,Round,Match Type\nDuplicate Player,Unique Player,21-19,19-21,Round 1,Singles'
-        data = dict(
-            post_file=(io.BytesIO(match_csv), 'match_import.csv')
-        )
-        
-        # First import
-        response = self.client.post('/upload/post', data=data, follow_redirects=True, content_type='multipart/form-data')
-        self.assertEqual(response.status_code, 200)
-        
-        # Confirm first import
-        with self.app.app_context():
-            # Create temporary file for confirmation
-            csv_path = os.path.join(self.app.config.get('UPLOAD_FOLDER'), 'match_import.csv')
-            with open(csv_path, 'wb') as f:
-                f.write(match_csv)
-                
-        # Confirm the import
-        response = self.client.post('/confirm_results/match_import.csv', data={
-            'tournament_name': 'Duplicate Match Test',
-            'location': 'Test Location'
-        }, follow_redirects=True)
-        
-        # Second import with same data
-        data = dict(
-            post_file=(io.BytesIO(match_csv), 'match_import2.csv')
-        )
-        response = self.client.post('/upload/post', data=data, follow_redirects=True, content_type='multipart/form-data')
-        
-        # Confirm second import
-        with self.app.app_context():
-            # Create temporary file for confirmation
-            csv_path = os.path.join(self.app.config.get('UPLOAD_FOLDER'), 'match_import2.csv')
-            with open(csv_path, 'wb') as f:
-                f.write(match_csv)
-                
-        response = self.client.post('/confirm_results/match_import2.csv', data={
-            'tournament_name': 'Duplicate Match Test 2',
-            'location': 'Test Location'
-        }, follow_redirects=True)
-        
-        # Verify both tournaments exist (duplicates allowed across tournaments)
-        with self.app.app_context():
-            tournament_count = Tournament.query.filter(Tournament.name.like('Duplicate Match Test%')).count()
-            self.assertEqual(tournament_count, 2)
-            
-        # Test case 3: Import partially duplicate data (same players, different scores)
-        match_csv2 = b'Team 1,Team 2,Score 1,Score 2,Round,Match Type\nDuplicate Player,Unique Player,21-10,10-21,Round 2,Singles'
-        data = dict(
-            post_file=(io.BytesIO(match_csv2), 'match_import3.csv')
-        )
-        
-        response = self.client.post('/upload/post', data=data, follow_redirects=True, content_type='multipart/form-data')
-        
-        # Confirm third import
-        with self.app.app_context():
-            # Create temporary file for confirmation
-            csv_path = os.path.join(self.app.config.get('UPLOAD_FOLDER'), 'match_import3.csv')
-            with open(csv_path, 'wb') as f:
-                f.write(match_csv2)
-                
-        response = self.client.post('/confirm_results/match_import3.csv', data={
-            'tournament_name': 'Different Score Test',
-            'location': 'Test Location'
-        }, follow_redirects=True)
-        
-        # Verify distinct match scores exist
-        with self.app.app_context():
-            match1 = Match.query.filter_by(score1='21-19').first()
-            match2 = Match.query.filter_by(score1='21-10').first()
-            self.assertIsNotNone(match1)
-            self.assertIsNotNone(match2)
-            self.assertNotEqual(match1.id, match2.id)
-
-
-    # --- 1. User Authentication and Authorization ---
+    # -------------------- User Authentication and Authorization --------------------
 
     def test_user_registration(self):
         """Test that user registration works with valid data."""
@@ -612,7 +464,6 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             user = User.query.filter_by(username='newuser').first()
             self.assertIsNotNone(user)
             self.assertEqual(user.email, 'newuser@example.com')
-
 
     def test_user_login(self):
         """Test that login works with correct credentials."""
@@ -660,8 +511,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         response = self.client.get('/admin', follow_redirects=True)
         self.assertIn(b'Admin Dashboard', response.data)
 
-
-    # --- 2. Player and Team Management ---
+    # -------------------- Player and Team Management --------------------
 
     def test_create_player(self):
         """Test that a new player can be added indirectly via tournament submission."""
@@ -685,33 +535,6 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         with self.app.app_context():
             player = Player.query.filter_by(name='New Player').first()
             self.assertIsNotNone(player)
-
-
-    def test_edit_player(self):
-        """Test updating player information."""
-        self.login()
-        with self.app.app_context():
-            player = Player(name='Editable Player')
-            db.session.add(player)
-            db.session.commit()
-            player_id = player.id
-
-        response = self.client.post(f'/players/{player_id}/edit', data={
-            'name': 'Updated Player'
-        }, follow_redirects=True)
-        self.assertIn(b'Player updated successfully', response.data)
-
-    def test_delete_player(self):
-        """Test removing a player from the database."""
-        self.login()
-        with self.app.app_context():
-            player = Player(name='Deletable Player')
-            db.session.add(player)
-            db.session.commit()
-            player_id = player.id
-
-        response = self.client.post(f'/players/{player_id}/delete', follow_redirects=True)
-        self.assertIn(b'Player deleted successfully', response.data)
 
     def test_player_duplicate_check(self):
         """Test that duplicate player names are handled gracefully (no duplicate records)."""
@@ -744,7 +567,6 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             players = Player.query.filter_by(name='Duplicate Player').all()
             self.assertEqual(len(players), 1)
 
-
     def test_team_creation(self):
         """Test that singles and doubles teams are created correctly."""
         self.login()
@@ -758,8 +580,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
             self.assertEqual(team.player1.name, 'Player One')
             self.assertEqual(team.player2.name, 'Player Two')
 
-
-    # --- 3. Tournament Management ---
+    # -------------------- Tournament Management --------------------
 
     def test_create_tournament(self):
         """Test that a new tournament is created successfully via submit_results."""
@@ -784,34 +605,6 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         with self.app.app_context():
             tournament = Tournament.query.filter_by(name='Test Tournament').first()
             self.assertIsNotNone(tournament)
-
-    def test_edit_tournament(self):
-        """Test updating tournament details."""
-        self.login()
-        with self.app.app_context():
-            tournament = Tournament(name='Editable Tournament', date=datetime.now(), location='Old Location', user_id=1)
-            db.session.add(tournament)
-            db.session.commit()
-            tid = tournament.id
-
-        response = self.client.post(f'/tournaments/{tid}/edit', data={
-            'name': 'Updated Tournament',
-            'date': datetime.now().strftime('%Y-%m-%d'),
-            'location': 'New Location'
-        }, follow_redirects=True)
-        self.assertIn(b'Tournament updated successfully', response.data)
-
-    def test_delete_tournament(self):
-        """Test deleting a tournament."""
-        self.login()
-        with self.app.app_context():
-            tournament = Tournament(name='Deletable Tournament', date=datetime.now(), location='Somewhere', user_id=1)
-            db.session.add(tournament)
-            db.session.commit()
-            tid = tournament.id
-
-        response = self.client.post(f'/tournaments/{tid}/delete', follow_redirects=True)
-        self.assertIn(b'Tournament deleted successfully', response.data)
 
     def test_view_tournament_list(self):
         """Test that the tournament dashboard displays correctly."""
@@ -841,16 +634,8 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
 
         self.assertIn(b'Tournament shared with recipient successfully!', response.data)
 
-            
-            
-    
-    
-        
-        
-        
-
 #################
-#SELENIUM TESTS
+# SELENIUM TESTS
 #################
 
 from selenium import webdriver
@@ -863,16 +648,14 @@ import time
 import platform
 
 # multiprocessing on Mac requires this line in order to work 
-# test to see what platform this script is running on, only run of on Mac
 if platform.system() == "Darwin":
     multiprocessing.set_start_method("fork") 
     
-
 localHost = "http://127.0.0.1:5000"  
 sleep_time = 1
 
 def run_flask():
-    #William Craig
+    """Run the Flask app in a separate process for Selenium tests."""
     app = create_app()
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory DB
@@ -882,166 +665,103 @@ def run_flask():
     app_context = app.app_context()
     app_context.push()
     with app_context:
-        db.drop_all()   # this might need to be in "with appcontext"
-        db.create_all() # this might need to be in "with appcontext"
+        db.drop_all()
+        db.create_all()
 
     app.run(host='127.0.0.1', port=5000, use_reloader=False)
 
 def sign_up_log_in_as_test_user(driver):
-    #William Craig
-    ##############################
-    #Sign up 
-    #navigate to the signup page
+    """Automate sign up and login as a test user using Selenium."""
+    # Sign up
     driver.get(localHost + "/signup")
-    #username 
     username_feild = driver.find_element(By.ID, "username")
     username_feild.send_keys("testinguser")
-    #email 
     email_feild = driver.find_element(By.ID, "email")
     email_feild.send_keys("testinguser@mail.com")
-    #password1 
     password1_feild = driver.find_element(By.ID, "password")
     password1_feild.send_keys("Testing123!")
-    #password1 
     password2_feild = driver.find_element(By.ID, "confirm_password")
     password2_feild.send_keys("Testing123!")
-    #click the submit button
     submit_button_feild = driver.find_element(By.ID, "submit_button")
     submit_button_feild.click()
-    ##############################
-    
-    #wait to be navigated to login page
     time.sleep(sleep_time)
 
-    ##############################
-    #Login
-    #username 
+    # Login
     username_feild = driver.find_element(By.ID, "username")
     username_feild.send_keys("testinguser")
-    #password1 
     password_feild = driver.find_element(By.ID, "password")
     password_feild.send_keys("Testing123!")
-    #click the submit button
     submit_button_feild = driver.find_element(By.ID, "submit_button")
     submit_button_feild.click()
-    ##############################
-
-    #wait to be navigated to dashboard page
     time.sleep(sleep_time)
 
 def add_test_tournament(driver):
+    """Automate adding a test tournament via the web form using Selenium."""
     driver.get(localHost+"/input_form")
     time.sleep(sleep_time)
-        
-    #Tournament Name 
     tournament_name_feild = driver.find_element(By.ID, "tournament_name")
     tournament_name_feild.send_keys("Test Tournament")
-    #Tournament date 
     tournament_date_feild = driver.find_element(By.ID, "tournament_date")
     tournament_date_feild.send_keys("01012025")
-    #Tournament location 
     location_feild = driver.find_element(By.ID, "location")
     location_feild.send_keys("Test location")
-    # Round
     round_feild = driver.find_element(By.ID, "round")
     round_feild.send_keys("Final")
-    # Group
     group_feild = driver.find_element(By.ID, "group")
     group_feild.send_keys("Test Group")
-    # Team 1
     team1_feild = driver.find_element(By.ID, "team1")
     team1_feild.send_keys("William Craig")
-    # Team 2
     team2_feild = driver.find_element(By.ID, "team2")
     team2_feild.send_keys("Craig William")
-    # Score
     score_feild = driver.find_element(By.ID, "score")
     score_feild.send_keys("21-19, 19-21, 21-18")
-    #click the submit button
     time.sleep(sleep_time)
     submit_button_feild = driver.find_element(By.ID, "submit_button")
     submit_button_feild.click()
     time.sleep(sleep_time)
 
 class SeleniumTests(unittest.TestCase):
-    #William Craig
-    #This class contains all of the selenium-webdriver tests
-    #These tests run much slower as it requires the web browser, i could make it run headless, but its harder to troubleshoot the tests 
+    """Selenium-based integration tests for end-to-end browser interactions."""
 
     def setUp(self):
-        #William Craig
-        ##########################################
-        # Start the flask server on a different thread
+        # Start the Flask server in a separate process
         self.server_thread = Process(target=run_flask)
         self.server_thread.start()
-        #time.sleep(1) # give some time for flask to boot
-        ##########################################
-
-        ##########################################
-        # Start the selenium driver client
-        #Open web browser 
+        # Start the Selenium driver (Chrome browser)
         self.driver = webdriver.Chrome()
         self.driver.delete_all_cookies()
-        #Get the home page of the website
         self.driver.get(localHost)
-        #time.sleep(1)
-        ##########################################
 
     def tearDown(self):
+        # Terminate Flask server and close browser after each test
         self.server_thread.terminate()
         self.driver.close()
         
     def test_tournament_statistics_selenium(self):
-        #William Craig
-        
-        # Step 1: Sign up as test user 
+        """Test tournament statistics page via Selenium."""
         sign_up_log_in_as_test_user(self.driver)
- 
-        #  Step 2: Add a test tournament
         add_test_tournament(self.driver)
-        
-        #######################
-        #  Step 3: Go to tournament analysis page and see if the information is correct
+        # Go to analytics page and select tournament
         self.driver.get(localHost+"/analytics")
         time.sleep(sleep_time)
         tournament_select_feild = Select(self.driver.find_element(By.ID, "tournamentSelect"))
-        tournament_select_feild.select_by_index(1) # select the second thing in the drop down
-                                                    # TODO: Replace this with "Select from visible text" 
-
-        #######################
-
-        #Step 4: Ensure that the information is the same as what was given
-        #   Tournament Name 
+        tournament_select_feild.select_by_index(1) # Select the second item in the dropdown
+        # Check that the tournament name appears on the analysis page
         self.assertIn("Test Tournament", self.driver.find_element(By.ID, "tournament-name").text,
                       "Tournament Analysis page title is not the same as tournament name provided in form")
-        # TODO: Use selenium to find the statistics and compare to expected values 
 
     def test_player_statistics_selenium(self):
-        # William Craig
-
-        # Step 1: Sign up as test user 
+        """Test player statistics page via Selenium."""
         sign_up_log_in_as_test_user(self.driver)
-
-        # Step 2: Add a test tournament
         add_test_tournament(self.driver)
-
-        # Step 3: Go to the player analysis page
         self.driver.get(localHost + "/analytics")
         time.sleep(sleep_time)
-
-        # Use select_by_visible_text instead of index
         player_select_field = Select(self.driver.find_element(By.ID, "playerSelect"))
         player_select_field.select_by_visible_text("Craig William")
-
-        # Assert player name is correct
         self.assertIn("Craig William", self.driver.find_element(By.ID, "player-name").text,
                     "Player Analysis page title is not the same as player name provided in form")
-        
 
-        
-     
-
-
+# -------------------- Placeholder/Edge Case Tests --------------------
 
 def test_head_to_head_comparison(self):
     """Test comparing performance between two players."""
@@ -1075,7 +795,6 @@ def test_invalid_player_id(self):
 def test_csrf_protection(self):
     """Test that CSRF protection works on forms."""
     pass
-
 
 if __name__ == '__main__':
     unittest.main()

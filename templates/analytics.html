@@ -1,11 +1,7 @@
 {% extends "layout.html" %}
-
 {% block title %}Data Analysis - Badminton MASTER{% endblock %}
 {% block page_title %}Badminton MASTER{% endblock %}
-
 {% block extra_css %}
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <style>
   /* Fix for chart container heights */
@@ -28,15 +24,95 @@
     text-align: center;
     color: #9ca3af;
   }
+  
+  /* Win Rate Table Styling */
+  .win-rate-table thead {
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+    color: white;
+  }
+  
+  .win-rate-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+  }
+  
+  /* Animation for rank colorbar */
+  .rank-indicator {
+    transition: all 0.3s ease;
+  }
+  
+  /* Win rate badge pulse animation on hover */
+  .win-rate-badge {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .win-rate-badge:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: inherit;
+    animation: pulse 1s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  
+  /* Subtle row hover effect */
+  .player-row {
+    transition: transform 0.2s ease;
+  }
+  
+  .player-row:hover {
+    transform: translateX(3px);
+    box-shadow: -2px 0 0 #4f46e5;
+  }
+  
+  /* Toggle button animation */
+  #toggleRankingsBtn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  #toggleRankingsBtn:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shine 1.5s infinite;
+  }
+  
+  @keyframes shine {
+    100% {
+      left: 100%;
+    }
+  }
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="mb-6">
   <h2 class="text-2xl font-semibold">📊 Data Analysis Dashboard</h2>
   <p class="text-gray-600 mt-1">View your badminton game statistics and trends</p>
 </div>
-
 <!-- Analysis navigation -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
   <a href="{{ url_for('analytics.overall_analysis') }}" class="bg-red-600 text-white p-4 rounded-lg shadow hover:bg-green-700 transition text-center">Overall Analysis</a>
@@ -52,9 +128,6 @@
     </select>
   </div>
 </div>
-
-
-
 <!-- Tournament Analysis -->
 <div class="bg-white rounded shadow p-6 mb-10">
   <h3 class="text-xl font-bold mb-4">🏆 Tournament Analysis</h3>
@@ -78,7 +151,6 @@
     </div>
   </div>
 </div>
-
 <!-- Player Comparison -->
 <div class="bg-white rounded shadow p-6 mb-10">
   <h3 class="text-xl font-bold mb-4">🏅 Player Comparison</h3>
@@ -108,7 +180,44 @@
     </button>
   </div>
 </div>
-
+<!-- Top Players by Win Rate -->
+<div class="bg-white rounded-lg shadow-lg p-6 mb-10 border border-gray-100">
+  <div class="flex justify-between items-center mb-6">
+    <h3 class="text-xl font-bold text-gray-800">🏆 Top Players by Win Rate</h3>
+    <button id="toggleRankingsBtn" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition">
+      Show All Players
+    </button>
+  </div>
+  <div id="playerRankings">
+    <div class="overflow-hidden rounded-lg border border-gray-200 shadow win-rate-table">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+          <tr>
+            <th scope="col" class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold w-16">Rank</th>
+            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">Player</th>
+            <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold w-32">Win Rate</th>
+            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold w-32">Matches</th>
+          </tr>
+        </thead>
+        <tbody id="playerRankingsBody" class="divide-y divide-gray-200 bg-white">
+          <!-- Player rankings will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+    <div id="noPlayerData" class="hidden">
+      <div class="text-center py-12 text-gray-500 bg-gray-50 rounded-lg mt-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <p class="text-lg">No player data available yet.</p>
+        <p class="text-sm mt-2">Add matches to see player rankings.</p>
+      </div>
+    </div>
+    <div class="mt-3 flex justify-end">
+      <div id="tableInfo" class="text-sm text-gray-600 italic"></div>
+    </div>
+  </div>
+</div>
 <!-- Quick Access to Other Features -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
   <a href="{{ url_for('tournament.upload_page') }}" class="bg-purple-600 text-white p-4 rounded-lg shadow hover:bg-purple-700 transition text-center">
@@ -122,115 +231,162 @@
   </a>
 </div>
 {% endblock %}
-
 {% block scripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Game type distribution charts - only initialize if data exists
-    {% if match_distribution and match_distribution.labels|length > 0 %}
-      const matchTypeData = JSON.parse('{{ match_distribution|safe }}');
-      const matchTypeCtx = document.getElementById('matchTypeChart').getContext('2d');
-      const matchTypeChart = new Chart(matchTypeCtx, {
-        type: 'doughnut',
-        data: {
-          labels: matchTypeData.labels,
-          datasets: [{
-            data: matchTypeData.data,
-            backgroundColor: [
-              '#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                boxWidth: 12
-              }
-            }
-          }
-        }
+    // Initialize the Player Win Rate Rankings
+    const playerWinRates = {{ player_win_rates|safe }};
+    const rankingsBody = document.getElementById('playerRankingsBody');
+    const noDataDiv = document.getElementById('noPlayerData');
+    const toggleRankingsBtn = document.getElementById('toggleRankingsBtn');
+    const tableInfo = document.getElementById('tableInfo');
+    
+    let allPlayers = [];
+    let isShowingAll = false;
+    const INITIAL_DISPLAY_COUNT = 5;
+    
+    if (playerWinRates && playerWinRates.labels && playerWinRates.labels.length > 0) {
+      // Create an array of player objects for sorting
+      allPlayers = playerWinRates.labels.map((name, index) => {
+        return {
+          name: name,
+          winRate: playerWinRates.data[index],
+          matches: playerWinRates.matches ? playerWinRates.matches[index] : '—' // Use matches count if available
+        };
       });
-    {% endif %}
-
-    // Player Win Rate Chart - only initialize if data exists
-    {% if player_win_rates and player_win_rates.labels|length > 0 %}
-      const winRateData = JSON.parse('{{ player_win_rates|safe }}');
-      const winRateCtx = document.getElementById('winRateChart').getContext('2d');
-      const winRateChart = new Chart(winRateCtx, {
-        type: 'bar',
-        data: {
-          labels: winRateData.labels,
-          datasets: [{
-            label: 'Win Rate (%)',
-            data: winRateData.data,
-            backgroundColor: '#3B82F6',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 100,
-              ticks: {
-                callback: function(value) {
-                  return value + '%';
-                }
-              }
-            }
-          }
-        }
+      
+      // Sort by win rate (already sorted from backend, but just to be sure)
+      allPlayers.sort((a, b) => b.winRate - a.winRate);
+      
+      // Show only top players initially
+      displayPlayers(allPlayers.slice(0, INITIAL_DISPLAY_COUNT));
+      
+      // Show toggle button if there are more players than the initial display count
+      if (allPlayers.length > INITIAL_DISPLAY_COUNT) {
+        toggleRankingsBtn.classList.remove('hidden');
+        toggleRankingsBtn.addEventListener('click', togglePlayerDisplay);
+        tableInfo.textContent = `Showing top ${INITIAL_DISPLAY_COUNT} of ${allPlayers.length} players`;
+      } else {
+        toggleRankingsBtn.classList.add('hidden');
+        tableInfo.textContent = `Showing all ${allPlayers.length} players`;
+      }
+      
+      // Hide the no data message
+      noDataDiv.classList.add('hidden');
+    } else {
+      // Hide the table and show the no data message
+      if (rankingsBody.parentNode.parentNode) {
+        rankingsBody.parentNode.parentNode.classList.add('hidden');
+      }
+      noDataDiv.classList.remove('hidden');
+      toggleRankingsBtn.classList.add('hidden');
+    }
+    
+    function displayPlayers(playersToShow) {
+      // Clear existing rows
+      rankingsBody.innerHTML = '';
+      
+      // Create ranking rows
+      playersToShow.forEach((player, index) => {
+        const row = document.createElement('tr');
+        
+        // Add medal emoji for top 3
+        let rankDisplay = `${index + 1}`;
+        if (index === 0) rankDisplay = `🥇 ${rankDisplay}`;
+        else if (index === 1) rankDisplay = `🥈 ${rankDisplay}`;
+        else if (index === 2) rankDisplay = `🥉 ${rankDisplay}`;
+        
+        // Get color based on win rate
+        const rowColor = getRowColorClass(player.winRate);
+        const nameColor = getNameColorClass(player.winRate);
+        const winRateColor = getWinRateColorClass(player.winRate);
+        
+        // Apply classes to row
+        row.className = `${rowColor} hover:bg-gray-50 transition duration-150 player-row`;
+        
+        row.innerHTML = `
+          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+            <span class="flex items-center">
+              ${rankDisplay}
+              ${index < 3 ? `<span class="ml-2 w-1 h-6 rounded rank-indicator ${index === 0 ? 'bg-yellow-400' : index === 1 ? 'bg-gray-300' : 'bg-amber-600'}"></span>` : ''}
+            </span>
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm ${nameColor}">${player.name}</td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-right font-medium ${winRateColor}">
+            <span class="px-2 py-1 rounded-full win-rate-badge ${getWinRateBadgeColor(player.winRate)}">
+              ${player.winRate.toFixed(1)}%
+            </span>
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-600">
+            ${player.matches}
+          </td>
+        `;
+        
+        rankingsBody.appendChild(row);
       });
-    {% endif %}
-
-    // Monthly Match Count Chart - only initialize if data exists
-    {% if monthly_matches and monthly_matches.labels|length > 0 %}
-      const monthlyData = JSON.parse('{{ monthly_matches|safe }}');
-      const monthlyCtx = document.getElementById('monthlyMatchChart').getContext('2d');
-      const monthlyChart = new Chart(monthlyCtx, {
-        type: 'line',
-        data: {
-          labels: monthlyData.labels,
-          datasets: [{
-            label: 'Number of matches',
-            data: monthlyData.data,
-            borderColor: '#10B981',
-            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-            tension: 0.3,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                precision: 0
-              }
-            }
-          }
-        }
-      });
-    {% endif %}
+    }
+    
+    function togglePlayerDisplay() {
+      isShowingAll = !isShowingAll;
+      
+      if (isShowingAll) {
+        // Show all players
+        displayPlayers(allPlayers);
+        toggleRankingsBtn.textContent = 'Show Top Players';
+        toggleRankingsBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+        toggleRankingsBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+        tableInfo.textContent = `Showing all ${allPlayers.length} players`;
+      } else {
+        // Show top players only
+        displayPlayers(allPlayers.slice(0, INITIAL_DISPLAY_COUNT));
+        toggleRankingsBtn.textContent = 'Show All Players';
+        toggleRankingsBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+        toggleRankingsBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        tableInfo.textContent = `Showing top ${INITIAL_DISPLAY_COUNT} of ${allPlayers.length} players`;
+      }
+    }
+    
+    // Helper function to get row background color class based on win rate
+    function getRowColorClass(winRate) {
+      if (winRate >= 80) return 'bg-gradient-to-r from-green-50 to-green-100';
+      else if (winRate >= 70) return 'bg-gradient-to-r from-emerald-50 to-emerald-100';
+      else if (winRate >= 60) return 'bg-gradient-to-r from-teal-50 to-teal-100';
+      else if (winRate >= 50) return 'bg-gradient-to-r from-blue-50 to-blue-100';
+      else if (winRate >= 40) return 'bg-gradient-to-r from-indigo-50 to-indigo-100';
+      else if (winRate >= 30) return 'bg-gradient-to-r from-purple-50 to-purple-100';
+      else return 'bg-gradient-to-r from-pink-50 to-pink-100';
+    }
+    
+    // Helper function to get player name color class based on win rate
+    function getNameColorClass(winRate) {
+      if (winRate >= 80) return 'text-green-800 font-semibold';
+      else if (winRate >= 70) return 'text-emerald-800 font-semibold';
+      else if (winRate >= 60) return 'text-teal-800 font-semibold';
+      else if (winRate >= 50) return 'text-blue-800 font-semibold';
+      else return 'text-gray-800';
+    }
+    
+    // Helper function to get win rate text color class based on win rate
+    function getWinRateColorClass(winRate) {
+      if (winRate >= 80) return 'text-green-700';
+      else if (winRate >= 70) return 'text-emerald-700';
+      else if (winRate >= 60) return 'text-teal-700';
+      else if (winRate >= 50) return 'text-blue-700';
+      else if (winRate >= 40) return 'text-indigo-700';
+      else if (winRate >= 30) return 'text-purple-700';
+      else return 'text-pink-700';
+    }
+    
+    // Helper function to get win rate badge color class based on win rate
+    function getWinRateBadgeColor(winRate) {
+      if (winRate >= 80) return 'bg-green-100 text-green-800';
+      else if (winRate >= 70) return 'bg-emerald-100 text-emerald-800';
+      else if (winRate >= 60) return 'bg-teal-100 text-teal-800';
+      else if (winRate >= 50) return 'bg-blue-100 text-blue-800';
+      else if (winRate >= 40) return 'bg-indigo-100 text-indigo-800';
+      else if (winRate >= 30) return 'bg-purple-100 text-purple-800';
+      else return 'bg-pink-100 text-pink-800';
+    }
 
     // Calculate the total number of matches
     let totalMatches = 0;
@@ -285,3 +441,4 @@
   });
 </script>
 {% endblock %}
+      

@@ -4,7 +4,9 @@ A comprehensive web application for organizing badminton tournaments, tracking p
 
 ## 📋 Overview
 
-Badminton MASTER allows tournament organizers to easily manage all aspects of badminton tournaments. Users can upload match data via CSV or input results through the web interface, then access powerful analytics to track player performance, view match statistics, and share tournament data with other users.
+Badminton MASTER allows tournament organizers to easily analyse and calculate key data of their hosted tournaments. 
+
+Users can upload match data via CSV or input results through the web interface, then access analytics to track player performance, view match statistics, and share tournament data with other users.
 
 ## ✨ Features
 
@@ -62,39 +64,38 @@ pip install -r requirements.txt
 python seeddatabase.py
 ```
 
-5. Run the application:
+5. Initialize the admin user:
+```bash
+python admin_init.py
+```
+
+6. Run the application:
 ```bash
 python app.py
 ```
 
-6. Access the application in your browser at `http://localhost:5000`
+7. Access the application in your browser at `http://localhost:5000`
 </details>
 
-### Key Dependencies
-
-- Flask 2.3.3: Web framework
-- Flask-SQLAlchemy 3.1.1: Database ORM
-- Flask-WTF 1.2.1: Form handling
-- Werkzeug 2.3.7: WSGI utilities
-- Python-dotenv 1.0.0: Environment management
 
 ## 📊 Using the Application
 
 ### Uploading Tournament Data
 
-1. **Pre-Tournament Setup**:
-   - Upload player list using CSV format
-   - Player names must be in the first column
+1. **Manual Data Entry**:
+   - Use the Input Form to add tournament details and match results
+   - Specify match types (Singles, Doubles, Mixed)
+   - Enter scores in standard format (e.g., "21-19, 19-21, 21-18")
 
 2. **Post-Tournament Results**:
    - Upload match results using CSV with required columns:
      - Team 1, Team 2, Score 1, Score 2, Round, Match Type
    - For doubles matches, separate player names with commas
 
-3. **Manual Data Entry**:
-   - Use the Input Form to add tournament details and match results
-   - Specify match types (Singles, Doubles, Mixed)
-   - Enter scores in standard format (e.g., "21-19, 19-21, 21-18")
+3. **Pre-Tournament Setup**:
+   - Upload player list using CSV format
+   - Player names must be in the first column
+
 
 ### Analyzing Results
 
@@ -151,13 +152,13 @@ badminton-tournament-manager/
 
 ## 🔒 Security Implementation
 
-The application includes comprehensive security features:
+Application security features:
 - Login required for all protected routes (everything other than "/" and "/home")
-- Admin user accounts with additional protected functionality 
+- Admin user accounts with additional protected permissions  
 - Session management with configurable timeout
 - Password hashing and validation
 - CSRF protection for all forms
-- Input validation and sanitization
+- User login input data validation and sanitization
 
 ## 💾 Database
 
@@ -173,7 +174,9 @@ This project uses SQLite for simplicity and easy deployment. The database file i
 
 ## 👨‍💻 Admin Account Guide
 
-Admin accounts provide extended capabilities for managing the entire system.
+Admin accounts provide extended capabilities for managing the entire system, availiable at 
+
+http://your-domain/admin
 
 <details>
 <summary>View admin setup instructions</summary>
@@ -251,16 +254,6 @@ http://your-domain/admin
 
 - **Page not found errors**: Check that you're accessing the correct URL and are logged in
 </details>
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues to improve the application.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## 📝 License
 

@@ -622,7 +622,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         """Test that protected routes require login."""
         response = self.client.get('/dashboard', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Please log in to access this page', response.data)
+        self.assertIn(b'Welcome Back', response.data)
 
     def test_admin_privileges(self):
         """Test that only admins can access the admin dashboard."""

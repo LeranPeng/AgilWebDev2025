@@ -696,11 +696,36 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         self.assertIn(b'Player deleted successfully', response.data)
 
     def test_player_duplicate_check(self):
-        """Test that duplicate player names are not allowed."""
+        """Test that duplicate player names are handled gracefully (no duplicate records)."""
         self.login()
-        self.client.post('/players/create', data={'name': 'Duplicate Player'}, follow_redirects=True)
-        response = self.client.post('/players/create', data={'name': 'Duplicate Player'}, follow_redirects=True)
-        self.assertIn(b'Player with this name already exists', response.data)
+    
+        data = {
+            'tournament_name': 'Duplicate Test Tournament',
+            'tournament_date': '2025-05-16',
+            'team1[]': 'Duplicate Player',
+            'team2[]': 'Opponent',
+            'score1[]': '21-15',
+            'score2[]': '15-21',
+            'match_type[]': 'Singles',
+            'round[]': 'Quarterfinal',
+            'group[]': 'A'
+        }
+
+    # First submission
+    response1 = self.client.post('/submit_results', data=data, follow_redirects=True)
+    self.assertEqual(response1.status_code, 200)
+    self.assertIn(b'Tournament results submitted successfully!', response1.data)
+
+    # Second submission (same player)
+    response2 = self.client.post('/submit_results', data=data, follow_redirects=True)
+    self.assertEqual(response2.status_code, 200)
+    self.assertIn(b'Tournament results submitted successfully!', response2.data)
+
+    # Verify only one player record exists for 'Duplicate Player'
+    with self.app.app_context():
+        players = Player.query.filter_by(name='Duplicate Player').all()
+        self.assertEqual(len(players), 1)
+
 
     def test_team_creation(self):
         """Test that singles and doubles teams are created correctly."""

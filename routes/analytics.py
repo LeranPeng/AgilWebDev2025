@@ -494,8 +494,8 @@ def get_match_distribution_by_type(user_id=None):
     return result
 
 
-def get_win_rates_by_player(user_id=None, limit=10):
-    """Get win rates by player"""
+def get_win_rates_by_player(user_id=None, limit=None):
+    """Get win rates by player with match counts"""
 
     # Get player statistics
     players = get_player_stats(user_id=user_id)
@@ -505,21 +505,27 @@ def get_win_rates_by_player(user_id=None, limit=10):
         # Filter out any non-dictionary items that might have been included
         players = [player for player in players if isinstance(player, dict)]
 
-        # Sort by win rate and limit count
-        players = sorted(players, key=lambda x: x.get('win_rate', 0), reverse=True)[:limit]
+        # Sort by win rate
+        players = sorted(players, key=lambda x: x.get('win_rate', 0), reverse=True)
+        
+        # If limit is specified and valid, limit the number of players returned
+        if limit and isinstance(limit, int) and limit > 0:
+            players = players[:limit]
     else:
         # If players is not a list or is empty, initialize an empty list
         players = []
 
-    # Format for chart data
+    # Format for chart data with match counts
     result = {
         'labels': [],
-        'data': []
+        'data': [],
+        'matches': []
     }
 
     for player in players:
         result['labels'].append(player.get('name', 'Unknown'))
         result['data'].append(player.get('win_rate', 0))
+        result['matches'].append(player.get('matches', 0))
 
     return result
 
@@ -613,7 +619,7 @@ def analytics_dashboard():
 
     # Get basic statistics
     match_distribution = get_match_distribution_by_type(user_id)
-    player_win_rates = get_win_rates_by_player(user_id, limit=5)
+    player_win_rates = get_win_rates_by_player(user_id)
     monthly_matches = get_monthly_match_counts(user_id, months=6)
 
     # Get all players list (for selection)

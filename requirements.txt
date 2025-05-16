@@ -7,4 +7,6 @@ email-validator==2.1.0
 Flask-Migrate==4.0.5
 WTForms==3.1.1
 selenium==4.32.0
-bs4==4.13.4
+#functools==
+dotenv==0.9.9
+datetime==5.5

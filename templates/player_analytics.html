@@ -117,6 +117,7 @@ losses:{{player.losses}}:
     {% if player.points_scored is defined or player.points_conceded is defined %}
       <div class="chart-container">
         <canvas id="scoreChart"></canvas>
+        <!-- DEBUG: Scored={{ player.points_scored }}, Conceded={{ player.points_conceded }} -->
       </div>
     {% else %}
       <div class="empty-state">

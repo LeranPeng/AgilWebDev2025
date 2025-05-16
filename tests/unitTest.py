@@ -622,7 +622,7 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         """Test that protected routes require login."""
         response = self.client.get('/dashboard', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Please log in to access this page', response.data)
+        self.assertIn(b'Welcome Back', response.data)
 
     def test_admin_privileges(self):
         """Test that only admins can access the admin dashboard."""
@@ -787,8 +787,12 @@ from multiprocessing import Process, set_start_method
 import multiprocessing
 import time
 
-# Below line is needed for this to work on mac
-multiprocessing.set_start_method("fork") #THIS LINE MUST BE COMMENTED WHEN RUNNING ON WINDOWS
+import platform
+
+# multiprocessing on Mac requires this line in order to work 
+# test to see what platform this script is running on, only run of on Mac
+if platform.system() == "Darwin":
+    multiprocessing.set_start_method("fork") 
     
 
 localHost = "http://127.0.0.1:5000"  

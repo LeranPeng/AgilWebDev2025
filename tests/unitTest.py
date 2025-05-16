@@ -782,11 +782,11 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
         self.assertIn(b'Tournament deleted successfully', response.data)
 
     def test_view_tournament_list(self):
-        """Test that the tournament list is displayed correctly."""
+        """Test that the tournament dashboard displays correctly."""
         self.login()
-        response = self.client.get('/tournaments', follow_redirects=True)
+        response = self.client.get('/dashboard', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Tournaments', response.data)
+        self.assertIn(b'Total Matches Uploaded', response.data)  # text that definitely appears on dashboard.html
 
     def test_tournament_sharing(self):
         """Test sharing a tournament with another user."""

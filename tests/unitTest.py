@@ -646,12 +646,28 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
     # --- 2. Player and Team Management ---
 
     def test_create_player(self):
-        """Test that a new player can be added."""
+        """Test that a new player can be added indirectly via tournament submission."""
         self.login()
-        response = self.client.post('/players/create', data={
-            'name': 'New Player'
-        }, follow_redirects=True)
-        self.assertIn(b'Player created successfully', response.data)
+        data = {
+            'tournament_name': 'Test Tournament',
+            'tournament_date': '2025-05-16',
+            'team1[]': 'New Player',
+            'team2[]': 'Opponent',
+            'score1[]': '21-15',
+            'score2[]': '15-21',
+            'match_type[]': 'Singles',
+            'round[]': 'Quarterfinal',
+            'group[]': 'A'
+        }
+        response = self.client.post('/submit_results', data=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Tournament results submitted successfully!', response.data)
+
+        # Verify player exists in the database
+        with self.app.app_context():
+            player = Player.query.filter_by(name='New Player').first()
+            self.assertIsNotNone(player)
+
 
     def test_edit_player(self):
         """Test updating player information."""

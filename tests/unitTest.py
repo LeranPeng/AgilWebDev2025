@@ -587,14 +587,32 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
 
     def test_user_registration(self):
         """Test that user registration works with valid data."""
-        response = self.client.post('/signup', data={
+        # Ensure no user is logged in by clearing the session
+        with self.client.session_transaction() as session:
+            session.clear()
+
+        data = {
             'username': 'newuser',
             'email': 'newuser@example.com',
-            'password': 'newpassword',
-            'confirm': 'newpassword'
-        }, follow_redirects=True)
+            'password': 'Password123!',
+            'confirm_password': 'Password123!'
+        }
+
+        # Send POST request to register a new user
+        response = self.client.post('/signup', data=data, follow_redirects=True)
+
+        # Check if the response status code is 200 (success)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Registration successful', response.data)
+
+        # Check for the flash message after successful registration
+        self.assertIn(b'Account created successfully! Please log in.', response.data)
+
+        # Check if the user was actually created in the database
+        with self.app.app_context():
+            user = User.query.filter_by(username='newuser').first()
+            self.assertIsNotNone(user)
+            self.assertEqual(user.email, 'newuser@example.com')
+
 
     def test_user_login(self):
         """Test that login works with correct credentials."""
@@ -744,14 +762,28 @@ class BadmintonManagerUnitTestCase(unittest.TestCase):
     # --- 3. Tournament Management ---
 
     def test_create_tournament(self):
-        """Test that a new tournament is created successfully."""
+        """Test that a new tournament is created successfully via submit_results."""
         self.login()
-        response = self.client.post('/tournaments/create', data={
-            'name': 'New Tournament',
-            'date': datetime.now().strftime('%Y-%m-%d'),
-            'location': 'Test Venue'
-        }, follow_redirects=True)
-        self.assertIn(b'Tournament created successfully', response.data)
+        data = {
+            'tournament_name': 'Test Tournament',
+            'tournament_date': '2025-05-16',
+            'location': 'Test Location',
+            'round[]': ['Round 1'],
+            'group[]': ['Group A'],
+            'team1[]': ['Player A'],
+            'team2[]': ['Player B'],
+            'score1[]': ['21-15'],
+            'score2[]': ['15-21'],
+            'match_type[]': ['Singles']
+        }
+        response = self.client.post('/submit_results', data=data, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Tournament results submitted successfully!', response.data)
+
+        # Optionally verify tournament in DB
+        with self.app.app_context():
+            tournament = Tournament.query.filter_by(name='Test Tournament').first()
+            self.assertIsNotNone(tournament)
 
     def test_edit_tournament(self):
         """Test updating tournament details."""

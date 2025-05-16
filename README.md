@@ -2,6 +2,7 @@
 
 A comprehensive web application for organizing badminton tournaments, tracking player statistics, and analyzing game results.
 
+Developer: Leran Peng(23909531), Andrew Mekhail (23775973), Dennis Chuo (23863534), Will Craig (23180621)
 ## 📋 Overview
 
 Badminton MASTER allows tournament organizers to easily analyse and calculate key data of their hosted tournaments. 
@@ -243,7 +244,6 @@ http://your-domain/admin
 - **Database initialization fails**: Remove the existing database file and try again
   ```bash
   rm badminton.db
-  python seeddatabase.py
   ```
 
 ### Runtime Issues

@@ -60,22 +60,17 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Initialize the database:
-```bash
-python seeddatabase.py
-```
-
-5. Initialize the admin user:
+4. Initialize the admin user:
 ```bash
 python admin_init.py
 ```
 
-6. Run the application:
+5. Run the application:
 ```bash
 python app.py
 ```
 
-7. Access the application in your browser at `http://localhost:5000`
+6. Access the application in your browser at `http://localhost:5000`
 </details>
 
 
@@ -114,7 +109,6 @@ badminton-tournament-manager/
 ├── admin.py            # Admin account functions
 ├── analytics.py        # Analytics module
 ├── models.py           # Database models
-├── seeddatabase.py     # Database initialization script
 ├── requirements.txt    # Project dependencies
 ├── static/             # Static files (CSS, JS, images)
 ├── routes/             # Python Flask backend logic for the sub pages

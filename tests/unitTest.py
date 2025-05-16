@@ -761,40 +761,5 @@ class SeleniumTests(unittest.TestCase):
         self.assertIn("Craig William", self.driver.find_element(By.ID, "player-name").text,
                     "Player Analysis page title is not the same as player name provided in form")
 
-# -------------------- Placeholder/Edge Case Tests --------------------
-
-def test_head_to_head_comparison(self):
-    """Test comparing performance between two players."""
-    pass
-
-def test_overall_performance_analysis(self):
-    """Test overall statistics across all tournaments."""
-    pass
-
-def test_analytics_access_restriction(self):
-    """Test that only authorized users can access analytics pages."""
-    pass
-
-#  Error Handling and Edge Cases
-def test_404_page(self):
-    """Test that the custom 404 error page is displayed."""
-    pass
-
-def test_500_page(self):
-    """Test that the custom 500 error page is displayed."""
-    pass
-
-def test_invalid_tournament_id(self):
-    """Test accessing a non-existent tournament ID."""
-    pass
-
-def test_invalid_player_id(self):
-    """Test accessing a non-existent player ID."""
-    pass
-
-def test_csrf_protection(self):
-    """Test that CSRF protection works on forms."""
-    pass
-
 if __name__ == '__main__':
     unittest.main()

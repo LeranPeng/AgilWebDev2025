@@ -60,10 +60,11 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Initialize the admin user:
+4. Initialize the admin user(optional):
 ```bash
 python admin_init.py
 ```
+We have an admin panel to manage all matches, users, and tournaments. But it's fine to sign up as an user.
 
 5. Run the application:
 ```bash
